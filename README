@@ -1,0 +1,23 @@
+------------------------------
+Multistep Form Module
+------------------------------
+
+April 3rd, 2008
+
+Managing multiple form steps ("wizard") with automatic session-saving
+of data, and versatile start/finish customizations.
+
+REQUIREMENTS
+------------
+SilverStripe 2.2.2
+
+DOCUMENTATION
+-------------
+http://doc.silverstripe.com/doku.php?id=modules:multiform
+
+INSTALL
+-------
+
+1) Copy the "multiform" directory into your main SilverStripe directory
+2) run ?flush=1
+3) Use it in your forms, e.g. in DataObject->getCMSFields()
