@@ -66,6 +66,9 @@ abstract class MultiForm extends Form {
 	 * 
 	 * @TODO init() may not be an appropriate name, considering there's already an init() automatically called
 	 * for controller classes. Perhaps we rename this?
+	 * 
+	 * @TODO Security. Currently you're able to just change the ID of MultiFormSessionID in the URL. We need some
+	 * sort of identification so you can't just change to another session by changing the ID.
 	 */
 	public function init() {
 		$startStepClass = $this->stat('start_step');
