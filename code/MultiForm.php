@@ -283,7 +283,7 @@ abstract class MultiForm extends Form {
 		$currentStep = $this->session->CurrentStep();
 		if(is_array($data)) {
 			foreach($data as $field => $value) {
-				if(in_array($field, self::$ignored_fields) || self::isActionField($field)) {
+				if(in_array($field, self::$ignored_fields) || self::is_action_field($field)) {
 					unset($data[$field]);
 				}
 			}
@@ -431,7 +431,7 @@ abstract class MultiForm extends Form {
 	 * @param string $prefix The prefix of the string to check for, default is "action_"
 	 * @return boolean
 	 */
-	public static function isActionField($fieldName, $prefix = 'action_') {
+	public static function is_action_field($fieldName, $prefix = 'action_') {
 		if(substr((string)$fieldName, 0, strlen($prefix)) == $prefix) return true;
 	}
 	
