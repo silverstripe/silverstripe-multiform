@@ -94,6 +94,7 @@ abstract class MultiForm extends Form {
 		$startStepClass = $this->stat('start_step');
 		$urlType = $this->stat('url_type');
 		
+		// Check if there was a start step defined on the subclass of MultiForm
 		if(!isset($startStepClass)) user_error('MultiForm::init(): Please define a $startStep on ' . $this->class, E_USER_ERROR);
 		
 		// If there's a MultiFormSessionID variable set, find that, otherwise create a new session
