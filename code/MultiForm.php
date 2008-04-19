@@ -122,6 +122,7 @@ abstract class MultiForm extends Form {
 				$this->session->CurrentStepID = $currentStep->ID;
 				$this->session->write();
 			}
+		// @TODO if you set a wrong ID, then it ends up at this point with a non-object error.
 		} elseif($this->session->CurrentStepID) {
 			$currentStep = $this->session->CurrentStep();
 		} else {
