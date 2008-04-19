@@ -11,15 +11,16 @@ class MultiFormSession extends DataObject {
 	
 	static $db = array(
 		'Data' => 'Text', // stores serialized maps with all session information
+		'Hash' => 'Varchar(40)' // cryptographic hash identification to this session
 	);
 	
 	static $has_one = array(
 		'Submitter' => 'Member',
-		'CurrentStep' => 'MultiFormStep',
+		'CurrentStep' => 'MultiFormStep'
 	);
 
 	static $has_many = array(
-		'FormSteps' => 'MultiFormStep',
+		'FormSteps' => 'MultiFormStep'
 	);
 	
 	public function onBeforeWrite() {

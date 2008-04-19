@@ -32,6 +32,23 @@ abstract class MultiForm extends Form {
 	 */
 	protected static $start_step; 
 	
+	/**
+	 * Define what type of URL you want to use throughout the step process.
+	 * 
+	 * By default, we store a hash, for example: http://mysite.com/my-form/?MultiFormSessionID=de9f2c7fd25e1b3afad3e850bd17d9b100db4b3
+	 * Alternatively, if you set this variable to "ID", then you get ?MultiFormSessionID=20
+	 * 
+	 * The ID is not as secure as the hash, but it all depends on your set up.
+	 * If you're going to add security, such as check the SubmitterID on init
+	 * of the MultiForm and use "ID" for this parameter, then security should be fine.
+	 * 
+	 * In any other case, where there's no Member tied to a MultiFormSession, using
+	 * the Hash is the recommended approach.
+	 *
+	 * @var $url_type either "ID", or "Hash"
+	 */
+	protected static $url_type = 'Hash';
+	
 	static $casting = array(
 		'CompletedStepCount' => 'Int',
 		'TotalStepCount' => 'Int',
@@ -75,15 +92,25 @@ abstract class MultiForm extends Form {
 	 */
 	public function init() {
 		$startStepClass = $this->stat('start_step');
-		if(!isset($startStepClass)) user_error('MultiForm::init(): Please define a $startStep', E_USER_ERROR);
+		$urlType = $this->stat('url_type');
+		
+		if(!isset($startStepClass)) user_error('MultiForm::init(): Please define a $startStep on ' . $this->class, E_USER_ERROR);
 		
 		// If there's a MultiFormSessionID variable set, find that, otherwise create a new session
 		if(isset($_GET['MultiFormSessionID'])) {
-			$this->session = DataObject::get_by_id('MultiFormSession', (int)$_GET['MultiFormSessionID']);  
+			if($urlType == 'Hash') {
+				$hash = Convert::raw2sql($_GET['MultiFormSessionID']);
+				$this->session = DataObject::get_one('MultiFormSession', "Hash = '$hash'");
+			} elseif($urlType == 'ID') {
+				$this->session = DataObject::get_by_id('MultiFormSession', (int)$_GET['MultiFormSessionID']);  
+			} else {
+				user_error('MultiForm::init(): Please define a correct value for $url_type on ' . $this->class, E_USER_ERROR);
+			}
 		} else {
 			// @TODO fix the fact that you can continually refresh on the first step creating new records
 			$this->session = new MultiFormSession();
 			$this->session->write();
+			if($urlType == 'Hash') $this->session->Hash = sha1($this->session->ID);
 		}
 
 		// Determine whether we use the current step, or create one if it doesn't exist
@@ -115,7 +142,7 @@ abstract class MultiForm extends Form {
 		$this->setActions();
 		
 		// Set a hidden field in the form to define what this form session ID is
-		$this->fields->push(new HiddenField('MultiFormSessionID', false, $this->session->ID));
+		$this->fields->push(new HiddenField('MultiFormSessionID', false, ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash));
 		
 		// Set up validator from the form step class
 		$this->validator = $currentStep->getValidator();
@@ -307,9 +334,10 @@ abstract class MultiForm extends Form {
 	 * @return string
 	 */
 	function FormAction() {
+		$id = ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash;
 		$action = parent::FormAction();
 		$action .= (strpos($action, '?')) ? '&amp;' : '?';
-		$action .= "MultiFormSessionID={$this->session->ID}";
+		$action .= "MultiFormSessionID={$id}";
 		
 		return $action;
 	}
@@ -329,7 +357,7 @@ abstract class MultiForm extends Form {
 			'ID' => $firstStep->ID,
 			'ClassName' => $firstStep->class,
 			'Title' => $firstStep->getTitle(),
-			'SessionID' => $firstStep->SessionID,
+			'SessionID' => ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash,
 			'LinkingMode' => ($firstStep->ID == $this->session->CurrentStep()->ID) ? 'current' : 'link'
 		);
 		$stepsFound->push(new ArrayData($templateData));
@@ -362,7 +390,7 @@ abstract class MultiForm extends Form {
 						'ID' => $nextStep->ID,
 						'ClassName' => $nextStep->class,
 						'Title' => $nextStep->getTitle(),
-						'SessionID' => $nextStep->SessionID,
+						'SessionID' => ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash,
 						'LinkingMode' => ($nextStep->ID == $this->session->CurrentStep()->ID) ? 'current' : 'link'
 					);
 					$stepsFound->push(new ArrayData($templateData));

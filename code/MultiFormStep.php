@@ -93,7 +93,8 @@ class MultiFormStep extends DataObject {
 	 * @return string Relative URL to this step
 	 */
 	public function Link() {
-		return Controller::curr()->Link() . '?MultiFormSessionID=' . $this->Session()->ID;
+		$id = $this->Session()->Hash ? $this->Session()->Hash : $this->Session()->ID;
+		return Controller::curr()->Link() . '?MultiFormSessionID=' . $id;
 	}
 
 	/**
