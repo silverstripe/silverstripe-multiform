@@ -129,7 +129,6 @@ abstract class MultiForm extends Form {
 			// @TODO fix the fact that you can continually refresh on the first step creating new records
 			// @TODO encapsulate this into it's own method - it's the same code as the next() method anyway
 			$currentStep = new $startStepClass();
-			$currentStep->start();
 			$currentStep->SessionID = $this->session->ID;
 			$currentStep->write();
 			$this->session->CurrentStepID = $currentStep->ID;
@@ -260,7 +259,6 @@ abstract class MultiForm extends Form {
 			$nextStep->SessionID = $this->session->ID;
 		}
 
-		$nextStep->finish();
 		$nextStep->write();
 		$this->session->CurrentStepID = $nextStep->ID;
 		$this->session->write();
