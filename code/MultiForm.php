@@ -32,16 +32,6 @@ abstract class MultiForm extends Form {
 	 */
 	protected static $start_step; 
 	
-	/**
-	 * Define what type of URL you want to use throughout the step process.
-	 * 
-	 * The non-secure way is to go by ID, for example: http://mysite.com/my-form/?MultiFormSessionID=50
-	 * Alternatively, we store a hash, for example: http://mysite.com/my-form/?MultiFormSessionID=de9f2c7fd25e1b3afad3e850bd17d9b100db4b3
-	 *
-	 * @var $url_type either "ID", or "Hash"
-	 */
-	protected static $url_type = 'Hash';
-	
 	static $casting = array(
 		'CompletedStepCount' => 'Int',
 		'TotalStepCount' => 'Int',
