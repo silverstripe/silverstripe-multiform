@@ -119,23 +119,6 @@ class MultiFormStep extends DataObject {
 	}
 	
 	/**
-	 * @TODO what does this method do? What is it's responsibility?
-	 *
-	 */
-	public function start() {
-		
-	}
-	
-	/**
-	 * @TODO what does this method do, in relation to MultiForm->finish() ?
-	 * I thought we were finalising the entire form on MultiForm, and not
-	 * each step?
-	 */
-	public function finish() {
-		
-	}
-	
-	/**
 	 * Returns the first value of $next_step
 	 * 
 	 * @return String Classname of a {@link MultiFormStep} subclass
@@ -209,14 +192,6 @@ class MultiFormStep extends DataObject {
 	}
 	
 	// ##################### Utility ####################
-	
-	/**
-	 * @TODO Do we need this? Can't we just check for the return value of getPreviousStep,
-	 * and do boolean logic from that?
-	 */
-	public function hasPreviousStep() {
-		die('MultiFormStep->hasPreviousStep(): Not implemented yet');
-	}
 	
 	/**
 	 * Determines whether this step is the final step in the multi-step process or not,
