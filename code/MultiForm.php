@@ -406,7 +406,6 @@ abstract class MultiForm extends Form {
 						'SessionID' => ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash,
 						'LinkingMode' => ($nextStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link'
 					);
-					$stepsFound->push(new ArrayData($templateData));
 				} else {
 					// If it's not in the DB, we use a singleton instance of it instead - this step hasn't been accessed yet
 					$nextStep = singleton($step->getNextStep());
@@ -414,9 +413,9 @@ abstract class MultiForm extends Form {
 						'ClassName' => $nextStep->class,
 						'Title' => $nextStep->getTitle()
 					);
-					$stepsFound->push(new ArrayData($templateData));
 				}
-				// Call back so we can recursively step through
+				// Add the array data, and do a callback
+				$stepsFound->push(new ArrayData($templateData));
 				$this->getAllStepsRecursive($nextStep, $stepsFound);
 			}
 		// Once we've reached the final step, we just return what we've collected
