@@ -152,21 +152,49 @@ abstract class MultiForm extends Form {
 		
 		// If there's a MultiFormSessionID variable set, find that, otherwise create a new session
 		if(isset($_GET['MultiFormSessionID'])) {
-			if($urlType == 'Hash') {
-				$hash = Convert::raw2sql($_GET['MultiFormSessionID']);
-				$this->session = DataObject::get_one('MultiFormSession', "Hash = '$hash'");
-			} elseif($urlType == 'ID') {
-				$this->session = DataObject::get_by_id('MultiFormSession', (int)$_GET['MultiFormSessionID']);  
-			} else {
-				user_error('MultiForm::init(): Please define a correct value for $url_type on ' . $this->class, E_USER_ERROR);
+			switch($urlType) {
+				case 'Hash':
+					$this->session = $this->getSessionRecordByHash($_GET['MultiFormSessionID']);
+					break;
+				case 'ID':
+					$this->session = $this->getSessionRecordByID($_GET['MultiFormSessionID']);
+					break;
+					
+				default:
+					user_error('MultiForm::init(): Please define a correct value for $url_type on ' . $this->class, E_USER_ERROR);
+					break;
 			}
 		} else {
 			// @TODO fix the fact that you can continually refresh on the first step creating new records
 			$this->session = new MultiFormSession();
 			$this->session->write();
+			
+			// We have to have an ID, before we can hash the ID of the session. @TODO a better way here?
 			if($urlType == 'Hash') $this->session->Hash = sha1($this->session->ID . '-' . microtime());
 			$this->session->write(); // I guess we could hash something else than the ID, this is a bit ugly...
 		}
+	}
+	
+	/**
+	 * Return an instance of MultiFormSession from the database by a single
+	 * record with the hash passed into this method.
+	 *
+	 * @param string $hash The Hash field of the record to retrieve
+	 * @return MultiFormSession
+	 */
+	function getSessionRecordByHash($hash) {
+		$SQL_hash = Convert::raw2sql($hash);
+		return DataObject::get_one('MultiFormSession', "Hash = '$SQL_hash'");
+	}
+	
+	/**
+	 * Return an instance of MultiFormSession from the database by it's ID.
+	 *
+	 * @param int|string $id The ID of the record to retrieve
+	 * @return MultiFormSession
+	 */
+	function getSessionRecordByID($id) {
+		return DataObject::get_by_id('MultiFormSession', $id);
 	}
 
 	/**
@@ -348,10 +376,10 @@ abstract class MultiForm extends Form {
 	 * @return string
 	 */
 	function FormAction() {
-		$id = ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash;
+		$urlMethod = $this->stat('url_type');
 		$action = parent::FormAction();
 		$action .= (strpos($action, '?')) ? '&amp;' : '?';
-		$action .= "MultiFormSessionID={$id}";
+		$action .= "MultiFormSessionID={$this->session->$urlMethod}";
 		
 		return $action;
 	}
