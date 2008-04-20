@@ -75,8 +75,8 @@ abstract class MultiForm extends Form {
 	 * It does NOT work like a normal controller init()! It has to be explicity called when MultiForm
 	 * is intanciated on your controller. @TODO perhaps find a better name, that doesn't quite conflict.
 	 * 
-	 * It sets up the right form session, gets the form step and populates the fields, actions,
-	 * and validation (if it's applicable).
+	 * This method sets up the session, figures out the current step, sets the current step, and 
+	 * 
 	 */
 	public function init() {
 		// Set up the session
@@ -190,14 +190,14 @@ abstract class MultiForm extends Form {
 		
 		// If the form is at final step, create a submit button to perform final actions
 		// The last step doesn't have a next button, so add that action to any step that isn't the final one
-		if($this->session->CurrentStep()->isFinalStep()) {
+		if($this->getCurrentStep()->isFinalStep()) {
 			$this->actions->push(new FormAction('finish', _t('MultiForm.SUBMIT', 'Submit')));
 		} else {
 			$this->actions->push(new FormAction('next', _t('MultiForm.NEXT', 'Next')));
 		}
 
 		// If there is a previous step defined, add the back button
-		if($this->session->CurrentStep()->getPreviousStep()) {
+		if($this->getCurrentStep()->getPreviousStep()) {
 			if($this->actions->fieldByName('action_next')) {
 				$this->actions->insertBefore(new FormAction('prev', _t('MultiForm.BACK', 'Back')), 'action_next');
 			} elseif($this->actions->fieldByName('action_finish')) {
@@ -208,7 +208,7 @@ abstract class MultiForm extends Form {
 		}
 
 		// Merge any extra action fields defined on the step
-		$this->actions->merge($this->session->CurrentStep()->getExtraActions());
+		$this->actions->merge($this->getCurrentStep()->getExtraActions());
 	}
 	
 	/**
@@ -220,7 +220,7 @@ abstract class MultiForm extends Form {
 	 */
 	function forTemplate() {
 		return $this->renderWith(array(
-			$this->session->CurrentStep()->class,
+			$this->getCurrentStep()->class,
 			'MultiFormStep',
 			$this->class,
 			'MultiForm',
@@ -238,7 +238,7 @@ abstract class MultiForm extends Form {
 	 * @param object $form The form that the action was called on
 	 */
 	public function finish($data, $form) {
-		if(!$this->session->CurrentStep()->isFinalStep()) {
+		if(!$this->getCurrentStep->isFinalStep()) {
 			Director::redirectBack();
 			return false;
 		}
@@ -258,13 +258,13 @@ abstract class MultiForm extends Form {
 	 * @param object $form The form that the action was called on
 	 */
 	public function next($data, $form) {
-		if(!$this->session->CurrentStep()->getNextStep()) {
+		if(!$this->getCurrentStep()->getNextStep()) {
 			Director::redirectBack();
 			return false;
 		}
 		
 		// Switch the step to the next!
-		$nextStepClass = $this->session->CurrentStep()->getNextStep();
+		$nextStepClass = $this->getCurrentStep()->getNextStep();
 		
 		// Save the form data for the current step
 		$this->save($data);
@@ -273,14 +273,14 @@ abstract class MultiForm extends Form {
 		if(!$nextStep = DataObject::get_one($nextStepClass, "SessionID = {$this->session->ID}")) {
 			$nextStep = new $nextStepClass();
 			$nextStep->SessionID = $this->session->ID;
+			$nextStep->write();
 		}
 
-		$nextStep->write();
-		$this->session->CurrentStepID = $nextStep->ID;
-		$this->session->write();
+		// Set the next step to be the current step
+		$this->setCurrentStep($nextStep);
 		
 		// Redirect to the next step
-		Director::redirect($this->session->CurrentStep()->Link());
+		Director::redirect($this->getCurrentStep()->Link());
 		return;
 	}
 	
@@ -298,23 +298,22 @@ abstract class MultiForm extends Form {
 	 * @param object $form The form that the action was called on
 	 */
 	public function prev($data, $form) {
-		if(!$this->session->CurrentStep()->getPreviousStep()) {
+		if(!$this->getCurrentStep()->getPreviousStep()) {
 			Director::redirectBack();
 			return false;
 		}
 		
 		// Switch the step to the previous!
-		$prevStepClass = $this->session->CurrentStep()->getPreviousStep();
+		$prevStepClass = $this->getCurrentStep()->getPreviousStep();
 
 		// Get the previous step of the class instance returned from $currentStep->getPreviousStep()
 		$prevStep = DataObject::get_one($prevStepClass, "SessionID = {$this->session->ID}");
 		
 		// Set the current step as the previous step
-		$this->session->CurrentStepID = $prevStep->ID;
-		$this->session->write();
+		$this->setCurrentStep($prevStep);
 		
 		// Redirect to the previous step
-		Director::redirect($this->session->CurrentStep()->Link());
+		Director::redirect($this->getCurrentStep()->Link());
 		return;
 	}
 
@@ -328,7 +327,7 @@ abstract class MultiForm extends Form {
 	 * @param array $data An array of data to save
 	 */
 	protected function save($data) {
-		$currentStep = $this->session->CurrentStep();
+		$currentStep = $this->getCurrentStep();
 		if(is_array($data)) {
 			foreach($data as $field => $value) {
 				if(in_array($field, self::$ignored_fields) || self::is_action_field($field)) {
@@ -373,7 +372,7 @@ abstract class MultiForm extends Form {
 			'ClassName' => $firstStep->class,
 			'Title' => $firstStep->getTitle(),
 			'SessionID' => ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash,
-			'LinkingMode' => ($firstStep->ID == $this->session->CurrentStep()->ID) ? 'current' : 'link'
+			'LinkingMode' => ($firstStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link'
 		);
 		$stepsFound->push(new ArrayData($templateData));
 
@@ -406,7 +405,7 @@ abstract class MultiForm extends Form {
 						'ClassName' => $nextStep->class,
 						'Title' => $nextStep->getTitle(),
 						'SessionID' => ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash,
-						'LinkingMode' => ($nextStep->ID == $this->session->CurrentStep()->ID) ? 'current' : 'link'
+						'LinkingMode' => ($nextStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link'
 					);
 					$stepsFound->push(new ArrayData($templateData));
 				} else {
