@@ -75,8 +75,8 @@ abstract class MultiForm extends Form {
 	 * It does NOT work like a normal controller init()! It has to be explicity called when MultiForm
 	 * is intanciated on your controller. @TODO perhaps find a better name, that doesn't quite conflict.
 	 * 
-	 * This method sets up the session, figures out the current step, sets the current step, and 
-	 * 
+	 * This method sets up the session, figures out the current step, sets the current step, then
+	 * takes the fields, actions and validation (if any) for the step, setting up the form.
 	 */
 	public function init() {
 		// Set up the session
