@@ -164,7 +164,7 @@ abstract class MultiForm extends Form {
 			// @TODO fix the fact that you can continually refresh on the first step creating new records
 			$this->session = new MultiFormSession();
 			$this->session->write();
-			if($urlType == 'Hash') $this->session->Hash = sha1($this->session->ID);
+			if($urlType == 'Hash') $this->session->Hash = sha1($this->session->ID . '-' . microtime());
 			$this->session->write(); // I guess we could hash something else than the ID, this is a bit ugly...
 		}
 	}
