@@ -32,8 +32,8 @@ class MultiFormStep extends DataObject {
 	protected static $next_steps;
 	
 	/**
-	 * Each {@link MultiForm} subclass
-	 * needs at least one step which is marked as the "final" one
+	 * Each {@link MultiForm} subclass needs at least
+	 * one step which is marked as the "final" one
 	 * and triggers the {@link MultiForm->finish()}
 	 * method that wraps up the whole submission.
 	 *
@@ -50,9 +50,11 @@ class MultiFormStep extends DataObject {
 	protected $title;
 	
 	/**
-	 * Formfields to be rendered with this step
+	 * Form fields to be rendered with this step.
 	 * (Form object is created in {@link MultiForm}.
-	 * This function needs to be implemented
+	 * 
+	 * This function needs to be implemented on your
+	 * subclasses of MultiFormStep
 	 *
 	 * @return FieldSet
 	 */
@@ -61,6 +63,11 @@ class MultiFormStep extends DataObject {
 	}
 	
 	/**
+	 * Additional form actions to be rendered with this step.
+	 * (Form object is created in {@link MultiForm}.
+	 * 
+	 * Note: This is optional, and is to be implemented
+	 * on your subclasses of MultiFormStep
 	 * 
 	 * @return FieldSet
 	 */
@@ -70,15 +77,17 @@ class MultiFormStep extends DataObject {
 	
 	/**
 	 * Get a validator specific to this form.
-	 *
+	 * 
 	 * @return Validator
 	 */
 	public function getValidator() {
-		return null;
+		return false;
 	}
 	
 	/**
 	 * Accessor method for $this->title
+	 * 
+	 * @return string Title of this step
 	 */
 	public function getTitle() {
 		return $this->title;
@@ -108,8 +117,6 @@ class MultiFormStep extends DataObject {
 	
 	/**
 	 * Save the data for this step into session, serializing it first.
-	 * 
-	 * @TODO write a code snippet on how to overload this method!
 	 *
 	 * @param array $data The processed data from save() on MultiForm
 	 */
@@ -153,11 +160,11 @@ class MultiFormStep extends DataObject {
 	public function getNextStepFromDatabase() {
 		$nextSteps = $this->stat('next_steps');
 		if(is_string($nextSteps)) {
-			$step = DataObject::get($nextSteps, "SessionID = {$this->SessionID}", 'LastEdited DESC');
-			if($step) return $step->First();
+			$step = DataObject::get_one($nextSteps, "SessionID = {$this->SessionID}");
+			if($step) return $step;
 		} elseif(is_array($nextSteps)) {
-			$step = DataObject::get($nextSteps[0], "SessionID = {$this->SessionID}", 'LastEdited DESC');
-			if($step) return $step->First();
+			$step = DataObject::get_one($nextSteps[0], "SessionID = {$this->SessionID}");
+			if($step) return $step;
 		} else {
 			return false;
 		}
