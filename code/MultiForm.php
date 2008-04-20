@@ -73,65 +73,18 @@ abstract class MultiForm extends Form {
 	 * Perform actions when the multiform is first started.
 	 * 
 	 * It does NOT work like a normal controller init()! It has to be explicity called when MultiForm
-	 * is intanciated on your controller.
+	 * is intanciated on your controller. @TODO perhaps find a better name, that doesn't quite conflict.
 	 * 
 	 * It sets up the right form session, gets the form step and populates the fields, actions,
 	 * and validation (if it's applicable).
-	 * 
-	 * @TODO We've currently got some start up routines that probably need to be moved to their own method,
-	 * like start() - like creating a new MultiFormSession instance.
-	 * 
-	 * @TODO init() may not be an appropriate name, considering there's already an init() automatically called
-	 * for controller classes. Perhaps we rename this?
-	 * 
-	 * @TODO Expiration. We need to make sure that these sessions, making use of {@link MultiFormPurgeTask} and
-	 * {@link MultiFormObjectDecorator}
 	 */
 	public function init() {
-		$startStepClass = $this->stat('start_step');
-		$urlType = $this->stat('url_type');
+		// Set up the session
+		$this->setSession();
 		
-		// Check if there was a start step defined on the subclass of MultiForm
-		if(!isset($startStepClass)) user_error('MultiForm::init(): Please define a $startStep on ' . $this->class, E_USER_ERROR);
-		
-		// If there's a MultiFormSessionID variable set, find that, otherwise create a new session
-		if(isset($_GET['MultiFormSessionID'])) {
-			if($urlType == 'Hash') {
-				$hash = Convert::raw2sql($_GET['MultiFormSessionID']);
-				$this->session = DataObject::get_one('MultiFormSession', "Hash = '$hash'");
-			} elseif($urlType == 'ID') {
-				$this->session = DataObject::get_by_id('MultiFormSession', (int)$_GET['MultiFormSessionID']);  
-			} else {
-				user_error('MultiForm::init(): Please define a correct value for $url_type on ' . $this->class, E_USER_ERROR);
-			}
-		} else {
-			// @TODO fix the fact that you can continually refresh on the first step creating new records
-			$this->session = new MultiFormSession();
-			$this->session->write();
-			if($urlType == 'Hash') $this->session->Hash = sha1($this->session->ID);
-		}
-
-		// Determine whether we use the current step, or create one if it doesn't exist
-		if(isset($_GET['StepID'])) {
-			$stepID = (int)$_GET['StepID'];
-			$step = DataObject::get_one('MultiFormStep', "SessionID = {$this->session->ID} AND ID = {$stepID}");
-			if($step) {
-				$currentStep = $step;
-				$this->session->CurrentStepID = $currentStep->ID;
-				$this->session->write();
-			}
-		// @TODO if you set a wrong ID, then it ends up at this point with a non-object error.
-		} elseif($this->session->CurrentStepID) {
-			$currentStep = $this->session->CurrentStep();
-		} else {
-			// @TODO fix the fact that you can continually refresh on the first step creating new records
-			// @TODO encapsulate this into it's own method - it's the same code as the next() method anyway
-			$currentStep = new $startStepClass();
-			$currentStep->SessionID = $this->session->ID;
-			$currentStep->write();
-			$this->session->CurrentStepID = $currentStep->ID;
-			$this->session->write();
-		}
+		// Get the current step, and set it
+		$currentStep = $this->getCurrentStep();
+		$this->setCurrentStep($currentStep);
 		
 		// Set up the fields from the current step
 		$this->setFields($currentStep->getFields());
@@ -148,6 +101,71 @@ abstract class MultiForm extends Form {
 		// If there is form data, we populate it here (CAUTION: loadData() MUST unserialize first!)
 		if($currentStep->loadData()) {
 			$this->loadDataFrom($currentStep->loadData());
+		}
+	}
+
+	/**
+	 * Get the current step.
+	 * @return MultiFormStep subclass
+	 */
+	public function getCurrentStep() {
+		$startStepClass = $this->stat('start_step');
+		
+		// Check if there was a start step defined on the subclass of MultiForm
+		if(!isset($startStepClass)) user_error('MultiForm::init(): Please define a $startStep on ' . $this->class, E_USER_ERROR);
+		
+		// Determine whether we use the current step, or create one if it doesn't exist
+		if(isset($_GET['StepID'])) {
+			$stepID = (int)$_GET['StepID'];
+			$step = DataObject::get_one('MultiFormStep', "SessionID = {$this->session->ID} AND ID = {$stepID}");
+			if($step) {
+				$currentStep = $step;
+			}
+		// @TODO if you set a wrong ID, then it ends up at this point with a non-object error.
+		} elseif($this->session->CurrentStepID) {
+			$currentStep = $this->session->CurrentStep();
+		} else {
+			// @TODO fix the fact that you can continually refresh on the first step creating new records
+			// @TODO encapsulate this into it's own method - it's the same code as the next() method anyway
+			$currentStep = new $startStepClass();
+			$currentStep->SessionID = $this->session->ID;
+			$currentStep->write();
+		}
+		return $currentStep;
+	}
+
+	/**
+	 * Set the step passed in as the current step.
+	 * @param MultiFormStep $step A subclass of MultiFormStep
+	 */
+	protected function setCurrentStep($step) {
+		$this->session->CurrentStepID = $step->ID;
+		$this->session->write();
+	}
+	
+	/**
+	 * Set up the session. There's a bit of logic to determine this, specifically
+	 * checking if there's a GET variable for a current session set.
+	 */
+	protected function setSession() {
+		$urlType = $this->stat('url_type');
+		
+		// If there's a MultiFormSessionID variable set, find that, otherwise create a new session
+		if(isset($_GET['MultiFormSessionID'])) {
+			if($urlType == 'Hash') {
+				$hash = Convert::raw2sql($_GET['MultiFormSessionID']);
+				$this->session = DataObject::get_one('MultiFormSession', "Hash = '$hash'");
+			} elseif($urlType == 'ID') {
+				$this->session = DataObject::get_by_id('MultiFormSession', (int)$_GET['MultiFormSessionID']);  
+			} else {
+				user_error('MultiForm::init(): Please define a correct value for $url_type on ' . $this->class, E_USER_ERROR);
+			}
+		} else {
+			// @TODO fix the fact that you can continually refresh on the first step creating new records
+			$this->session = new MultiFormSession();
+			$this->session->write();
+			if($urlType == 'Hash') $this->session->Hash = sha1($this->session->ID);
+			$this->session->write(); // I guess we could hash something else than the ID, this is a bit ugly...
 		}
 	}
 
@@ -407,15 +425,6 @@ abstract class MultiForm extends Form {
 		} else {
 			return $stepsFound;
 		}
-	}
-	
-	/**
-	 * Returns the current step in the form process.
-	 * 
-	 * @return Instance of a MultiFormStep subclass
-	 */
-	public function getCurrentStep() {
-		return $this->session->CurrentStep();
 	}
 	
 	/**
