@@ -399,7 +399,7 @@ abstract class MultiForm extends Form {
 			if($step->getNextStep()) {
 				// Is this step in the DB? If it is, we use that
 				if($nextStep = $step->getNextStepFromDatabase()) {
-					$templateData = array(
+					$record = array(
 						'ID' => $nextStep->ID,
 						'ClassName' => $nextStep->class,
 						'Title' => $nextStep->getTitle(),
@@ -409,13 +409,13 @@ abstract class MultiForm extends Form {
 				} else {
 					// If it's not in the DB, we use a singleton instance of it instead - this step hasn't been accessed yet
 					$nextStep = singleton($step->getNextStep());
-					$templateData = array(
+					$record = array(
 						'ClassName' => $nextStep->class,
 						'Title' => $nextStep->getTitle()
 					);
 				}
 				// Add the array data, and do a callback
-				$stepsFound->push(new ArrayData($templateData));
+				$stepsFound->push(new ArrayData($record));
 				$this->getAllStepsRecursive($nextStep, $stepsFound);
 			}
 		// Once we've reached the final step, we just return what we've collected
