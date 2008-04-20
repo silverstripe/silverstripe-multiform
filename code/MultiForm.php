@@ -398,8 +398,7 @@ abstract class MultiForm extends Form {
 		if(!$step->isFinalStep()) {
 			if($step->getNextStep()) {
 				// Is this step in the DB? If it is, we use that
-				if($nextSteps = DataObject::get($step->getNextStep(), "SessionID = {$this->session->ID}", "LastEdited DESC")) {
-					$nextStep = $nextSteps->First();
+				if($nextStep = $step->getNextStepFromDatabase()) {
 					$templateData = array(
 						'ID' => $nextStep->ID,
 						'ClassName' => $nextStep->class,

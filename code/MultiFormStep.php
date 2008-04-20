@@ -152,21 +152,20 @@ class MultiFormStep extends DataObject {
 	 * Returns the next step to the current step in the database.
 	 * 
 	 * This will only return something if you've previously visited
-	 * the step ahead of the current step, so if you've gone to the
-	 * step ahead, and then gone back a step.
+	 * the step ahead of the current step, and then gone back a step.
 	 * 
 	 * @return MultiFormStep|boolean
 	 */
 	public function getNextStepFromDatabase() {
-		$nextSteps = $this->stat('next_steps');
-		if(is_string($nextSteps)) {
-			$step = DataObject::get_one($nextSteps, "SessionID = {$this->SessionID}");
-			if($step) return $step;
-		} elseif(is_array($nextSteps)) {
-			$step = DataObject::get_one($nextSteps[0], "SessionID = {$this->SessionID}");
-			if($step) return $step;
-		} else {
-			return false;
+		if($this->SessionID) {
+			$nextSteps = $this->stat('next_steps');
+			if(is_string($nextSteps)) {
+				return DataObject::get_one($nextSteps, "SessionID = {$this->SessionID}");
+			} elseif(is_array($nextSteps)) {
+				return DataObject::get_one($nextSteps[0], "SessionID = {$this->SessionID}");
+			} else {
+				return false;
+			}
 		}
 	}
 	
