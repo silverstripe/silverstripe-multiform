@@ -105,6 +105,14 @@ abstract class MultiForm extends Form {
 	}
 
 	/**
+	 * Accessor method to $this->controller
+	 * Returns the controller this form was instanciated on.
+	 */
+	public function getController() {
+		return $this->controller;
+	}
+	
+	/**
 	 * Get the current step.
 	 * @return MultiFormStep subclass
 	 */
