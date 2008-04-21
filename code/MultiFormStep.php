@@ -197,6 +197,17 @@ class MultiFormStep extends DataObject {
 		}
 	}
 	
+	/**
+	 * Retrieves the previous step record from the database.
+	 *
+	 * @return MultiFormStep subclass
+	 */
+	public function getPreviousStepFromDatabase() {
+		if($prevStepClass = $this->getPreviousStep()) {
+			return DataObject::get_one($prevStepClass, "SessionID = {$this->SessionID}");	
+		}
+	}
+	
 	// ##################### Utility ####################
 	
 	/**
