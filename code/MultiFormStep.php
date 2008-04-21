@@ -108,8 +108,19 @@ class MultiFormStep extends DataObject {
 
 	/**
 	 * Unserialize stored session data and return it.
-	 * This should be called when the form is constructed,
-	 * so the fields can be loaded with the values.
+	 * This is used for loading data previously saved
+	 * in session back into the form.
+	 * 
+	 * You need to overload this method onto your own
+	 * step if you require custom loading. An example
+	 * would be selective loading specific fields, or
+	 * filtering out fields that don't require loading.
+	 * 
+	 * This method is called on {@link MultiForm} inside
+	 * the init() method, to load the data by default (if
+	 * it exists, back into the form).
+	 * 
+	 * @return array
 	 */
 	public function loadData() {
 		return unserialize($this->Data);
@@ -117,8 +128,11 @@ class MultiFormStep extends DataObject {
 	
 	/**
 	 * Save the data for this step into session, serializing it first.
+	 * 
+	 * To selectively save fields, instead of it all, this
+	 * method would need to be overloaded on your step class.
 	 *
-	 * @param array $data The processed data from save() on MultiForm
+	 * @param array $data The processed data from save() on {@link MultiForm}
 	 */
 	public function saveData($data) {
 		$this->Data = serialize($data);
@@ -198,7 +212,7 @@ class MultiFormStep extends DataObject {
 	}
 	
 	/**
-	 * Retrieves the previous step record from the database.
+	 * Retrieves the previous step class record from the database.
 	 *
 	 * @return MultiFormStep subclass
 	 */
