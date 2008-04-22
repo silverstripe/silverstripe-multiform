@@ -4,8 +4,11 @@
  * Serializes one or more {@link MultiFormStep}s into 
  * a database object.
  * 
+ * MultiFormSession also stores the current step, so that
+ * the {@link MultiForm} and {@link MultiFormStep} classes
+ * know what the current step is.
+ * 
  * @package multiform
- *
  */
 class MultiFormSession extends DataObject {
 	
@@ -23,6 +26,9 @@ class MultiFormSession extends DataObject {
 		'FormSteps' => 'MultiFormStep'
 	);
 	
+	/**
+	 * These actions are performed when write() is called on this object.
+	 */
 	public function onBeforeWrite() {
 		// save submitter if a Member is logged in
 		$currentMember = Member::currentMember();
@@ -30,7 +36,10 @@ class MultiFormSession extends DataObject {
 		
 		parent::onBeforeWrite();
 	}
-	
+
+	/**
+	 * These actions are performed when delete() is called on this object.
+	 */
 	public function onBeforeDelete() {
 		// delete dependent form steps
 		$steps = $this->FormSteps();
@@ -40,8 +49,8 @@ class MultiFormSession extends DataObject {
 	}
 	
 	/**
-	 * Enter description here...
-	 *
+	 * Get all the temporary objects, and set them as temporary, writing
+	 * them back to the database.
 	 */
 	public function markTemporaryDataObjectsFinished() {
 		$temporaryObjects = $this->getTemporaryDataObjects();
@@ -52,7 +61,9 @@ class MultiFormSession extends DataObject {
 	}
 	
 	/**
-	 * Enter description here...
+	 * Get all classes that implement the MultiFormObjectDecorator,
+	 * find the records for each and merge them together into a 
+	 *	DataObjectSet.
 	 *
 	 * @return DataObjectSet
 	 */

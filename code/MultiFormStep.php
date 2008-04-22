@@ -1,10 +1,11 @@
 <?php
 
 /**
- * MultiFormStep controls the behaviour of a single from step in the multi-form
- * process. All form steps should be subclasses of this class, as it encapsulates
- * the functionality required for the step to be aware of itself in the form step
- * process.
+ * MultiFormStep controls the behaviour of a single form step in the multi-form
+ * process. All form steps are required to be subclasses of this class, as it
+ * encapsulates the functionality required for the step to be aware of itself
+ * in the process by knowing what it's next step is, and if applicable, it's previous
+ * step.
  * 
  * @package multiform
  */
@@ -20,11 +21,11 @@ class MultiFormStep extends DataObject {
 	
 	/**
 	 * Centerpiece of the flow control for the form.
-	 * If set to a string, you pretty much have a linear
-	 * form flow - if set to an array, you should
-	 * use {@link getNextStep()} to enact flow control
-	 * and branching to different form steps,
-	 * most likely based on previously set session data
+	 * 
+	 * If set to a string, you have a linear form flow
+	 * If set to an array, you should use {@link getNextStep()}
+	 * to enact flow control and branching to different form
+	 * steps, most likely based on previously set session data
 	 * (e.g. a checkbox field or a dropdown).
 	 *
 	 * @var array|string
@@ -42,8 +43,9 @@ class MultiFormStep extends DataObject {
 	protected static $is_final_step = false;
 
 	/**
-	 * Title of this step, can be used by each step that sub-classes this.
-	 * It's useful for creating a list of steps in your template.
+	 * Title of this step.
+	 * 
+	 * Used for the step indicator templates.
 	 *
 	 * @var string
 	 */
@@ -54,7 +56,7 @@ class MultiFormStep extends DataObject {
 	 * (Form object is created in {@link MultiForm}.
 	 * 
 	 * This function needs to be implemented on your
-	 * subclasses of MultiFormStep
+	 * subclasses of MultiFormStep.
 	 *
 	 * @return FieldSet
 	 */
@@ -63,11 +65,11 @@ class MultiFormStep extends DataObject {
 	}
 	
 	/**
-	 * Additional form actions to be rendered with this step.
+	 * Additional form actions to be added to this step.
 	 * (Form object is created in {@link MultiForm}.
 	 * 
 	 * Note: This is optional, and is to be implemented
-	 * on your subclasses of MultiFormStep
+	 * on your subclasses of MultiFormStep.
 	 * 
 	 * @return FieldSet
 	 */
@@ -185,6 +187,8 @@ class MultiFormStep extends DataObject {
 	
 	/**
 	 * Accessor method for self::$next_steps
+	 * 
+	 * @return string|array
 	 */
 	public function getNextSteps() {
 		return $this->stat('next_steps');
@@ -226,8 +230,7 @@ class MultiFormStep extends DataObject {
 	
 	/**
 	 * Determines whether this step is the final step in the multi-step process or not,
-	 * based on the variable $is_final_step - to set the final step, create this variable
-	 * on your form step class.
+	 * based on the variable $is_final_step - which must be defined on at least one step.
 	 *
 	 * @return boolean
 	 */

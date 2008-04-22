@@ -22,7 +22,6 @@ class MultiFormPurgeTask extends DailyTask {
 	 */
 	public static $session_expiry_days = 7;
 	
-	
 	public function run() {
 		$controllers = ClassInfo::subclassesFor('MultiForm');
 		

@@ -18,10 +18,10 @@ class MultiFormObjectDecorator extends DataObjectDecorator {
 	
 	public function updateDBFields() {
 		return array(
-			"db" => array(
+			'db' => array(
 				'MultiFormIsTemporary' => 'Boolean',
 			),
-			"has_one" => array(
+			'has_one' => array(
 				'MultiFormSession' => 'MultiFormSession',
 			)
 		);
