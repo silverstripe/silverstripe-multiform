@@ -97,7 +97,8 @@ abstract class MultiForm extends Form {
 		$this->setActions();
 		
 		// Set a hidden field in the form to define what this form session ID is
-		$this->fields->push(new HiddenField('MultiFormSessionID', false, ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash));
+		$urlMethod = $this->stat('url_type');
+		$this->fields->push(new HiddenField('MultiFormSessionID', false, $this->session->$urlMethod));
 		
 		// Set up validator from the form step class
 		$this->validator = $currentStep->getValidator();
