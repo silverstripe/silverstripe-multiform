@@ -83,6 +83,10 @@ abstract class MultiForm extends Form {
 	 * takes the fields, actions and validation (if any) for the step, setting up the form.
 	 */
 	public function init() {
+		// Disable security token. We tie a form to a session by URL.
+		// @TODO Is there a better way than simply disabling this?
+		$this->disableSecurityToken();
+		
 		// Set up the session
 		$this->setSession();
 		
