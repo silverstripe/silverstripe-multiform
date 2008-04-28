@@ -102,7 +102,7 @@ abstract class MultiForm extends Form {
 		
 		// Set a hidden field in the form to identify this session.
 		// Depending on what has been configured for $url_type, we
-		// find an encrypted hash to identify the session.
+		// find an encrypted hash by default to identify the session.
 		$urlMethod = $this->stat('url_type');
 		$this->fields->push(new HiddenField('MultiFormSessionID', false, $this->session->$urlMethod));
 		
