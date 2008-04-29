@@ -100,6 +100,10 @@ class MultiFormStep extends DataObject {
 	 * if you're allowed to skip steps, or this step
 	 * has already been saved to the database
 	 * for the current {@link MultiFormSession}).
+	 * 
+	 * @TODO We check for the Hash field directly on session
+	 * to determine how to identify the session. This isn't
+	 * a very good way of doing it!
 	 *
 	 * @return string Relative URL to this step
 	 */
