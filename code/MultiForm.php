@@ -105,10 +105,8 @@ abstract class MultiForm extends Form {
 		// Set up validator from the form step class
 		$this->validator = $currentStep->getValidator();
 		
-		// If there is form data, we populate it here (CAUTION: loadData() MUST unserialize first!)
-		if($currentStep->loadData()) {
-			$this->loadDataFrom($currentStep->loadData());
-		}
+		// Load existing data into the form (CAUTION: loadData() MUST unserialize first!)
+		$this->loadDataFrom($currentStep->loadData());
 	}
 
 	/**
