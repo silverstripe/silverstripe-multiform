@@ -449,7 +449,7 @@ abstract class MultiForm extends Form {
 		$templateData = array(
 			'ID' => $firstStep->ID,
 			'ClassName' => $firstStep->class,
-			'Title' => $firstStep->getTitle(),
+			'Title' => $firstStep->title ? $firstStep->title : $firstStep->class,
 			'SessionID' => ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash,
 			'LinkingMode' => ($firstStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link'
 		);
@@ -478,7 +478,7 @@ abstract class MultiForm extends Form {
 					$record = array(
 						'ID' => $nextStep->ID,
 						'ClassName' => $nextStep->class,
-						'Title' => $nextStep->getTitle(),
+						'Title' => $nextStep->title ? $nextStep->title : $nextStep->class,
 						'SessionID' => ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash,
 						'LinkingMode' => ($nextStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link'
 					);
@@ -487,7 +487,7 @@ abstract class MultiForm extends Form {
 					$nextStep = singleton($step->getNextStep());
 					$record = array(
 						'ClassName' => $nextStep->class,
-						'Title' => $nextStep->getTitle()
+						'Title' => $nextStep->title ? $nextStep->title : $nextStep->class
 					);
 				}
 				// Add the array data, and do a callback
