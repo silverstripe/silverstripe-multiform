@@ -165,6 +165,14 @@ abstract class MultiForm extends Form {
 	}
 	
 	/**
+	 * Accessor method to $this->session.
+	 * @return MultiFormSession
+	 */
+	function getSession() {
+		return $this->session;
+	}
+	
+	/**
 	 * Set up the session.
 	 * 
 	 * First of all we check if MultiFormSessionID is set in the URL,
