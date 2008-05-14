@@ -41,9 +41,10 @@ class MultiFormSession extends DataObject {
 	 * These actions are performed when delete() is called on this object.
 	 */
 	public function onBeforeDelete() {
-		// delete dependent form steps
+		// delete dependent form steps and relation
 		$steps = $this->FormSteps();
 		if($steps) foreach($steps as $step) {
+			$steps->remove($step);
 			$step->delete();
 		}
 		
