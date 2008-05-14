@@ -185,6 +185,9 @@ abstract class MultiForm extends Form {
 	 * 
 	 * @TODO Fix the fact you can continually refresh and create new records
 	 * if MultiFormSessionID isn't set.
+	 * 
+	 * @TODO Not sure if we should bake the session stuff directly into MultiForm.
+	 * Perhaps it would be best dealt with on a separate class?
 	 */
 	protected function setSession() {
 		$urlType = $this->stat('url_type');
