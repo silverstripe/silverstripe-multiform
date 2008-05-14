@@ -138,12 +138,10 @@ abstract class MultiForm extends Form {
 		// Determine whether we use the current step, or create one if it doesn't exist
 		if(isset($_GET['StepID'])) {
 			$stepID = (int)$_GET['StepID'];
-			$step = DataObject::get_one('MultiFormStep', "SessionID = {$this->session->ID} AND ID = {$stepID}");
-			if($step) {
-				$currentStep = $step;
-			}
-		// @TODO if you set a wrong ID, then it ends up at this point with a non-object error.
+			$currentStep = DataObject::get_one('MultiFormStep', "SessionID = {$this->session->ID} AND ID = {$stepID}");
+			// @TODO if you set a wrong ID, then it ends up at this point with a non-object error.
 		} elseif($this->session->CurrentStepID) {
+			// @TODO if you set a wrong ID, then it ends up at this point with a non-object error.
 			$currentStep = $this->session->CurrentStep();
 		} else {
 			// @TODO fix the fact that you can continually refresh on the first step creating new records
