@@ -150,6 +150,7 @@ abstract class MultiForm extends Form {
 			$currentStep->SessionID = $this->session->ID;
 			$currentStep->write();
 		}
+		
 		return $currentStep;
 	}
 
