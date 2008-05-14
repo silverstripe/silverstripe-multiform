@@ -3,16 +3,23 @@
 class MultiFormSessionTest extends SapphireTest {
 	
 	/**
+	 * Set up the instance of MultiFormSession, writing
+	 * a record to the database for this test. We persist
+	 * the object in our tests by assigning $this->session
+	 */
+	function setUp() {
+		$this->session = new MultiFormSession();
+		$this->session->write();
+	}
+	
+	/**
 	 * Test generation of a new session.
+	 * 
+	 * @TODO Write some more advanced tests for MultiFormSession.
 	 */
 	function testSessionGeneration() {
-		$session = new MultiFormSession();
-		$session->write();
-		
-		$this->assertTrue($session->ID != 0);
-		$this->assertTrue($session->ID > 0);
-		
-		$session->delete();
+		$this->assertTrue($this->session->ID != 0);
+		$this->assertTrue($this->session->ID > 0);
 	}
 	
 	/**
@@ -26,6 +33,13 @@ class MultiFormSessionTest extends SapphireTest {
 		if($memberID = Member::currentUserID()) {
 			$this->assertTrue($memberID == $session->SubmitterID);
 		}
+	}
+	
+	/**
+	 * Delete the MultiFormSession record that we created.
+	 */
+	function tearDown() {
+		$this->session->delete();
 	}
 	
 }
