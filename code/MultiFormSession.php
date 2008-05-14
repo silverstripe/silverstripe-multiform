@@ -13,8 +13,9 @@
 class MultiFormSession extends DataObject {
 	
 	static $db = array(
-		'Data' => 'Text', // stores serialized maps with all session information
-		'Hash' => 'Varchar(40)' // cryptographic hash identification to this session
+		'Data' => 'Text', 			// stores serialized maps with all session information
+		'Hash' => 'Varchar(40)', 	// cryptographic hash identification to this session
+		'IsComplete' => 'Boolean'	// flag to determine if this session is marked completed
 	);
 	
 	static $has_one = array(
@@ -25,6 +26,17 @@ class MultiFormSession extends DataObject {
 	static $has_many = array(
 		'FormSteps' => 'MultiFormStep'
 	);
+	
+	/**
+	 * Mark this session as completed.
+	 * 
+	 * This sets the flag "IsComplete" to true,
+	 * and writes the session back.
+	 */
+	public function markCompleted() {
+		$this->IsComplete = 1;
+		$this->write();
+	}
 	
 	/**
 	 * These actions are performed when write() is called on this object.

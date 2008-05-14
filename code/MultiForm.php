@@ -139,13 +139,9 @@ abstract class MultiForm extends Form {
 		if(isset($_GET['StepID'])) {
 			$stepID = (int)$_GET['StepID'];
 			$currentStep = DataObject::get_one('MultiFormStep', "SessionID = {$this->session->ID} AND ID = {$stepID}");
-			// @TODO if you set a wrong ID, then it ends up at this point with a non-object error.
 		} elseif($this->session->CurrentStepID) {
-			// @TODO if you set a wrong ID, then it ends up at this point with a non-object error.
 			$currentStep = $this->session->CurrentStep();
 		} else {
-			// @TODO fix the fact that you can continually refresh on the first step creating new records
-			// @TODO encapsulate this into it's own method - it's the same code as the next() method anyway
 			$currentStep = new $startStepClass();
 			$currentStep->SessionID = $this->session->ID;
 			$currentStep->write();
@@ -205,14 +201,21 @@ abstract class MultiForm extends Form {
 					user_error('MultiForm::init(): Please define a correct value for $url_type on ' . $this->class, E_USER_ERROR);
 					break;
 			}
-		} else {
+		}
+
+		// If there was no session found, create a new one instead
+		if(!$this->session) {
 			// @TODO fix the fact that you can continually refresh on the first step creating new records
 			$this->session = new MultiFormSession();
 			$this->session->write();
+		}
 			
-			// We have to have an ID, before we can hash the ID of the session. @TODO a better way here?
-			if($urlType == 'Hash') $this->session->Hash = sha1($this->session->ID . '-' . microtime());
-			$this->session->write(); // I guess we could hash something else than the ID, this is a bit ugly...
+		// We have to have an ID, before we can hash the ID of the session. @TODO a better way here?
+		if($urlType == 'Hash') {
+			if(!$this->session->Hash) {
+				$this->session->Hash = sha1($this->session->ID . '-' . microtime());
+				$this->session->write(); // I guess we could hash something else than the ID, this is a bit ugly...
+			}
 		}
 	}
 	
@@ -225,7 +228,7 @@ abstract class MultiForm extends Form {
 	 */
 	function getSessionRecordByHash($hash) {
 		$SQL_hash = Convert::raw2sql($hash);
-		return DataObject::get_one('MultiFormSession', "Hash = '$SQL_hash'");
+		return DataObject::get_one('MultiFormSession', "Hash = '$SQL_hash' AND IsComplete = 0");
 	}
 	
 	/**
@@ -235,7 +238,7 @@ abstract class MultiForm extends Form {
 	 * @return MultiFormSession
 	 */
 	function getSessionRecordByID($id) {
-		return DataObject::get_by_id('MultiFormSession', $id);
+		return DataObject::get_one('MultiFormSession', "MultiFormSession.ID = $id AND IsComplete = 0");
 	}
 
 	/**
