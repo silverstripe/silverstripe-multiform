@@ -46,6 +46,8 @@ class MultiFormSession extends DataObject {
 		if($steps) foreach($steps as $step) {
 			$step->delete();
 		}
+		
+		parent::onBeforeDelete();
 	}
 	
 	/**
