@@ -31,7 +31,7 @@ class MultiFormSessionTest extends SapphireTest {
 		$session->write();
 		
 		if($memberID = Member::currentUserID()) {
-			$this->assertTrue($memberID == $session->SubmitterID);
+			$this->assertEquals($memberID, $session->SubmitterID);
 		}
 	}
 	

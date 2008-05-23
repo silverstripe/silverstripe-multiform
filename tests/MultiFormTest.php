@@ -47,7 +47,21 @@ class MultiFormTest extends SapphireTest {
 	function testInitialisingForm() {
 		$this->assertTrue(is_numeric($this->form->getCurrentStep()->ID) && ($this->form->getCurrentStep()->ID > 0));
 		$this->assertTrue(is_numeric($this->form->session->ID) && ($this->form->session->ID > 0));
-		$this->assertTrue($this->form->getStartStep() == 'MultiFormTestStepOne');
+		$this->assertEquals('MultiFormTestStepOne', $this->form->getStartStep());
+	}
+	
+	/**
+	 * Test that the 2nd step is correct to what we expect it to be.
+	 */
+	function testSecondStep() {
+		$this->assertEquals('MultiFormTestStepTwo', $this->form->getCurrentStep()->getNextStep());
+	}
+	
+	/**
+	 * Test that the amount of steps we have has been calculated correctly.
+	 */
+	function testTotalStepCount() {
+		$this->assertEquals(3, $this->form->getAllStepsLinear()->Count());
 	}
 	
 	/**
