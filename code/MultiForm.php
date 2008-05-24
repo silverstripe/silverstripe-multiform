@@ -103,7 +103,7 @@ abstract class MultiForm extends Form {
 		$this->fields->push(new HiddenField('MultiFormSessionID', false, $this->session->$urlMethod));
 		
 		// Set up validator from the form step class
-		$this->validator = $currentStep->getValidator();
+		$this->setValidator();
 		
 		// If there is form data, we populate it here (CAUTION: loadData() MUST unserialize first!)
 		if($currentStep->loadData()) {
@@ -252,6 +252,19 @@ abstract class MultiForm extends Form {
 	function setFields($fields) {
 		foreach($fields as $field) $field->setForm($this);
 		$this->fields = $fields;
+	}
+	
+	/**
+	 * Set up the validation for this form.
+	 * 
+	 * We check if the validator exists first, as validation on
+	 * each step is optional.
+	 */
+	function setValidator() {
+		if($validator = $this->getCurrentStep()->getValidator()) {
+			$this->validator = $validator;
+			$this->validator->setForm($this);
+		}
 	}
 	
 	/**
