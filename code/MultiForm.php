@@ -337,7 +337,7 @@ abstract class MultiForm extends Form {
 	 * @param object $form The form that the action was called on
 	 */
 	public function finish($data, $form) {
-		if(!$this->getCurrentStep->isFinalStep()) {
+		if(!$this->getCurrentStep()->isFinalStep()) {
 			Director::redirectBack();
 			return false;
 		}
