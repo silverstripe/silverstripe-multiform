@@ -45,6 +45,12 @@ class MultiFormStep extends DataObject {
 	/**
 	 * This variable determines whether a user can use
 	 * the "back" action from this step.
+	 * 
+	 * @TODO This does not check if the arbitrarily chosen step
+	 * using the step indicator is actually a previous step, so
+	 * unless you remove the link from the indicator template, or
+	 * type in StepID=23 to the address bar you can still go back
+	 * using the step indicator.
 	 *
 	 * @var boolean
 	 */
