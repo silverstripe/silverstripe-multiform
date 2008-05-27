@@ -83,18 +83,21 @@ abstract class MultiForm extends Form {
 	 * takes the fields, actions and validation (if any) for the step, setting up the form.
 	 */
 	public function init() {
-		// Set up the session
+		// Set up the session for this MultiForm instance
 		$this->setSession();
 		
-		// Get the current step, and set it
+		// Get the current step available (Note: either returns an existing
+		// step or creates a new one if none available)
 		$currentStep = $this->getCurrentStep();
+		
+		// Set the step returned above as the current step
 		$this->setCurrentStep($currentStep);
 		
-		// Set up the fields from the current step
+		// Set up the fields for the current step
 		$this->setFields($currentStep->getFields());
 		
-		// Set up the actions from the current step
-		$this->setActions();
+		// Set up the actions for the current step
+		$this->setActions($currentStep);
 		
 		// Set a hidden field in the form to identify this session.
 		// Depending on what has been configured for $url_type, we
@@ -102,7 +105,7 @@ abstract class MultiForm extends Form {
 		$urlMethod = $this->stat('url_type');
 		$this->fields->push(new HiddenField('MultiFormSessionID', false, $this->session->$urlMethod));
 		
-		// Set up validator from the form step class
+		// Set up validator for the step
 		$this->setValidator();
 		
 		// If there is form data, we populate it here (CAUTION: loadData() MUST unserialize first!)
@@ -282,32 +285,34 @@ abstract class MultiForm extends Form {
 	 * If there are any extra actions defined in MultiFormStep->getExtraActions()
 	 * then that set of actions is appended to the end of the actions FieldSet we
 	 * have created in this method.
+	 * 
+	 * @param $currentStep Subclass of MultiFormStep to set actions for
 	 */
-	function setActions() {
+	function setActions($currentStep) {
 		// Create default multi step actions (next, prev), and merge with extra actions, if any
 		$this->actions = new FieldSet();
 		
 		// If the form is at final step, create a submit button to perform final actions
 		// The last step doesn't have a next button, so add that action to any step that isn't the final one
-		if($this->getCurrentStep()->isFinalStep()) {
+		if($currentStep->isFinalStep()) {
 			$this->actions->push(new FormAction('finish', _t('MultiForm.SUBMIT', 'Submit')));
 		} else {
 			$this->actions->push(new FormAction('next', _t('MultiForm.NEXT', 'Next')));
 		}
 
 		// If there is a previous step defined, add the back button
-		if($this->getCurrentStep()->getPreviousStep()) {
-			if($this->actions->fieldByName('action_next')) {
+		if($currentStep->getPreviousStep() && $currentStep->canGoBack()) {
+			// If there is a next step, insert the action before the next action
+			if($currentStep->getNextStep()) {
 				$this->actions->insertBefore(new FormAction('prev', _t('MultiForm.BACK', 'Back')), 'action_next');
-			} elseif($this->actions->fieldByName('action_finish')) {
-				$this->actions->insertBefore(new FormAction('prev', _t('MultiForm.BACK', 'Back')), 'action_finish');
+			// Assume that this is the last step, insert the action before the finish action
 			} else {
-				$this->actions->push(new FormAction('prev', _t('MultiForm.BACK', 'Back')));
+				$this->actions->insertBefore(new FormAction('prev', _t('MultiForm.BACK', 'Back')), 'action_finish');
 			}
 		}
 
 		// Merge any extra action fields defined on the step
-		$this->actions->merge($this->getCurrentStep()->getExtraActions());
+		$this->actions->merge($currentStep->getExtraActions());
 	}
 	
 	/**
@@ -395,7 +400,7 @@ abstract class MultiForm extends Form {
 	 * @param object $form The form that the action was called on
 	 */
 	public function prev($data, $form) {
-		if(!$this->getCurrentStep()->getPreviousStep()) {
+		if(!$this->getCurrentStep()->getPreviousStep() && !$this->getCurrentStep()->canGoBack()) {
 			Director::redirectBack();
 			return false;
 		}

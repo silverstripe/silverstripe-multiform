@@ -43,6 +43,14 @@ class MultiFormStep extends DataObject {
 	protected static $is_final_step = false;
 
 	/**
+	 * This variable determines whether a user can use
+	 * the "back" action from this step.
+	 *
+	 * @var boolean
+	 */
+	protected static $can_go_back = true;
+	
+	/**
 	 * Title of this step.
 	 * 
 	 * Used for the step indicator templates.
@@ -231,6 +239,16 @@ class MultiFormStep extends DataObject {
 	}
 	
 	// ##################### Utility ####################
+	
+	/**
+	 * Determines whether the user is able to go back using the "action_back"
+	 * form action, based on the boolean value of $can_go_back.
+	 * 
+	 * @return boolean
+	 */
+	public function canGoBack() {
+		return $this->stat('can_go_back');
+	}
 	
 	/**
 	 * Determines whether this step is the final step in the multi-step process or not,
