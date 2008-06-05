@@ -411,6 +411,9 @@ abstract class MultiForm extends Form {
 		// Switch the step to the previous!
 		$prevStepClass = $this->getCurrentStep()->getPreviousStep();
 
+		// Save the form data for the current step
+		$this->save($data);
+		
 		// Get the previous step of the class instance returned from $currentStep->getPreviousStep()
 		$prevStep = DataObject::get_one($prevStepClass, "SessionID = {$this->session->ID}");
 		
