@@ -105,8 +105,11 @@ abstract class MultiForm extends Form {
 		$urlMethod = $this->stat('url_type');
 		$this->fields->push(new HiddenField('MultiFormSessionID', false, $this->session->$urlMethod));
 		
-		// Set up validator for the step
-		$this->setValidator();
+		// Set up validator for the step		
+		// @TODO Fix this hack to stop validation if hitting the "prev" action
+		if(empty($_REQUEST['action_prev'])) {
+			$this->setValidator();
+		}
 		
 		// If there is form data, we populate it here (CAUTION: loadData() MUST unserialize first!)
 		if($currentStep->loadData()) {
