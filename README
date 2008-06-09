@@ -1,15 +1,15 @@
-------------------------------
-Multistep Form Module
-------------------------------
+-----------------------------
+SilverStripe MultiForm module
+-----------------------------
 
 April 3rd, 2008
 
-Managing multiple form steps ("wizard") with automatic session-saving
-of data, and versatile start/finish customizations.
+This module acts as a "wizard" for multiple form steps with automatic
+session-saving of data, and versatile start/finish customizations.
 
 REQUIREMENTS
 ------------
-SilverStripe 2.2.2
+SilverStripe 2.2.2 or higher is required.
 
 DOCUMENTATION
 -------------
@@ -23,5 +23,8 @@ INSTALL
 
 NOTES
 -----
+Please read the documentation (link above), for instructions on using
+this module.
+
 If you ever add a new step, you must run db/build?flush=1, as the step requires
 a class name in the database to store it's session state, and data.
