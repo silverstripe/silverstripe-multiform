@@ -66,6 +66,13 @@ class MultiFormStep extends DataObject {
 	protected $title;
 	
 	/**
+	 * Form class that this step is directly related to.
+	 *
+	 * @var MultiForm subclass
+	 */
+	protected $form;
+	
+	/**
 	 * Form fields to be rendered with this step.
 	 * (Form object is created in {@link MultiForm}.
 	 * 
@@ -242,6 +249,15 @@ class MultiFormStep extends DataObject {
 		if($prevStepClass = $this->getPreviousStep()) {
 			return DataObject::get_one($prevStepClass, "SessionID = {$this->SessionID}");	
 		}
+	}
+	
+	/**
+	 * Sets the form that this step is directly related to.
+	 *
+	 * @param MultiForm subclass $form
+	 */
+	public function setForm($form) {
+		$this->form = $form;
 	}
 	
 	// ##################### Utility ####################

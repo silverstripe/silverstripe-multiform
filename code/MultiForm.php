@@ -92,6 +92,9 @@ abstract class MultiForm extends Form {
 		
 		// Set the step returned above as the current step
 		$this->setCurrentStep($currentStep);
+
+		// Set the form of the step to this form instance
+		$currentStep->form = $this;
 		
 		// Set up the fields for the current step
 		$this->setFields($currentStep->getFields());
@@ -158,6 +161,7 @@ abstract class MultiForm extends Form {
 
 	/**
 	 * Set the step passed in as the current step.
+	 * 
 	 * @param MultiFormStep $step A subclass of MultiFormStep
 	 */
 	protected function setCurrentStep($step) {
@@ -167,6 +171,7 @@ abstract class MultiForm extends Form {
 	
 	/**
 	 * Accessor method to $this->session.
+	 * 
 	 * @return MultiFormSession
 	 */
 	function getSession() {
