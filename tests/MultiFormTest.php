@@ -31,8 +31,7 @@ class MultiFormTest extends SapphireTest {
 	 * in our tests by assigning $this->session
 	 */
 	function setUp() {
-		$this->form = new MultiFormTestClass(new Controller(), 'Form', new FieldSet(), new FieldSet());
-		$this->form->init();
+		$this->form = new MultiFormTestClass(new Controller(), 'Form');
 	}
 	
 	/**
