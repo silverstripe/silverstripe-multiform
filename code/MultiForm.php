@@ -74,15 +74,21 @@ abstract class MultiForm extends Form {
 	);
 	
 	/**
-	 * Perform actions when the multiform is first started.
-	 * 
-	 * It does NOT work like a normal controller init()! It has to be explicity called when MultiForm
-	 * is intanciated on your controller. @TODO perhaps find a better name, that doesn't quite conflict.
-	 * 
-	 * This method sets up the session, figures out the current step, sets the current step, then
-	 * takes the fields, actions and validation (if any) for the step, setting up the form.
+	 * We start the MultiForm here. Before we start the MultiForm process,
+	 * like setting up the session, we must pass in empty FieldSet objects
+	 * to the Form->__construct(), as it requires them to be present.
+	 *
+	 * @param ContentController instance $controller Controller this form is created on
+	 * @param string $name The form name, typically the same as the method name
 	 */
-	public function init() {
+	public function __construct($controller, $name) {
+		
+		// We don't have any fields directly on here, they're on the step classes
+		$fields = new FieldSet();
+		$actions = new FieldSet();
+		
+		parent::__construct($controller, $name, $fields, $actions);
+
 		// Set up the session for this MultiForm instance
 		$this->setSession();
 		
