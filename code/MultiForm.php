@@ -399,7 +399,7 @@ abstract class MultiForm extends Form {
 		$this->setCurrentStep($nextStep);
 		
 		// Redirect to the next step
-		Director::redirect($this->getCurrentStep()->Link());
+		Director::redirect($nextStep->Link());
 		return;
 	}
 	
@@ -432,7 +432,7 @@ abstract class MultiForm extends Form {
 		$this->setCurrentStep($prevStep);
 		
 		// Redirect to the previous step
-		Director::redirect($this->getCurrentStep()->Link());
+		Director::redirect($prevStep->Link());
 		return;
 	}
 
