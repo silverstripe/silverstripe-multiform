@@ -449,7 +449,7 @@ abstract class MultiForm extends Form {
 		$currentStep = $this->getCurrentStep();
 		if(is_array($data)) {
 			foreach($data as $field => $value) {
-				if(in_array($field, self::$ignored_fields) || self::is_action_field($field)) {
+				if(in_array($field, $this->stat('ignored_fields')) || self::is_action_field($field)) {
 					unset($data[$field]);
 				}
 			}
