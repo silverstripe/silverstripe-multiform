@@ -30,9 +30,11 @@ class MultiFormPurgeTask extends DailyTask {
 	 */
 	public function run() {
 		$sessions = $this->getExpiredSessions();
+		$delCount = 0;
 		if($sessions) foreach($sessions as $session) {
-			$session->delete();
+			if($session->delete()) $delCount++;
 		}
+		echo $delCount . ' session records deleted that were older than ' . self::$session_expiry_days . ' days.';
 	}
 
 	/**
