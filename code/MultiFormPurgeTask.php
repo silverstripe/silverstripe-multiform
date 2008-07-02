@@ -13,44 +13,38 @@
 class MultiFormPurgeTask extends DailyTask {
 	
 	/**
-	 * Days after which unfinished sessions
-	 * expire and are automatically deleted
-	 * by a cronjob/ScheduledTask.
+	 * Days after which sessions expire and
+	 * are automatically deleted.
 	 * 
 	 * @usedby {@link MultiFormPurgeTask}
 	 * @var int
 	 */
 	public static $session_expiry_days = 7;
-	
+
+	/**
+	 * Run this cron task.
+	 * 
+	 * Go through all MultiFormSession records that
+	 * are older than the days specified in $session_expiry_days
+	 * and delete them.
+	 */
 	public function run() {
-		$controllers = ClassInfo::subclassesFor('MultiForm');
-		
-		if($controllers) foreach($controllers as $controllerClass) {
-			$controller = new $controllerClass();
-			$sessions = $controller->getExpiredSessions();
-			$sessionDeleteCount = 0;
-			if($sessions) foreach($sessions as $session) {
-				$session->purgeStoredData();
-				if($session->delete()) $sessionDeleteCount++;
-			}
+		$sessions = $this->getExpiredSessions();
+		if($sessions) foreach($sessions as $session) {
+			$session->delete();
 		}
 	}
-	
+
+	/**
+	 * Return all MultiFormSession database records that are older than
+	 * the days specified in $session_expiry_days
+	 *
+	 * @return DataObjectSet
+	 */
 	protected function getExpiredSessions() {
-		$sessions = new DataObjectSet();
-		
-		$implementors = Object::implementors_for_extension('MultiFormObjectDecorator');
-		if($implementors) foreach($implementors as $implementorClass) {
-			$sessions->merge(
-				DataObject::get(
-					$implementorClass, 
-					"`{$implementorClass}`.`MultiFormIsTemporary` = 1
-						AND DATEDIFF(NOW(), `{$implementorClass}`.`Created`) > " . self::$session_expiry_days
-				)
-			);
-		}
-		
-		return $sessions;
+		return DataObject::get(
+			'MultiFormSession',
+			"DATEDIFF(NOW(), `MultiFormSession`.`Created`) > " . self::$session_expiry_days);
 	}
 	
 }
