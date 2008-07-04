@@ -124,6 +124,9 @@ abstract class MultiForm extends Form {
 		if($currentStep->loadData()) {
 			$this->loadDataFrom($currentStep->loadData());
 		}
+		
+		// Disable security token - we tie a form to a session ID so this is not required
+		$this->disableSecurityToken();
 	}
 
 	/**
