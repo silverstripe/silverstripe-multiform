@@ -258,7 +258,8 @@ abstract class MultiForm extends Form {
 	 * @return MultiFormSession
 	 */
 	function getSessionRecordByID($id) {
-		return DataObject::get_one('MultiFormSession', "MultiFormSession.ID = $id AND IsComplete = 0");
+		$SQL_id = (int)$id;
+		return DataObject::get_one('MultiFormSession', "MultiFormSession.ID = {$SQL_id} AND IsComplete = 0");
 	}
 
 	/**
