@@ -99,7 +99,7 @@ abstract class MultiForm extends Form {
 		// Set up validation (if necessary) {@TODO find a better way instead
 		// of hardcoding a check for action_prev in order to prevent validation
 		// when hitting the back button
-		$validator = new Validator();
+		$validator = '';
 		if(empty($_REQUEST['action_prev'])) {
 			if($this->getCurrentStep()->getValidator()) {
 				$validator = $this->getCurrentStep()->getValidator();
@@ -107,7 +107,7 @@ abstract class MultiForm extends Form {
 		}
 		
 		// Give the fields, actions, and validation for the current step back to the parent Form class
-		parent::__construct($controller, $name, $fields, $actions, $validator);
+		parent::__construct($controller, $name, $fields, $actions, $validator ? $validator : null);
 		
 		// Set the step returned above as the current step
 		$this->setCurrentStep($currentStep);
