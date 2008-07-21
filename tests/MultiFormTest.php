@@ -20,6 +20,8 @@
  * is a subclass of DataObject. This is a bit of a pain, but it's required for
  * the database to store the step data for each step, which is very important!
  * 
+ * @TODO make use of .yml file to populate test db data instead?
+ * 
  * So, if you're going to create some new tests, and want to use some test classes,
  * make sure to use the ones mentioned above.
  */
