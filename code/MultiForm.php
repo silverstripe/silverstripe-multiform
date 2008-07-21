@@ -83,10 +83,6 @@ abstract class MultiForm extends Form {
 	 */
 	public function __construct($controller, $name) {
 		
-		// We don't have any fields directly on here, they're on the step classes
-		$fields = new FieldSet();
-		$actions = new FieldSet();
-		
 		// Set up the session for this MultiForm instance
 		$this->setSession();
 
