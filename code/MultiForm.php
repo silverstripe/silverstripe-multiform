@@ -90,6 +90,12 @@ abstract class MultiForm extends Form {
 		// step or creates a new one if none available)
 		$currentStep = $this->getCurrentStep();
 
+		// Set the step returned above as the current step
+		$this->setCurrentStep($currentStep);
+
+		// Set the form of the step to this form instance
+		$currentStep->form = $this;
+
 		// Set up the fields for the current step
 		$fields = $currentStep->getFields();
 
@@ -108,13 +114,7 @@ abstract class MultiForm extends Form {
 		
 		// Give the fields, actions, and validation for the current step back to the parent Form class
 		parent::__construct($controller, $name, $fields, $actions, $validator ? $validator : null);
-		
-		// Set the step returned above as the current step
-		$this->setCurrentStep($currentStep);
 
-		// Set the form of the step to this form instance
-		$currentStep->form = $this;
-		
 		// Set a hidden field in the form to identify this session.
 		// Depending on what has been configured for $url_type, we
 		// find an encrypted hash by default to identify the session.
