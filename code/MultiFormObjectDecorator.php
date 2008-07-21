@@ -48,7 +48,7 @@ class MultiFormObjectDecorator extends DataObjectDecorator {
 	 * @return boolean
 	 */
 	protected function wantsTemporary($query) {
-		foreach($query->where[] as $whereClause) {
+		foreach($query->where as $whereClause) {
 			if($whereClause == "`{$query->from[0]}`.`MultiFormIsTemporary` = 1") return true;
 		}
 		return false;
