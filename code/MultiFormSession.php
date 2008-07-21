@@ -13,7 +13,6 @@
 class MultiFormSession extends DataObject {
 	
 	static $db = array(
-		'Data' => 'Text', 			// stores serialized maps with all session information
 		'Hash' => 'Varchar(40)', 	// cryptographic hash identification to this session
 		'IsComplete' => 'Boolean'	// flag to determine if this session is marked completed
 	);
