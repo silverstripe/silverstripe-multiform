@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MultiFormStep controls the behaviour of a single form step in the multi-form
+ * MultiFormStep controls the behaviour of a single form step in the MultiForm
  * process. All form steps are required to be subclasses of this class, as it
  * encapsulates the functionality required for the step to be aware of itself
  * in the process by knowing what it's next step is, and if applicable, it's previous
@@ -121,16 +121,11 @@ class MultiFormStep extends DataObject {
 	 * if you're allowed to skip steps, or this step
 	 * has already been saved to the database
 	 * for the current {@link MultiFormSession}).
-	 * 
-	 * @TODO We check for the Hash field directly on session
-	 * to determine how to identify the session. This isn't
-	 * a very good way of doing it!
 	 *
 	 * @return string Relative URL to this step
 	 */
 	public function Link() {
-		$id = $this->Session()->Hash ? $this->Session()->Hash : $this->Session()->ID;
-		return Controller::curr()->Link() . '?MultiFormSessionID=' . $id;
+		return Controller::curr()->Link() . '?MultiFormSessionID=' . $this->Session()->Hash;
 	}
 
 	/**
@@ -140,12 +135,8 @@ class MultiFormStep extends DataObject {
 	 * 
 	 * You need to overload this method onto your own
 	 * step if you require custom loading. An example
-	 * would be selective loading specific fields, or
-	 * filtering out fields that don't require loading.
-	 * 
-	 * This method is called on {@link MultiForm} inside
-	 * the init() method, to load the data by default (if
-	 * it exists, back into the form).
+	 * would be selective loading specific fields, leaving
+	 * others that are not required.
 	 * 
 	 * @return array
 	 */
@@ -243,6 +234,8 @@ class MultiFormStep extends DataObject {
 	/**
 	 * Retrieves the previous step class record from the database.
 	 *
+	 * This will only return a record if you've previously been on the step.
+	 *
 	 * @return MultiFormStep subclass
 	 */
 	public function getPreviousStepFromDatabase() {
@@ -291,7 +284,7 @@ class MultiFormStep extends DataObject {
 	 * @return boolean
 	 */
 	public function isCurrentStep() {
-		if($this->class == $this->Session()->CurrentStep()->class) return true;
+		return ($this->class == $this->Session()->CurrentStep()->class) ? true : false;
 	}
 	
 }

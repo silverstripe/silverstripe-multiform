@@ -16,44 +16,27 @@
 abstract class MultiForm extends Form {
 	
 	/**
-	 * A session object stored in the database, which might link
-	 * to further temporary {@link DataObject}s.
+	 * A session object stored in the database, to identify and store
+	 * data for this MultiForm instance.
 	 *
 	 * @var MultiFormSession
 	 */
 	protected $session;
 	
 	/**
-	 * Defines which subclass of {@link MultiFormStep} starts the form -
-	 * needs to be defined for the controller to work correctly
+	 * Defines which subclass of {@link MultiFormStep} should be the first
+	 * step in the multi-step process.
 	 *
 	 * @var string Classname of a {@link MultiFormStep} subclass
 	 */
-	protected static $start_step; 
-	
-	/**
-	 * Define what type of URL you want to use throughout the step process.
-	 * 
-	 * By default, we store a hash, for example: http://mysite.com/my-form/?MultiFormSessionID=de9f2c7fd25e1b3afad3e850bd17d9b100db4b3
-	 * Alternatively, if you set this variable to "ID", then you get ?MultiFormSessionID=20
-	 * 
-	 * The ID is not as secure as the hash, but it all depends on your set up.
-	 * If you're going to add security, such as check the SubmitterID on init
-	 * of the MultiForm and use "ID" for this parameter, then security should be fine.
-	 * 
-	 * In any other case, where there's no Member tied to a MultiFormSession, using
-	 * the Hash is the recommended approach.
-	 *
-	 * @var $url_type either "ID", or "Hash"
-	 */
-	protected static $url_type = 'Hash';
+	protected static $start_step;
 	
 	/**
 	 * Set the casting for these fields.
 	 *
 	 * @var array
 	 */
-	static $casting = array(
+	public static $casting = array(
 		'CompletedStepCount' => 'Int',
 		'TotalStepCount' => 'Int',
 		'CompletedPercent' => 'Float'
@@ -66,7 +49,7 @@ abstract class MultiForm extends Form {
 	 *
 	 * @var array
 	 */
-	static $ignored_fields = array(
+	public static $ignored_fields = array(
 		'url',
 		'executeForm',
 		'MultiFormSessionID',
@@ -105,7 +88,7 @@ abstract class MultiForm extends Form {
 		// Set up validation (if necessary) {@TODO find a better way instead
 		// of hardcoding a check for action_prev in order to prevent validation
 		// when hitting the back button
-		$validator = '';
+		$validator = null;
 		if(empty($_REQUEST['action_prev'])) {
 			if($this->getCurrentStep()->getValidator()) {
 				$validator = $this->getCurrentStep()->getValidator();
@@ -113,26 +96,25 @@ abstract class MultiForm extends Form {
 		}
 		
 		// Give the fields, actions, and validation for the current step back to the parent Form class
-		parent::__construct($controller, $name, $fields, $actions, $validator ? $validator : null);
+		parent::__construct($controller, $name, $fields, $actions, $validator);
 
-		// Set a hidden field in the form to identify this session.
-		// Depending on what has been configured for $url_type, we
-		// find an encrypted hash by default to identify the session.
-		$urlMethod = $this->stat('url_type');
-		$this->fields->push(new HiddenField('MultiFormSessionID', false, $this->session->$urlMethod));
+		// Set a hidden field in our form with an encrypted hash to identify this session.
+		$this->fields->push(new HiddenField('MultiFormSessionID', false, $this->session->Hash));
 		
-		// If there is form data, we populate it here (CAUTION: loadData() MUST unserialize first!)
+		// If there is saved data for the current step, we load it into the form it here
+		//(CAUTION: loadData() MUST unserialize first!)
 		if($currentStep->loadData()) {
 			$this->loadDataFrom($currentStep->loadData());
 		}
 		
-		// Disable security token - we tie a form to a session ID so this is not required
+		// Disable security token - we tie a form to a session ID instead
 		$this->disableSecurityToken();
 	}
 
 	/**
-	 * Accessor method to $this->controller
-	 * Returns the controller this form was instanciated on.
+	 * Accessor method to $this->controller.
+	 *
+	 * @return Controller this MultiForm was instanciated on.
 	 */
 	public function getController() {
 		return $this->controller;
@@ -173,10 +155,11 @@ abstract class MultiForm extends Form {
 	 * Set the step passed in as the current step.
 	 * 
 	 * @param MultiFormStep $step A subclass of MultiFormStep
+	 * @return boolean The return value of write()
 	 */
 	protected function setCurrentStep($step) {
 		$this->session->CurrentStepID = $step->ID;
-		$this->session->write();
+		return $this->session->write();
 	}
 	
 	/**
@@ -191,11 +174,6 @@ abstract class MultiForm extends Form {
 	/**
 	 * Set up the session.
 	 * 
-	 * First of all we check if MultiFormSessionID is set in the URL,
-	 * then we determine what URL type has been set (default is "Hash").
-	 * Knowing this, we can retrieve the session record from the database
-	 * by a particular method (getSessionRecordByHash, or getSessionRecordByID).
-	 * 
 	 * If MultiFormSessionID isn't set, we assume that this is a new
 	 * multiform that requires a new session record to be created.
 	 * 
@@ -206,65 +184,37 @@ abstract class MultiForm extends Form {
 	 * Perhaps it would be best dealt with on a separate class?
 	 */
 	protected function setSession() {
-		$urlType = $this->stat('url_type');
-		
 		// If there's a MultiFormSessionID variable set, find that, otherwise create a new session
 		if(isset($_GET['MultiFormSessionID'])) {
-			switch($urlType) {
-				case 'Hash':
-					$this->session = $this->getSessionRecordByHash($_GET['MultiFormSessionID']);
-					break;
-				case 'ID':
-					$this->session = $this->getSessionRecordByID($_GET['MultiFormSessionID']);
-					break;
-					
-				default:
-					user_error('MultiForm::init(): Please define a correct value for $url_type on ' . $this->class, E_USER_ERROR);
-					break;
-			}
+			$this->session = $this->getSessionRecord($_GET['MultiFormSessionID']);
 		}
 
 		// If there was no session found, create a new one instead
 		if(!$this->session) {
-			// @TODO fix the fact that you can continually refresh on the first step creating new records
 			$this->session = new MultiFormSession();
 			$this->session->write();
 		}
 			
-		// We have to have an ID, before we can hash the ID of the session. @TODO a better way here?
-		if($urlType == 'Hash') {
-			if(!$this->session->Hash) {
-				$this->session->Hash = sha1($this->session->ID . '-' . microtime());
-				$this->session->write(); // I guess we could hash something else than the ID, this is a bit ugly...
-			}
+		// Create encrypted identification to the session instance if it doesn't exist
+		if(!$this->session->Hash) {
+			$this->session->Hash = sha1($this->session->ID . '-' . microtime());
+			$this->session->write();
 		}
 	}
 	
 	/**
-	 * Return an instance of MultiFormSession from the database by a single
-	 * record with the hash passed into this method.
+	 * Return an instance of MultiFormSession.
 	 *
-	 * @param string $hash The Hash field of the record to retrieve
+	 * @param string $hash The unique, encrypted hash to identify the session
 	 * @return MultiFormSession
 	 */
-	function getSessionRecordByHash($hash) {
+	function getSessionRecord($hash) {
 		$SQL_hash = Convert::raw2sql($hash);
 		return DataObject::get_one('MultiFormSession', "Hash = '$SQL_hash' AND IsComplete = 0");
 	}
-	
+
 	/**
-	 * Return an instance of MultiFormSession from the database by it's ID.
-	 *
-	 * @param int|string $id The ID of the record to retrieve
-	 * @return MultiFormSession
-	 */
-	function getSessionRecordByID($id) {
-		$SQL_id = (int)$id;
-		return DataObject::get_one('MultiFormSession', "MultiFormSession.ID = {$SQL_id} AND IsComplete = 0");
-	}
-	
-	/**
-	 * Build a FieldSet of the FormAction fields used for the given step.
+	 * Build a FieldSet of the FormAction fields for the given step.
 	 * 
 	 * If the current step is the final step, we push in a submit button, which
 	 * calls the action {@link finish()} to finalise the submission. Otherwise,
@@ -317,6 +267,8 @@ abstract class MultiForm extends Form {
 	 * subclass template) to see if one is available to render the form with. If
 	 * any of those don't exist, look for a default Form template to render
 	 * with instead.
+	 *
+	 * @return SSViewer object to render the template with
 	 */
 	function forTemplate() {
 		return $this->renderWith(array(
@@ -444,15 +396,15 @@ abstract class MultiForm extends Form {
 	
 	/**
 	 * Add the MultiFormSessionID variable to the URL on form submission.
-	 * We use this to determine what session the multiform is currently using.
+	 * This is a means to persist the session, by adding it's identification
+	 * to the URL, which ties it back to this MultiForm instance.
 	 * 
 	 * @return string
 	 */
 	function FormAction() {
-		$urlMethod = $this->stat('url_type');
 		$action = parent::FormAction();
 		$action .= (strpos($action, '?')) ? '&amp;' : '?';
-		$action .= "MultiFormSessionID={$this->session->$urlMethod}";
+		$action .= "MultiFormSessionID={$this->session->Hash}";
 		
 		return $action;
 	}
@@ -472,7 +424,7 @@ abstract class MultiForm extends Form {
 			'ID' => $firstStep->ID,
 			'ClassName' => $firstStep->class,
 			'Title' => $firstStep->title ? $firstStep->title : $firstStep->class,
-			'SessionID' => ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash,
+			'SessionID' => $this->session->Hash,
 			'LinkingMode' => ($firstStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link'
 		);
 		$stepsFound->push(new ArrayData($templateData));
@@ -501,7 +453,7 @@ abstract class MultiForm extends Form {
 						'ID' => $nextStep->ID,
 						'ClassName' => $nextStep->class,
 						'Title' => $nextStep->title ? $nextStep->title : $nextStep->class,
-						'SessionID' => ($this->stat('url_type') == 'ID') ? $this->session->ID : $this->session->Hash,
+						'SessionID' => $this->session->Hash,
 						'LinkingMode' => ($nextStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link'
 					);
 				} else {

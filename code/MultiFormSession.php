@@ -56,55 +56,13 @@ class MultiFormSession extends DataObject {
 		// delete dependent form steps and relation
 		$steps = $this->FormSteps();
 		if($steps) foreach($steps as $step) {
-			$steps->remove($step);
+			$steps->remove($step);	// @TODO not sure if this is required (does delete() remove the relation too?)
 			$step->delete();
 		}
 		
 		parent::onBeforeDelete();
 	}
-	
-	/**
-	 * Get all the temporary objects, and set them as temporary, writing
-	 * them back to the database.
-	 */
-	public function markTemporaryDataObjectsFinished() {
-		$temporaryObjects = $this->getTemporaryDataObjects();
-		if($temporaryObjects) foreach($temporaryObjects as $obj) {
-			$obj->MultiFormIsTemporary = 0;
-			$obj->write();
-		}
-	}
-	
-	/**
-	 * Get all classes that implement the MultiFormObjectDecorator,
-	 * find the records for each and merge them together into a 
-	 *	DataObjectSet.
-	 *
-	 * @return DataObjectSet
-	 */
-	public function getTemporaryDataObjects() {
-		$implementors = Object::get_implementors_for_extension('MultiFormObjectDecorator');
-		$objs = new DataObjectSet();
-		if($implementors) foreach($implementors as $implementorClass) {
-			$objs->merge(
-				DataObject::get($implementorClass, "MultiFormSessionID = {$this->ID}")
-			);
-		}
-		
-		return $objs;
-	}
-	
-	/**
-	 * Remove all related data, either serialized
-	 * in $Data property, or in related stored
-	 * DataObjects.
-	 *
-	 * @return boolean
-	 */
-	public function purgeStoredData() {
-		die('MultiFormSession->purgeStoredData(): Not implemented yet');
-	}
-	
+
 }
 
 ?>
