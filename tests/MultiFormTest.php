@@ -30,7 +30,7 @@ class MultiFormTest extends SapphireTest {
 	/**
 	 * Set up the instance of MultiForm, writing a record
 	 * to the database for this test. We persist the object
-	 * in our tests by assigning $this->session
+	 * in our tests by assigning $this->getSession()
 	 */
 	function setUp() {
 		$this->form = new MultiFormTestClass(new Controller(), 'Form');
@@ -47,7 +47,7 @@ class MultiFormTest extends SapphireTest {
 	 */
 	function testInitialisingForm() {
 		$this->assertTrue(is_numeric($this->form->getCurrentStep()->ID) && ($this->form->getCurrentStep()->ID > 0));
-		$this->assertTrue(is_numeric($this->form->session->ID) && ($this->form->session->ID > 0));
+		$this->assertTrue(is_numeric($this->form->getSession()->ID) && ($this->form->getSession()->ID > 0));
 		$this->assertEquals('MultiFormTestStepOne', $this->form->getStartStep());
 	}
 	
@@ -71,7 +71,7 @@ class MultiFormTest extends SapphireTest {
 	 * this session. These directives can be found on {@link MultiFormSession->onBeforeWrite()}
 	 */
 	function tearDown() {
-		$this->form->session->delete();
+		$this->form->getSession()->delete();
 	}
 	
 }
