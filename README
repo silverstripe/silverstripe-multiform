@@ -9,8 +9,8 @@ session-saving of data, and versatile start/finish customizations.
 
 Maintainer Contact
 -----------------------------------------------
-Matt Peel (Nickname: mpeel, mattSS)
-<matt (at) silverstripe (dot) com>
+Sean Harvey (Nickname: sharvey, halkyon)
+<sean (at) silverstripe (dot) com>
 
 Requirements
 -----------------------------------------------
@@ -33,3 +33,4 @@ a class name in the database to store it's session state, and data.
 
 Known issues:
 -----------------------------------------------
+Please check http://open.silverstripe.com for known issues.
