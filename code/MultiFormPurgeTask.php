@@ -16,7 +16,6 @@ class MultiFormPurgeTask extends DailyTask {
 	 * Days after which sessions expire and
 	 * are automatically deleted.
 	 * 
-	 * @usedby {@link MultiFormPurgeTask}
 	 * @var int
 	 */
 	public static $session_expiry_days = 7;
@@ -46,7 +45,8 @@ class MultiFormPurgeTask extends DailyTask {
 	protected function getExpiredSessions() {
 		return DataObject::get(
 			'MultiFormSession',
-			"DATEDIFF(NOW(), `MultiFormSession`.`Created`) > " . self::$session_expiry_days);
+			"DATEDIFF(NOW(), `MultiFormSession`.`Created`) > " . self::$session_expiry_days
+		);
 	}
 	
 }
