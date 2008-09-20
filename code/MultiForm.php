@@ -57,11 +57,9 @@ abstract class MultiForm extends Form {
 	);
 	
 	/**
-	 * We start the MultiForm here. Before we start the MultiForm process,
-	 * like setting up the session, we must pass in empty FieldSet objects
-	 * to the Form->__construct(), as it requires them to be present.
+	 * Start the MultiForm instance.
 	 *
-	 * @param ContentController instance $controller Controller this form is created on
+	 * @param Controller instance $controller Controller this form is created on
 	 * @param string $name The form name, typically the same as the method name
 	 */
 	public function __construct($controller, $name) {
