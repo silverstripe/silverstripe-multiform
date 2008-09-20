@@ -1,6 +1,6 @@
 <?php
 
-class MultiFormTestClass extends MultiForm {
+class MultiFormTestClass extends MultiForm implements TestOnly {
 	
 	protected static $start_step = 'MultiFormTestStepOne';
 	

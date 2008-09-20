@@ -1,6 +1,6 @@
 <?php
 
-class MultiFormTestStepOne extends MultiFormStep {
+class MultiFormTestStepOne extends MultiFormStep implements TestOnly {
 	
 	protected static $next_steps = 'MultiFormTestStepTwo';
 	
