@@ -100,6 +100,7 @@ class MultiFormStep extends DataObject {
 	
 	/**
 	 * Get a validator specific to this form.
+	 * The form is automatically validated in {@link Form->httpSubmission()}.
 	 * 
 	 * @return Validator
 	 */
@@ -155,6 +156,24 @@ class MultiFormStep extends DataObject {
 	public function saveData($data) {
 		$this->Data = serialize($data);
 		$this->write();
+	}
+	
+	/**
+	 * Custom validation for a step. In most cases, it should be sufficient
+	 * to have built-in validation through the {@link Validator} class
+	 * on the {@link getValidator()} method.
+	 * Use {@link Form->sessionMessage()} to feed back validation messages
+	 * to the user. Please don't redirect from this method,
+	 * this is taken care of in {@link next()}.
+	 * 
+	 * @usedby next()
+	 * 
+	 * @param array $data Request data
+	 * @param Form $form
+	 * @return boolean Validation success
+	 */
+	public function validateStep($data, $form) {
+		return true;
 	}
 	
 	/**

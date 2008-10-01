@@ -83,9 +83,8 @@ abstract class MultiForm extends Form {
 		// Set up the actions for the current step
 		$actions = $this->actionsFor($currentStep);
 
-		// Set up validation (if necessary) {@TODO find a better way instead
-		// of hardcoding a check for action_prev in order to prevent validation
-		// when hitting the back button
+		// Set up validation (if necessary)
+		// @todo find a better way instead of hardcoding a check for action_prev in order to prevent validation when hitting the back button
 		$validator = null;
 		if(empty($_REQUEST['action_prev'])) {
 			if($this->getCurrentStep()->getValidator()) {
@@ -210,6 +209,41 @@ abstract class MultiForm extends Form {
 		$SQL_hash = Convert::raw2sql($hash);
 		return DataObject::get_one('MultiFormSession', "Hash = '$SQL_hash' AND IsComplete = 0");
 	}
+	
+	/**
+	 * Get all steps saved in the database for the currently active session,
+	 * in the order they were saved, oldest to newest (automatically ordered by ID).
+	 * If you want a full chain of steps regardless if they've already been saved
+	 * to the database, use {@link getAllStepsLinear()}.
+	 * 
+	 * @return DataObjectSet|boolean A set of MultiFormStep subclasses
+	 */
+	function getSavedSteps() {
+		return DataObject::get(
+			'MultiFormStep', 
+			sprintf("SessionID = '%s'",
+				$this->session->ID
+			)
+		);
+	}
+	
+	/**
+	 * Get a step which was previously saved to the database in the current session.
+	 * Caution: This might cause unexpected behaviour if you have multiple steps
+	 * in your chain with the same classname.
+	 * 
+	 * @param string $className Classname of a {@link MultiFormStep} subclass
+	 * @return MultiFormStep
+	 */
+	function getSavedStepByClass($className) {
+		return DataObject::get_one(
+			'MultiFormStep', 
+			sprintf("SessionID = '%s' AND ClassName = '%s'",
+				$this->session->ID,
+				Convert::raw2sql($className)
+			)
+		);
+	}
 
 	/**
 	 * Build a FieldSet of the FormAction fields for the given step.
@@ -241,7 +275,7 @@ abstract class MultiForm extends Form {
 		} else {
 			$actions->push(new FormAction('next', _t('MultiForm.NEXT', 'Next')));
 		}
-
+		
 		// If there is a previous step defined, add the back button
 		if($step->getPreviousStep() && $step->canGoBack()) {
 			// If there is a next step, insert the action before the next action
@@ -309,16 +343,22 @@ abstract class MultiForm extends Form {
 	 * @param object $form The form that the action was called on
 	 */
 	public function next($data, $form) {
-		if(!$this->getCurrentStep()->getNextStep()) {
+		// Get the next step class
+		$nextStepClass = $this->getCurrentStep()->getNextStep();
+		
+		if(!$nextStepClass) {
+			Director::redirectBack();
+			return false;
+		}
+
+		// custom validation (use MultiFormStep->getValidator() for built-in functionality)
+		if(!$this->getCurrentStep()->validateStep($data, $form)) {
 			Director::redirectBack();
 			return false;
 		}
 		
-		// Get the next step class
-		$nextStepClass = $this->getCurrentStep()->getNextStep();
-		
 		// Save the form data for the current step
-		$this->save($data);
+		$this->save($form->getData());
 
 		// Determine whether we can use a step already in the DB, or have to create a new one
 		if(!$nextStep = DataObject::get_one($nextStepClass, "SessionID = {$this->session->ID}")) {
@@ -381,7 +421,7 @@ abstract class MultiForm extends Form {
 		$currentStep = $this->getCurrentStep();
 		if(is_array($data)) {
 			foreach($data as $field => $value) {
-				if(in_array($field, $this->stat('ignored_fields')) || self::is_action_field($field)) {
+				if(in_array($field, $this->stat('ignored_fields'))) {
 					unset($data[$field]);
 				}
 			}
@@ -409,7 +449,7 @@ abstract class MultiForm extends Form {
 
 	/**
 	 * Determine the steps to show in a linear fashion, starting from the
-	 * first step. We run a recursive function passing the steps found
+	 * first step. We run {@link getAllStepsRecursive} passing the steps found
 	 * by reference to get a listing of the steps.
 	 *
 	 * @return DataObjectSet
@@ -436,6 +476,9 @@ abstract class MultiForm extends Form {
 	 * Recursively run through steps using the getNextStep() method on each step
 	 * to determine what the next step is, gathering each step along the way.
 	 * We stop on the last step, and return the results.
+	 * If a step in the chain was already saved to the database in the current
+	 * session, its used - otherwise a singleton of this step is used.
+	 * Caution: Doesn't consider branching for steps which aren't in the database yet.
 	 * 
 	 * @param $step Subclass of MultiFormStep to find the next step of
 	 * @param $stepsFound $stepsFound DataObjectSet reference, the steps found to call back on
