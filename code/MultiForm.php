@@ -551,24 +551,6 @@ abstract class MultiForm extends Form {
 		return (float)$this->CompletedStepCount * 100 / $this->TotalStepCount;
 	}
 
-	/**
-	 * Determines whether the field is an action. This checks the string name of the
-	 * field, and not the actual field object of one. The actual checking is done
-	 * by doing a string check to see if "action_" is prefixed to the name of the
-	 * field. For example, in the form system: FormAction('next', 'Next') field
-	 * gives an ID of "action_next"
-	 * 
-	 * The assumption here is the ID we're checking against has the prefix that we're
-	 * looking for, otherwise this won't work.
-	 * 
-	 * @param string $fieldName The name of the field to check is an action
-	 * @param string $prefix The prefix of the string to check for, default is "action_"
-	 * @return boolean
-	 */
-	public static function is_action_field($fieldName, $prefix = 'action_') {
-		if(substr((string)$fieldName, 0, strlen($prefix)) == $prefix) return true;
-	}
-	
 }
 
 ?>
