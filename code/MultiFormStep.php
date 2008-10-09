@@ -159,6 +159,29 @@ class MultiFormStep extends DataObject {
 	}
 	
 	/**
+	 * Save the data on this step into an object,
+	 * similiar to {@link Form->saveInto()} - by building
+	 * a stub form from {@link getFields()}. This is necessary
+	 * to trigger each {@link FormField->saveInto()} method
+	 * individually, rather than assuming that all data
+	 * serialized through {@link saveData()} can be saved
+	 * as a simple value outside of the original FormField context.
+	 * 
+	 * @param DataObject $obj
+	 */
+	public function saveInto($obj) {
+		$form = new Form(
+			new Controller(),
+			'Form',
+			$this->getFields(),
+			new FieldSet()
+		);
+		$form->loadDataFrom($this->loadData());
+		$form->saveInto($obj);
+		return $obj;
+	}
+	
+	/**
 	 * Custom validation for a step. In most cases, it should be sufficient
 	 * to have built-in validation through the {@link Validator} class
 	 * on the {@link getValidator()} method.
@@ -269,6 +292,13 @@ class MultiFormStep extends DataObject {
 	 */
 	public function setForm($form) {
 		$this->form = $form;
+	}
+	
+	/**
+	 * @return Form
+	 */
+	public function getForm() {
+		return $this->form;
 	}
 	
 	// ##################### Utility ####################
