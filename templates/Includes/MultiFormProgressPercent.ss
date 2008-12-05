@@ -1,0 +1,1 @@
+<p>You've completed {$CompletedPercent.Nice}% ($CompletedStepCount/$TotalStepCount)</p>
