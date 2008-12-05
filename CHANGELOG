@@ -1,2 +1,18 @@
+0.2:
+ - ENHANCEMENT Updated entities and added german translation for multiform
+ - ENHANCEMENT Making multiform module translatable
+ - ENHANCEMENT Added MultiFormStep->saveInto() to simulate Form->saveInto()
+ - ENHANCEMENT Made MultiForm->prev() do the same behaviour for saving data
+ - ENHANCEMENT Added MultiForm->getSavedSteps()
+ - BUGFIX Removing url_type which isnt very useful
+ - BUGFIX $this->form wasn't accessible on MultiFormStep
+ - ENHANCEMENT Correct use of parent::construct() so that fields, actions
+ - BUGFIX SQL injection possibility fix on MultiForm->getSessionRecordByID()
+ - BUGFIX Disable security token inherited from Form, which isn't required
+ - BUGFIX Made MultiFormPurgeTask greatly simplified, and workable
+ - ENHANCEMENT Allowed static $ignored_fields to be overloaded on subclass of MultiForm
+ - BUGFIX Use $nextStep->Link and $prevStep->Link() for prev() and next() on MultiForm
+ - API CHANGE Ticket #2562 - Cleaner instanciation of MultiForm subclass without having to call ->init()
+
 0.1:
 - initial release
