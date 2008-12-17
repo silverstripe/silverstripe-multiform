@@ -113,8 +113,8 @@ abstract class MultiForm extends Form {
 
 		// Apply validation if the current step requires validation (is not exempt)
 		if($applyValidation) {
-			if($this->getCurrentStep()->getValidator()) {
-				$validator = $this->getCurrentStep()->getValidator();
+			if($currentStep->getValidator()) {
+				$validator = $currentStep->getValidator();
 			}
 		}
 		
