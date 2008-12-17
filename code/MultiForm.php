@@ -57,6 +57,20 @@ abstract class MultiForm extends Form {
 	);
 	
 	/**
+	 * Any of the actions defined in this variable are exempt from
+	 * being validated.
+	 * 
+	 * This is most useful for the "Back" (action_prev) action, as
+	 * you typically don't validate the form when the user is going
+	 * back a step.
+	 * 
+	 * @var array
+	 */
+	public static $actions_exempt_from_validation = array(
+		'action_prev'
+	);
+	
+	/**
 	 * Start the MultiForm instance.
 	 *
 	 * @param Controller instance $controller Controller this form is created on
@@ -84,9 +98,21 @@ abstract class MultiForm extends Form {
 		$actions = $this->actionsFor($currentStep);
 
 		// Set up validation (if necessary)
-		// @todo find a better way instead of hardcoding a check for action_prev in order to prevent validation when hitting the back button
 		$validator = null;
-		if(empty($_REQUEST['action_prev'])) {
+		$applyValidation = true;
+
+		// Check if the $_REQUEST action that user clicked is an exempt one		
+		if(self::$actions_exempt_from_validation) {
+			foreach(self::$actions_exempt_from_validation as $exemptAction) {
+				if(!empty($_REQUEST[$exemptAction])) {
+					$applyValidation = false;
+					break;
+				} 
+			}
+		}
+
+		// Apply validation if the current step requires validation (is not exempt)
+		if($applyValidation) {
 			if($this->getCurrentStep()->getValidator()) {
 				$validator = $this->getCurrentStep()->getValidator();
 			}
