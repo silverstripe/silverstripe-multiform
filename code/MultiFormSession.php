@@ -56,6 +56,7 @@ class MultiFormSession extends DataObject {
 		$steps = $this->FormSteps();
 		if($steps) foreach($steps as $step) {
 			$steps->remove($step);	// @TODO not sure if this is required (does delete() remove the relation too?)
+			$step->destroy();
 			$step->delete();
 		}
 		
