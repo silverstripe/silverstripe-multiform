@@ -230,7 +230,7 @@ class MultiFormStep extends DataObject {
 	 * @return MultiFormStep|boolean
 	 */
 	public function getNextStepFromDatabase() {
-		if($this->SessionID) {
+		if($this->SessionID && is_numeric($this->SessionID)) {
 			$nextSteps = $this->stat('next_steps');
 			if(is_string($nextSteps)) {
 				return DataObject::get_one($nextSteps, "SessionID = {$this->SessionID}");
