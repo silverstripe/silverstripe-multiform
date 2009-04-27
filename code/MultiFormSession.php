@@ -55,9 +55,11 @@ class MultiFormSession extends DataObject {
 		// delete dependent form steps and relation
 		$steps = $this->FormSteps();
 		if($steps) foreach($steps as $step) {
-			$steps->remove($step);	// @TODO not sure if this is required (does delete() remove the relation too?)
-			$step->destroy();
-			$step->delete();
+			if($step && $step->exists()) {
+				$steps->remove($step);
+				$step->delete();
+				$step->destroy();
+			}
 		}
 		
 		parent::onBeforeDelete();
