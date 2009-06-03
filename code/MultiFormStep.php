@@ -171,7 +171,7 @@ class MultiFormStep extends DataObject {
 	 */
 	public function saveInto($obj) {
 		$form = new Form(
-			new Controller(),
+			Controller::curr(),
 			'Form',
 			$this->getFields(),
 			new FieldSet()
