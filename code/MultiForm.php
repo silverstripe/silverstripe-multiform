@@ -89,7 +89,7 @@ abstract class MultiForm extends Form {
 		$this->setCurrentStep($currentStep);
 
 		// Set the form of the step to this form instance
-		$currentStep->form = $this;
+		$currentStep->setForm($this);
 
 		// Set up the fields for the current step
 		$fields = $currentStep->getFields();
@@ -170,6 +170,8 @@ abstract class MultiForm extends Form {
 			$currentStep->SessionID = $this->session->ID;
 			$currentStep->write();
 		}
+		
+		$currentStep->setForm($this);
 		
 		return $currentStep;
 	}

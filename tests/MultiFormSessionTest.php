@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Tests for {@link MultiFormSessionTest}
+ * 
+ * @package multiform
+ * @subpackage tests
+ */
 class MultiFormSessionTest extends SapphireTest {
 	
 	/**
@@ -8,14 +13,13 @@ class MultiFormSessionTest extends SapphireTest {
 	 * the object in our tests by assigning $this->session
 	 */
 	function setUp() {
+		parent::setUp();
 		$this->session = new MultiFormSession();
 		$this->session->write();
 	}
 	
 	/**
 	 * Test generation of a new session.
-	 * 
-	 * @TODO Write some more advanced tests for MultiFormSession.
 	 */
 	function testSessionGeneration() {
 		$this->assertTrue($this->session->ID != 0);
@@ -35,13 +39,4 @@ class MultiFormSessionTest extends SapphireTest {
 		}
 	}
 	
-	/**
-	 * Delete the MultiFormSession record that we created.
-	 */
-	function tearDown() {
-		$this->session->delete();
-	}
-	
 }
-
-?>
