@@ -46,22 +46,23 @@ class MultiFormTest extends FunctionalTest {
 		$this->assertEquals(3, $this->form->getAllStepsLinear()->Count());
 	}
 	
-	/*function testNextStepAction() {
+	function testNextStepAction() {
 		$this->get($this->controller->class);
-		$response = $this->submitForm('MultiFormTest_Form', 'next', array(
+		$response = $this->submitForm('MultiFormTest_Form', 'action_next', array(
 			'FirstName' => 'Joe',
 			'Surname' => 'Bloggs',
 			'Email' => 'joe@bloggs.com'
 		));
 		
+		$this->assertEquals(200, $response->getStatusCode());
 		$this->assertNotNull($response->getBody());
-	}*/
+	}
 	
 }
 class MultiFormTest_Controller extends Controller implements TestOnly {
 
-	function Link($action = null) {
-		return $this->class . '/' . $action;
+	function Link() {
+		return 'MultiFormTest_Controller';
 	}
 	
 	public function Form($request = null) {
