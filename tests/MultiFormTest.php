@@ -19,6 +19,8 @@
  */
 class MultiFormTest extends FunctionalTest {
 	
+	public static $fixture_file = 'multiform/tests/MultiFormTest.yml';
+	
 	protected $controller;
 	
 	function setUp() {
@@ -31,6 +33,19 @@ class MultiFormTest extends FunctionalTest {
 		$this->assertTrue(is_numeric($this->form->getCurrentStep()->ID) && ($this->form->getCurrentStep()->ID > 0));
 		$this->assertTrue(is_numeric($this->form->getSession()->ID) && ($this->form->getSession()->ID > 0));
 		$this->assertEquals('MultiFormTest_StepOne', $this->form->getStartStep());
+	}
+	
+	function testSessionGeneration() {
+		$this->assertTrue($this->form->session->ID > 0);
+	}
+	
+	function testMemberLogging() {
+		$this->session()->inst_set('loggedInAs', 1);
+		
+		$session = $this->form->session;
+		$session->write();
+		
+		$this->assertEquals(1, $session->SubmitterID);
 	}
 	
 	function testSecondStep() {
@@ -46,16 +61,22 @@ class MultiFormTest extends FunctionalTest {
 		$this->assertEquals(3, $this->form->getAllStepsLinear()->Count());
 	}
 	
-	function testNextStepAction() {
+	function testStepTraversal() {
 		$this->get($this->controller->class);
-		$response = $this->submitForm('MultiFormTest_Form', 'action_next', array(
+		
+		$actionNextResponse = $this->submitForm('MultiFormTest_Form', 'action_next', array(
 			'FirstName' => 'Joe',
 			'Surname' => 'Bloggs',
 			'Email' => 'joe@bloggs.com'
 		));
 		
-		$this->assertEquals(200, $response->getStatusCode());
-		$this->assertNotNull($response->getBody());
+		$this->assertEquals(200, $actionNextResponse->getStatusCode());
+		$this->assertNotNull($actionNextResponse->getBody());
+		
+		$actionPrevResponse = $this->submitForm('MultiFormTest_Form', 'action_prev');
+		
+		$this->assertEquals(200, $actionPrevResponse->getStatusCode());
+		$this->assertNotNull($actionPrevResponse->getBody());
 	}
 	
 }
@@ -116,4 +137,3 @@ class MultiFormTest_StepThree extends MultiFormStep implements TestOnly {
 	}
 	
 }
-
