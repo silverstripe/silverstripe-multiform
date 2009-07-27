@@ -101,9 +101,10 @@ abstract class MultiForm extends Form {
 		$validator = null;
 		$applyValidation = true;
 
-		// Check if the $_REQUEST action that user clicked is an exempt one		
-		if(self::$actions_exempt_from_validation) {
-			foreach(self::$actions_exempt_from_validation as $exemptAction) {
+		// Check if the $_REQUEST action that user clicked is an exempt one
+		$actionNames = Object::get_static(get_class($this),'actions_exempt_from_validation');
+		if( $actionNames ) {
+			foreach( $actionNames as $exemptAction) {
 				if(!empty($_REQUEST[$exemptAction])) {
 					$applyValidation = false;
 					break;
@@ -371,6 +372,7 @@ abstract class MultiForm extends Form {
 	 * @param object $form The form that the action was called on
 	 */
 	public function next($data, $form) {
+
 		// Get the next step class
 		$nextStepClass = $this->getCurrentStep()->getNextStep();
 		
