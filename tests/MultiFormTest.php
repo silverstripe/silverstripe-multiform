@@ -87,6 +87,14 @@ class MultiFormTest extends FunctionalTest {
 		$this->assertFalse($this->form->getCurrentSession());
 	}
 	
+	function testIncorrectSessionIdentifier() {
+		$this->form->setCurrentSessionHash('sdfsdf3432325325sfsdfdf'); // made up!
+		$this->assertFalse($this->form->getCurrentSession());
+		
+		// A new session is generated, even though we made up the identifier
+		$this->assertType('MultiFormSession', $this->form->session);
+	}
+	
 }
 class MultiFormTest_Controller extends Controller implements TestOnly {
 
