@@ -25,6 +25,7 @@ class MultiFormTest extends FunctionalTest {
 	
 	function setUp() {
 		parent::setUp();
+		
 		$this->controller = new MultiFormTest_Controller();
 		$this->form = $this->controller->Form();
 	}
@@ -77,6 +78,13 @@ class MultiFormTest extends FunctionalTest {
 		
 		$this->assertEquals(200, $actionPrevResponse->getStatusCode());
 		$this->assertNotNull($actionPrevResponse->getBody());
+	}
+	
+	function testCompletedSession() {
+		$this->form->setCurrentSessionHash($this->form->session->Hash);
+		$this->assertType('MultiFormSession', $this->form->getCurrentSession());
+		$this->form->session->markCompleted();
+		$this->assertFalse($this->form->getCurrentSession());
 	}
 	
 }

@@ -24,6 +24,12 @@ abstract class MultiForm extends Form {
 	protected $session;
 	
 	/**
+	 * The current encrypted MultiFormSession identification.
+	 * @var string
+	 */
+	protected $currentSessionHash;
+	
+	/**
 	 * Defines which subclass of {@link MultiFormStep} should be the first
 	 * step in the multi-step process.
 	 *
@@ -77,6 +83,9 @@ abstract class MultiForm extends Form {
 	 * @param string $name The form name, typically the same as the method name
 	 */
 	public function __construct($controller, $name) {
+		if(isset($_GET['MultiFormSessionID'])) {
+			$this->setCurrentSessionHash($_GET['MultiFormSessionID']);
+		}
 		
 		// Set up the session for this MultiForm instance
 		$this->setSession();
@@ -210,17 +219,14 @@ abstract class MultiForm extends Form {
 	 * Perhaps it would be best dealt with on a separate class?
 	 */
 	protected function setSession() {
-		// If there's a MultiFormSessionID variable set, find that, otherwise create a new session
-		if(isset($_GET['MultiFormSessionID'])) {
-			$this->session = $this->getSessionRecord($_GET['MultiFormSessionID']);
-		}
-
+		$this->session = $this->getCurrentSession();
+		
 		// If there was no session found, create a new one instead
 		if(!$this->session) {
 			$this->session = new MultiFormSession();
 			$this->session->write();
 		}
-			
+		
 		// Create encrypted identification to the session instance if it doesn't exist
 		if(!$this->session->Hash) {
 			$this->session->Hash = sha1($this->session->ID . '-' . microtime());
@@ -229,13 +235,22 @@ abstract class MultiForm extends Form {
 	}
 	
 	/**
-	 * Return an instance of MultiFormSession.
-	 *
-	 * @param string $hash The unique, encrypted hash to identify the session
-	 * @return MultiFormSession
+	 * Set the currently used encrypted hash to identify
+	 * the MultiFormSession.
+	 * 
+	 * @param string $hash Encrypted identification to session
 	 */
-	function getSessionRecord($hash) {
-		$SQL_hash = Convert::raw2sql($hash);
+	function setCurrentSessionHash($hash) {
+		$this->currentSessionHash = $hash;
+	}
+	
+	/**
+	 * Return the currently used {@link MultiFormSession}
+	 * @return MultiFormSession|boolean FALSE
+	 */
+	function getCurrentSession() {
+		if(!$this->currentSessionHash) return false;
+		$SQL_hash = Convert::raw2sql($this->currentSessionHash);
 		return DataObject::get_one('MultiFormSession', "Hash = '$SQL_hash' AND IsComplete = 0");
 	}
 	
