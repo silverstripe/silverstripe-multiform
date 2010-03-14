@@ -172,7 +172,7 @@ abstract class MultiForm extends Form {
 		// Determine whether we use the current step, or create one if it doesn't exist
 		if(isset($_GET['StepID'])) {
 			$stepID = (int)$_GET['StepID'];
-			$currentStep = DataObject::get_one('MultiFormStep', "SessionID = {$this->session->ID} AND ID = {$stepID}");
+			$currentStep = DataObject::get_one('MultiFormStep', "\"SessionID\" = {$this->session->ID} AND \"ID\" = {$stepID}");
 		} elseif($this->session->CurrentStepID) {
 			$currentStep = $this->session->CurrentStep();
 		} else {
@@ -251,7 +251,7 @@ abstract class MultiForm extends Form {
 	function getCurrentSession() {
 		if(!$this->currentSessionHash) return false;
 		$SQL_hash = Convert::raw2sql($this->currentSessionHash);
-		return DataObject::get_one('MultiFormSession', "Hash = '$SQL_hash' AND IsComplete = 0");
+		return DataObject::get_one('MultiFormSession', "\"Hash\" = '$SQL_hash' AND \"IsComplete\" = 0");
 	}
 	
 	/**
@@ -282,7 +282,7 @@ abstract class MultiForm extends Form {
 	function getSavedStepByClass($className) {
 		return DataObject::get_one(
 			'MultiFormStep', 
-			sprintf("SessionID = '%s' AND ClassName = '%s'",
+			sprintf("\"SessionID\" = '%s' AND \"ClassName\" = '%s'",
 				$this->session->ID,
 				Convert::raw2sql($className)
 			)
@@ -405,7 +405,7 @@ abstract class MultiForm extends Form {
 		}
 
 		// Determine whether we can use a step already in the DB, or have to create a new one
-		if(!$nextStep = DataObject::get_one($nextStepClass, "SessionID = {$this->session->ID}")) {
+		if(!$nextStep = DataObject::get_one($nextStepClass, "\"SessionID\" = {$this->session->ID}")) {
 			$nextStep = new $nextStepClass();
 			$nextStep->SessionID = $this->session->ID;
 			$nextStep->write();
