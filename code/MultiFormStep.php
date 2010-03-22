@@ -233,9 +233,9 @@ class MultiFormStep extends DataObject {
 		if($this->SessionID && is_numeric($this->SessionID)) {
 			$nextSteps = $this->stat('next_steps');
 			if(is_string($nextSteps)) {
-				return DataObject::get_one($nextSteps, "SessionID = {$this->SessionID}");
+				return DataObject::get_one($nextSteps, "\"SessionID\" = {$this->SessionID}");
 			} elseif(is_array($nextSteps)) {
-				return DataObject::get_one($nextSteps[0], "SessionID = {$this->SessionID}");
+				return DataObject::get_one($nextSteps[0], "\"SessionID\" = {$this->SessionID}");
 			} else {
 				return false;
 			}
@@ -260,7 +260,7 @@ class MultiFormStep extends DataObject {
 	 * @return String Classname of a {@link MultiFormStep} subclass
 	 */
 	public function getPreviousStep() {
-		$steps = DataObject::get('MultiFormStep', "SessionID = {$this->SessionID}", 'LastEdited DESC');
+		$steps = DataObject::get('MultiFormStep', "\"SessionID\" = {$this->SessionID}", '"LastEdited" DESC');
 		if($steps) {
 			foreach($steps as $step) {
 				if($step->getNextStep()) {
@@ -281,7 +281,7 @@ class MultiFormStep extends DataObject {
 	 */
 	public function getPreviousStepFromDatabase() {
 		if($prevStepClass = $this->getPreviousStep()) {
-			return DataObject::get_one($prevStepClass, "SessionID = {$this->SessionID}");
+			return DataObject::get_one($prevStepClass, "\"SessionID\" = {$this->SessionID}");
 		}
 	}
 	

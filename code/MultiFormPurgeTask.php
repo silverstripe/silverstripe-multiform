@@ -45,7 +45,7 @@ class MultiFormPurgeTask extends DailyTask {
 	protected function getExpiredSessions() {
 		return DataObject::get(
 			'MultiFormSession',
-			"DATEDIFF(NOW(), `MultiFormSession`.`Created`) > " . self::$session_expiry_days
+			"DATEDIFF(NOW(), \"MultiFormSession\".\"Created\") > " . self::$session_expiry_days
 		);
 	}
 	

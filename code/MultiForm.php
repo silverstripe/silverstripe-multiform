@@ -265,7 +265,7 @@ abstract class MultiForm extends Form {
 	function getSavedSteps() {
 		return DataObject::get(
 			'MultiFormStep', 
-			sprintf("SessionID = '%s'",
+			sprintf("\"SessionID\" = '%s'",
 				$this->session->ID
 			)
 		);
@@ -442,7 +442,7 @@ abstract class MultiForm extends Form {
 		}
 
 		// Get the previous step of the class instance returned from $currentStep->getPreviousStep()
-		$prevStep = DataObject::get_one($prevStepClass, "SessionID = {$this->session->ID}");
+		$prevStep = DataObject::get_one($prevStepClass, "\"SessionID\" = {$this->session->ID}");
 		
 		// Set the current step as the previous step
 		$this->setCurrentStep($prevStep);
@@ -501,7 +501,7 @@ abstract class MultiForm extends Form {
 	public function getAllStepsLinear() {
 		$stepsFound = new DataObjectSet();
 		
-		$firstStep = DataObject::get_one($this->stat('start_step'), "SessionID = {$this->session->ID}");
+		$firstStep = DataObject::get_one($this->stat('start_step'), "\"SessionID\" = {$this->session->ID}");
 		$templateData = array(
 			'ID' => $firstStep->ID,
 			'ClassName' => $firstStep->class,
@@ -571,7 +571,7 @@ abstract class MultiForm extends Form {
 	 * @return int
 	 */
 	public function getCompletedStepCount() {
-		$steps = DataObject::get('MultiFormStep', "SessionID = {$this->session->ID} && Data IS NOT NULL");
+		$steps = DataObject::get('MultiFormStep', "\"SessionID\" = {$this->session->ID} && \"Data\" IS NOT NULL");
 		return $steps ? $steps->Count() : 0;
 	}
 	

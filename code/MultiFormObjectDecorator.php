@@ -35,7 +35,7 @@ class MultiFormObjectDecorator extends DataObjectDecorator {
 			&& strpos($query->where[0], "ID = ") !== 0
 			&& !$this->wantsTemporary($query)
 		) {
-			$query->where[] = "`{$query->from[0]}`.`MultiFormIsTemporary` = 0"; 
+			$query->where[] = "\"{$query->from[0]}\".\"MultiFormIsTemporary\" = 0"; 
 		}
 	}
 	
@@ -49,7 +49,7 @@ class MultiFormObjectDecorator extends DataObjectDecorator {
 	 */
 	protected function wantsTemporary($query) {
 		foreach($query->where as $whereClause) {
-			if($whereClause == "`{$query->from[0]}`.`MultiFormIsTemporary` = 1") return true;
+			if($whereClause == "\"{$query->from[0]}\".\"MultiFormIsTemporary\" = 1") return true;
 		}
 		return false;
 	}
