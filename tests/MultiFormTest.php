@@ -41,12 +41,15 @@ class MultiFormTest extends FunctionalTest {
 	}
 	
 	function testMemberLogging() {
-		$this->session()->inst_set('loggedInAs', 1);
+		// Grab any user to fake being logged in as, and ensure that after a session is written it has
+		// that user as the submitter.
+		$userId = Member::get_one("Member")->ID;
+		$this->session()->inst_set('loggedInAs', $userId);
 		
 		$session = $this->form->session;
 		$session->write();
 		
-		$this->assertEquals(1, $session->SubmitterID);
+		$this->assertEquals($userId, $session->SubmitterID);
 	}
 	
 	function testSecondStep() {
