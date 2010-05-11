@@ -147,7 +147,7 @@ class MultiFormTest_StepTwo extends MultiFormStep implements TestOnly {
 }
 class MultiFormTest_StepThree extends MultiFormStep implements TestOnly {
 	
-	protected static $is_final_step = true;
+	public static $is_final_step = true;
 	
 	function getFields() {
 		return new FieldSet(
