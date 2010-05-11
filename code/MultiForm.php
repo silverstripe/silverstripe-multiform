@@ -315,19 +315,19 @@ abstract class MultiForm extends Form {
 		// If the form is at final step, create a submit button to perform final actions
 		// The last step doesn't have a next button, so add that action to any step that isn't the final one
 		if($step->isFinalStep()) {
-			$actions->push(new FormAction('finish', _t('MultiForm.SUBMIT', 'Submit')));
+			$actions->push(new FormAction('finish', $step->getSubmitText()));
 		} else {
-			$actions->push(new FormAction('next', _t('MultiForm.NEXT', 'Next')));
+			$actions->push(new FormAction('next', $step->getNextText()));
 		}
 		
 		// If there is a previous step defined, add the back button
 		if($step->getPreviousStep() && $step->canGoBack()) {
 			// If there is a next step, insert the action before the next action
 			if($step->getNextStep()) {
-				$actions->insertBefore(new FormAction('prev', _t('MultiForm.BACK', 'Back')), 'action_next');
+				$actions->insertBefore(new FormAction('prev', $step->getPrevText()), 'action_next');
 			// Assume that this is the last step, insert the action before the finish action
 			} else {
-				$actions->insertBefore(new FormAction('prev', _t('MultiForm.BACK', 'Back')), 'action_finish');
+				$actions->insertBefore(new FormAction('prev', $step->getPrevText()), 'action_finish');
 			}
 		}
 

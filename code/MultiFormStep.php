@@ -284,7 +284,31 @@ class MultiFormStep extends DataObject {
 			return DataObject::get_one($prevStepClass, "\"SessionID\" = {$this->SessionID}");
 		}
 	}
-	
+
+	/**
+	 * Get the text to the use on the button to the previous step.
+	 * @return string
+	 */
+	public function getPrevText() {
+		return _t('MultiForm.BACK', 'Back');
+	}
+
+	/**
+	 * Get the text to use on the button to the next step.
+	 * @return string
+	 */
+	public function getNextText() {
+		return _t('MultiForm.NEXT', 'Next');
+	}
+
+	/**
+	 * Get the text to use on the button to submit the form.
+	 * @return string
+	 */
+	public function getSubmitText() {
+		return _t('MultiForm.SUBMIT', 'Submit');
+	}
+
 	/**
 	 * Sets the form that this step is directly related to.
 	 *
