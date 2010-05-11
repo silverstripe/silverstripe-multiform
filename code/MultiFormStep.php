@@ -30,7 +30,7 @@ class MultiFormStep extends DataObject {
 	 *
 	 * @var array|string
 	 */
-	protected static $next_steps;
+	public static $next_steps;
 	
 	/**
 	 * Each {@link MultiForm} subclass needs at least
@@ -40,7 +40,7 @@ class MultiFormStep extends DataObject {
 	 *
 	 * @var boolean
 	 */
-	protected static $is_final_step = false;
+	public static $is_final_step = false;
 
 	/**
 	 * This variable determines whether a user can use

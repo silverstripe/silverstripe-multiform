@@ -123,7 +123,7 @@ class MultiFormTest_Form extends MultiForm implements TestOnly {
 }
 class MultiFormTest_StepOne extends MultiFormStep implements TestOnly {
 	
-	protected static $next_steps = 'MultiFormTest_StepTwo';
+	public static $next_steps = 'MultiFormTest_StepTwo';
 	
 	function getFields() {
 		return new FieldSet(
@@ -136,7 +136,7 @@ class MultiFormTest_StepOne extends MultiFormStep implements TestOnly {
 }
 class MultiFormTest_StepTwo extends MultiFormStep implements TestOnly {
 	
-	protected static $next_steps = 'MultiFormTest_StepThree';
+	public static $next_steps = 'MultiFormTest_StepThree';
 	
 	function getFields() {
 		return new FieldSet(
