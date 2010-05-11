@@ -35,7 +35,7 @@ abstract class MultiForm extends Form {
 	 *
 	 * @var string Classname of a {@link MultiFormStep} subclass
 	 */
-	protected static $start_step;
+	public static $start_step;
 	
 	/**
 	 * Set the casting for these fields.

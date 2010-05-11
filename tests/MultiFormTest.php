@@ -114,7 +114,7 @@ class MultiFormTest_Controller extends Controller implements TestOnly {
 }
 class MultiFormTest_Form extends MultiForm implements TestOnly {
 
-	protected static $start_step = 'MultiFormTest_StepOne';
+	public static $start_step = 'MultiFormTest_StepOne';
 	
 	function getStartStep() {
 		return $this->stat('start_step');
