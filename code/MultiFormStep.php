@@ -142,7 +142,7 @@ class MultiFormStep extends DataObject {
 	 * @return array
 	 */
 	public function loadData() {
-		return is_string($this->Data) ? unserialize($this->Data) : array();
+		return ($this->Data && is_string($this->Data)) ? unserialize($this->Data) : array();
 	}
 	
 	/**
