@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
-		<base href="$BaseHref"></base>
+		<base href="$AbsoluteBaseURL"></base>
 		<title>Test multiform controller</title>
 	</head>
 	<body>
