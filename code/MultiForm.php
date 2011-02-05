@@ -86,7 +86,12 @@ abstract class MultiForm extends Form {
 		if(isset($_GET['MultiFormSessionID'])) {
 			$this->setCurrentSessionHash($_GET['MultiFormSessionID']);
 		}
-		
+
+		// First set the controller and name manually so they are available for
+		// field construction.
+		$this->controller = $controller;
+		$this->name       = $name;
+
 		// Set up the session for this MultiForm instance
 		$this->setSession();
 
