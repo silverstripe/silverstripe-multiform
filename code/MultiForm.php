@@ -403,8 +403,11 @@ abstract class MultiForm extends Form {
 			return false;
 		}
 
-		// custom validation (use MultiFormStep->getValidator() for built-in functionality)
+		// Perform custom step validation (use MultiFormStep->getValidator() for
+		// built-in functionality). The data needs to be manually saved on error
+		// so the form is re-populated.
 		if(!$this->getCurrentStep()->validateStep($data, $form)) {
+			Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
 			Director::redirectBack();
 			return false;
 		}
