@@ -86,7 +86,12 @@ abstract class MultiForm extends Form {
 		if(isset($_GET['MultiFormSessionID'])) {
 			$this->setCurrentSessionHash($_GET['MultiFormSessionID']);
 		}
-		
+
+		// First set the controller and name manually so they are available for
+		// field construction.
+		$this->controller = $controller;
+		$this->name       = $name;
+
 		// Set up the session for this MultiForm instance
 		$this->setSession();
 
@@ -398,8 +403,11 @@ abstract class MultiForm extends Form {
 			return false;
 		}
 
-		// custom validation (use MultiFormStep->getValidator() for built-in functionality)
+		// Perform custom step validation (use MultiFormStep->getValidator() for
+		// built-in functionality). The data needs to be manually saved on error
+		// so the form is re-populated.
 		if(!$this->getCurrentStep()->validateStep($data, $form)) {
+			Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
 			Director::redirectBack();
 			return false;
 		}
