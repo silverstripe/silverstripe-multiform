@@ -114,7 +114,7 @@ class MultiFormStep extends DataObject {
 	 * @return string Title of this step
 	 */
 	public function getTitle() {
-		return $this->title;
+		return $this->title ? $this->title : $this->class;
 	}
 	
 	/**

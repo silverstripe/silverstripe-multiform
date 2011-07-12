@@ -544,20 +544,15 @@ abstract class MultiForm extends Form {
 	 * first step. We run {@link getAllStepsRecursive} passing the steps found
 	 * by reference to get a listing of the steps.
 	 *
-	 * @return DataObjectSet
+	 * @return DataObjectSet of MultiFormStep instances
 	 */
 	public function getAllStepsLinear() {
 		$stepsFound = (class_exists('ArrayList')) ? new ArrayList() : new DataObjectSet();
 		
 		$firstStep = DataObject::get_one($this->stat('start_step'), "\"SessionID\" = {$this->session->ID}");
-		$templateData = array(
-			'ID' => $firstStep->ID,
-			'ClassName' => $firstStep->class,
-			'Title' => $firstStep->title ? $firstStep->title : $firstStep->class,
-			'SessionID' => $this->session->Hash,
-			'LinkingMode' => ($firstStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link'
-		);
-		$stepsFound->push(new ArrayData($templateData));
+		$firstStep->LinkingMode = ($firstStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link';
+		$firstStep->setForm($this);
+		$stepsFound->push($firstStep);
 
 		$this->getAllStepsRecursive($firstStep, $stepsFound);
 		
@@ -574,31 +569,22 @@ abstract class MultiForm extends Form {
 	 * 
 	 * @param $step Subclass of MultiFormStep to find the next step of
 	 * @param $stepsFound $stepsFound DataObjectSet reference, the steps found to call back on
-	 * @return DataObjectSet
+	 * @return DataObjectSet of MultiFormStep instances
 	 */
 	protected function getAllStepsRecursive($step, &$stepsFound) {
 		// Find the next step to the current step, the final step has no next step
 		if(!$step->isFinalStep()) {
 			if($step->getNextStep()) {
 				// Is this step in the DB? If it is, we use that
-				if($nextStep = $step->getNextStepFromDatabase()) {
-					$record = array(
-						'ID' => $nextStep->ID,
-						'ClassName' => $nextStep->class,
-						'Title' => $nextStep->title ? $nextStep->title : $nextStep->class,
-						'SessionID' => $this->session->Hash,
-						'LinkingMode' => ($nextStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link'
-					);
-				} else {
+				$nextStep = $step->getNextStepFromDatabase();
+				if(!$nextStep) {
 					// If it's not in the DB, we use a singleton instance of it instead - this step hasn't been accessed yet
 					$nextStep = singleton($step->getNextStep());
-					$record = array(
-						'ClassName' => $nextStep->class,
-						'Title' => $nextStep->title ? $nextStep->title : $nextStep->class
-					);
-				}
+				} 
+				$nextStep->LinkingMode = ($nextStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link';
+				$nextStep->setForm($this);
 				// Add the array data, and do a callback
-				$stepsFound->push(new ArrayData($record));
+				$stepsFound->push($nextStep);
 				$this->getAllStepsRecursive($nextStep, $stepsFound);
 			}
 		// Once we've reached the final step, we just return what we've collected
