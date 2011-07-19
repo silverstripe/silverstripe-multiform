@@ -186,18 +186,22 @@ abstract class MultiForm extends Form {
 		if(!isset($startStepClass)) user_error('MultiForm::init(): Please define a $startStep on ' . $this->class, E_USER_ERROR);
 		
 		// Determine whether we use the current step, or create one if it doesn't exist
+		$currentStep = null;
 		if(isset($_GET['StepID'])) {
 			$stepID = (int)$_GET['StepID'];
 			$currentStep = DataObject::get_one('MultiFormStep', "\"SessionID\" = {$this->session->ID} AND \"ID\" = {$stepID}");
 		} elseif($this->session->CurrentStepID) {
 			$currentStep = $this->session->CurrentStep();
-		} else {
+		} 
+		
+		// Always fall back to creating a new step (in case the session or request data is invalid)
+		if(!$currentStep) {
 			$currentStep = new $startStepClass();
 			$currentStep->SessionID = $this->session->ID;
 			$currentStep->write();
 		}
 		
-		$currentStep->setForm($this);
+		if($currentStep) $currentStep->setForm($this);
 		
 		return $currentStep;
 	}
