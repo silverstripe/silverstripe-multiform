@@ -282,15 +282,13 @@ abstract class MultiForm extends Form {
 	 * If you want a full chain of steps regardless if they've already been saved
 	 * to the database, use {@link getAllStepsLinear()}.
 	 * 
+	 * @param String $filter SQL WHERE statement
 	 * @return DataObjectSet|boolean A set of MultiFormStep subclasses
 	 */
-	function getSavedSteps() {
-		return DataObject::get(
-			'MultiFormStep', 
-			sprintf("\"SessionID\" = '%s'",
-				$this->session->ID
-			)
-		);
+	function getSavedSteps($filter = null) {
+		$filter .= ($filter) ? ' AND ' : '';
+		$filter .= sprintf("\"SessionID\" = '%s'", $this->session->ID);
+		return DataObject::get('MultiFormStep', $filter);
 	}
 	
 	/**
