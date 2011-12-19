@@ -199,6 +199,8 @@ abstract class MultiForm extends Form {
 	 */
 	protected function setCurrentStep($step) {
 		$this->session->CurrentStepID = $step->ID;
+		$step->setForm($this);
+
 		return $this->session->write();
 	}
 	

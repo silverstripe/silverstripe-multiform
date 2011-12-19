@@ -263,6 +263,8 @@ class MultiFormStep extends DataObject {
 		$steps = DataObject::get('MultiFormStep', "\"SessionID\" = {$this->SessionID}", '"LastEdited" DESC');
 		if($steps) {
 			foreach($steps as $step) {
+				$step->setForm($this->form);
+
 				if($step->getNextStep()) {
 					if($step->getNextStep() == $this->class) {
 						return $step->class;
