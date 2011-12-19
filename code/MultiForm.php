@@ -199,6 +199,8 @@ abstract class MultiForm extends Form {
 	 */
 	protected function setCurrentStep($step) {
 		$this->session->CurrentStepID = $step->ID;
+		$step->setForm($this);
+
 		return $this->session->write();
 	}
 	
@@ -375,7 +377,13 @@ abstract class MultiForm extends Form {
 			Director::redirectBack();
 			return false;
 		}
-		
+
+		if(!$this->getCurrentStep()->validateStep($data, $form)) {
+			Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
+			Director::redirectBack();
+			return false;
+		}
+
 		// Save the form data for the current step
 		$this->save($data);
 	}
