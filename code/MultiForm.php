@@ -75,7 +75,12 @@ abstract class MultiForm extends Form {
 	public static $actions_exempt_from_validation = array(
 		'action_prev'
 	);
-	
+
+	/**
+	 * @var string
+	 */
+	protected $displayLink;
+
 	/**
 	 * Start the MultiForm instance.
 	 *
@@ -505,6 +510,29 @@ abstract class MultiForm extends Form {
 		$action .= "MultiFormSessionID={$this->session->Hash}";
 		
 		return $action;
+	}
+
+	/**
+	 * Returns the link to the page where the form is displayed. The user is
+	 * redirected to this link with a session param after each step is
+	 * submitted.
+	 *
+	 * @return string
+	 */
+	public function getDisplayLink() {
+		return $this->displayLink ? $this->displayLink : Controller::curr()->Link();
+	}
+
+	/**
+	 * Set the link to the page on which the form is displayed.
+	 *
+	 * The link defaults to the controllers current link. However if the form
+	 * is displayed inside an action the display link must be explicitly set.
+	 *
+	 * @param string $link
+	 */
+	public function setDisplayLink($link) {
+		$this->displayLink = $link;
 	}
 
 	/**
