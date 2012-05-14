@@ -302,27 +302,27 @@ abstract class MultiForm extends Form {
 	}
 
 	/**
-	 * Build a FieldSet of the FormAction fields for the given step.
-	 * 
+	 * Build a FieldList of the FormAction fields for the given step.
+	 *
 	 * If the current step is the final step, we push in a submit button, which
 	 * calls the action {@link finish()} to finalise the submission. Otherwise,
 	 * we push in a next button which calls the action {@link next()} to determine
 	 * where to go next in our step process, and save any form data collected.
-	 * 
+	 *
 	 * If there's a previous step (a step that has the current step as it's next
 	 * step class), then we allow a previous button, which calls the previous action
 	 * to determine which step to go back to.
-	 * 
+	 *
 	 * If there are any extra actions defined in MultiFormStep->getExtraActions()
 	 * then that set of actions is appended to the end of the actions FieldSet we
 	 * have created in this method.
-	 * 
+	 *
 	 * @param $currentStep Subclass of MultiFormStep
-	 * @return FieldSet of FormAction objects
+	 * @return FieldList of FormAction objects
 	 */
 	function actionsFor($step) {
 		// Create default multi step actions (next, prev), and merge with extra actions, if any
-		$actions = new FieldSet();
+		$actions = (class_exists('FieldList')) ? new FieldList() : new FieldSet();
 		
 		// If the form is at final step, create a submit button to perform final actions
 		// The last step doesn't have a next button, so add that action to any step that isn't the final one
@@ -543,7 +543,7 @@ abstract class MultiForm extends Form {
 	 * @return DataObjectSet
 	 */
 	public function getAllStepsLinear() {
-		$stepsFound = new DataObjectSet();
+		$stepsFound = (class_exists('ArrayList')) ? new ArrayList() : new DataObjectSet();
 		
 		$firstStep = DataObject::get_one($this->stat('start_step'), "\"SessionID\" = {$this->session->ID}");
 		$templateData = array(

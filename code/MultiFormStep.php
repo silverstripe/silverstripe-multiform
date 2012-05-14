@@ -75,11 +75,11 @@ class MultiFormStep extends DataObject {
 	/**
 	 * Form fields to be rendered with this step.
 	 * (Form object is created in {@link MultiForm}.
-	 * 
+	 *
 	 * This function needs to be implemented on your
 	 * subclasses of MultiFormStep.
 	 *
-	 * @return FieldSet
+	 * @return FieldList
 	 */
 	public function getFields() {
 		user_error('Please implement getFields on your MultiFormStep subclass', E_USER_ERROR);
@@ -88,14 +88,14 @@ class MultiFormStep extends DataObject {
 	/**
 	 * Additional form actions to be added to this step.
 	 * (Form object is created in {@link MultiForm}.
-	 * 
+	 *
 	 * Note: This is optional, and is to be implemented
 	 * on your subclasses of MultiFormStep.
-	 * 
-	 * @return FieldSet
+	 *
+	 * @return FieldList
 	 */
 	public function getExtraActions() {
-		return new FieldSet();
+		return (class_exists('FieldList')) ? new FieldList() : new FieldSet();
 	}
 	
 	/**
@@ -166,7 +166,7 @@ class MultiFormStep extends DataObject {
 	 * individually, rather than assuming that all data
 	 * serialized through {@link saveData()} can be saved
 	 * as a simple value outside of the original FormField context.
-	 * 
+	 *
 	 * @param DataObject $obj
 	 */
 	public function saveInto($obj) {
@@ -174,7 +174,7 @@ class MultiFormStep extends DataObject {
 			Controller::curr(),
 			'Form',
 			$this->getFields(),
-			new FieldSet()
+			((class_exists('FieldList')) ? new FieldList() : new FieldSet())
 		);
 		$form->loadDataFrom($this->loadData());
 		$form->saveInto($obj);
@@ -185,11 +185,11 @@ class MultiFormStep extends DataObject {
 	 * Custom validation for a step. In most cases, it should be sufficient
 	 * to have built-in validation through the {@link Validator} class
 	 * on the {@link getValidator()} method.
-	 * 
+	 *
 	 * Use {@link Form->sessionMessage()} to feed back validation messages
 	 * to the user. Please don't redirect from this method,
 	 * this is taken care of in {@link next()}.
-	 * 
+	 *
 	 * @param array $data Request data
 	 * @param Form $form
 	 * @return boolean Validation success

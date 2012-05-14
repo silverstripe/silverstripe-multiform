@@ -64,29 +64,10 @@ class MultiFormTest extends FunctionalTest {
 	function testTotalStepCount() {
 		$this->assertEquals(3, $this->form->getAllStepsLinear()->Count());
 	}
-	
-	// TODO Returns "page not found", doesn't test anything really
-	// function testStepTraversal() {
-	// 	$this->get($this->controller->class);
-	// 	
-	// 	$actionNextResponse = $this->submitForm('MultiFormTest_Form', 'action_next', array(
-	// 		'FirstName' => 'Joe',
-	// 		'Surname' => 'Bloggs',
-	// 		'Email' => 'joe@bloggs.com'
-	// 	));
-	// 	
-	// 	$this->assertEquals(200, $actionNextResponse->getStatusCode());
-	// 	$this->assertNotNull($actionNextResponse->getBody());
-	// 	
-	// 	$actionPrevResponse = $this->submitForm('MultiFormTest_Form', 'action_prev');
-	// 	
-	// 	$this->assertEquals(200, $actionPrevResponse->getStatusCode());
-	// 	$this->assertNotNull($actionPrevResponse->getBody());
-	// }
-	
+
 	function testCompletedSession() {
 		$this->form->setCurrentSessionHash($this->form->session->Hash);
-		$this->assertType('MultiFormSession', $this->form->getCurrentSession());
+		$this->assertInstanceOf('MultiFormSession', $this->form->getCurrentSession());
 		$this->form->session->markCompleted();
 		$this->assertFalse($this->form->getCurrentSession());
 	}
@@ -96,7 +77,7 @@ class MultiFormTest extends FunctionalTest {
 		$this->assertFalse($this->form->getCurrentSession());
 		
 		// A new session is generated, even though we made up the identifier
-		$this->assertType('MultiFormSession', $this->form->session);
+		$this->assertInstanceOf('MultiFormSession', $this->form->session);
 	}
 	
 }
@@ -127,7 +108,7 @@ class MultiFormTest_StepOne extends MultiFormStep implements TestOnly {
 	public static $next_steps = 'MultiFormTest_StepTwo';
 	
 	function getFields() {
-		return new FieldSet(
+		return new FieldList(
 			new TextField('FirstName', 'First name'),
 			new TextField('Surname', 'Surname'),
 			new EmailField('Email', 'Email address')
@@ -140,7 +121,7 @@ class MultiFormTest_StepTwo extends MultiFormStep implements TestOnly {
 	public static $next_steps = 'MultiFormTest_StepThree';
 	
 	function getFields() {
-		return new FieldSet(
+		return new FieldList(
 			new TextareaField('Comments', 'Tell us a bit about yourself...')
 		);
 	}
@@ -151,7 +132,7 @@ class MultiFormTest_StepThree extends MultiFormStep implements TestOnly {
 	public static $is_final_step = true;
 	
 	function getFields() {
-		return new FieldSet(
+		return new FieldList(
 			new TextField('Test', 'Anything else you\'d like to tell us?')
 		);
 	}
