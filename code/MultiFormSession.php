@@ -42,7 +42,7 @@ class MultiFormSession extends DataObject {
 	 */
 	public function onBeforeWrite() {
 		// save submitter if a Member is logged in
-		$currentMember = Member::currentMember();
+		$currentMember = Member::currentUser();
 		if(!$this->SubmitterID && $currentMember) $this->SubmitterID = $currentMember->ID;
 		
 		parent::onBeforeWrite();
