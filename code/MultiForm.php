@@ -121,7 +121,13 @@ abstract class MultiForm extends Form {
 		$applyValidation = true;
 
 		// Check if the $_REQUEST action that user clicked is an exempt one
-		$actionNames = Object::get_static(get_class($this),'actions_exempt_from_validation');
+		// if the Config class is available, use that instead of get_static() which is deprecated in SS 3.x
+		if(class_exists('Config')) {
+			$actionNames = Config::inst()->get(get_class($this), 'actions_exempt_from_validation', Config::FIRST_SET);
+		} else {
+			$actionNames = Object::get_static(get_class($this),'actions_exempt_from_validation');
+		}
+
 		if( $actionNames ) {
 			foreach( $actionNames as $exemptAction) {
 				if(!empty($_REQUEST[$exemptAction])) {
