@@ -385,13 +385,13 @@ abstract class MultiForm extends Form {
 	 */
 	public function finish($data, $form) {
 		if(!$this->getCurrentStep()->isFinalStep()) {
-			Director::redirectBack();
+			$this->controller->redirectBack();
 			return false;
 		}
 
 		if(!$this->getCurrentStep()->validateStep($data, $form)) {
 			Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
-			Director::redirectBack();
+			$this->controller->redirectBack();
 			return false;
 		}
 
@@ -418,7 +418,7 @@ abstract class MultiForm extends Form {
 		$nextStepClass = $this->getCurrentStep()->getNextStep();
 		
 		if(!$nextStepClass) {
-			Director::redirectBack();
+			$this->controller->redirectBack();
 			return false;
 		}
 
@@ -427,7 +427,7 @@ abstract class MultiForm extends Form {
 		// so the form is re-populated.
 		if(!$this->getCurrentStep()->validateStep($data, $form)) {
 			Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
-			Director::redirectBack();
+			$this->controller->redirectBack();
 			return false;
 		}
 
@@ -442,8 +442,7 @@ abstract class MultiForm extends Form {
 		$this->setCurrentStep($nextStep);
 		
 		// Redirect to the next step
-		Director::redirect($nextStep->Link());
-		return;
+		$this->controller->redirect($nextStep->Link());
 	}
 	
 	/**
@@ -464,7 +463,7 @@ abstract class MultiForm extends Form {
 		$prevStepClass = $this->getCurrentStep()->getPreviousStep();
 
 		if(!$prevStepClass && !$this->getCurrentStep()->canGoBack()) {
-			Director::redirectBack();
+			$this->controller->redirectBack();
 			return false;
 		}
 
@@ -475,8 +474,7 @@ abstract class MultiForm extends Form {
 		$this->setCurrentStep($prevStep);
 		
 		// Redirect to the previous step
-		Director::redirect($prevStep->Link());
-		return;
+		$this->controller->redirect($prevStep->Link());
 	}
 
 	/**
