@@ -34,14 +34,6 @@ SilverStripe 2.4 or higher is required.
 *  Automatically determine what to do at the end of the process, and where to save it
 *  Provide nicely presented URLs of each step (an enhancement, for the future)
 
-## Download
-
-*  [0.3](http://open.silverstripe.com/changeset/latest/modules/multiform/tags/0.3?old_path=/&filename=/modules/multiform/tags/0.3&format=zip) (Latest Release)
-
-*  [Daily Build](http://open.silverstripe.com/changeset/latest/modules/multiform/trunk?old_path=/&filename=/modules/multiform/trunk&format=zip) ("trunk")
-
-*Warning:* Whilst we try and ensure that the development version is relatively stable, there may be bugs in this copy, and a lack of testing to ensure that it works under all circumstances. Caution is advised if you are using this version. If you insist on using the development version, make sure you test your work well!
-
 Note: The *multiform* directory should sit in your SilverStripe project directory in the file system as a sibling of cms, jsparty and sapphire.
 
 ## Reporting bugs
