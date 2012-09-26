@@ -152,8 +152,8 @@ abstract class MultiForm extends Form {
 		
 		// If there is saved data for the current step, we load it into the form it here
 		//(CAUTION: loadData() MUST unserialize first!)
-		if($currentStep->loadData()) {
-			$this->loadDataFrom($currentStep->loadData());
+		if($data = $currentStep->loadData()) {
+			$this->loadDataFrom($data);
 		}
 		
 		// Disable security token - we tie a form to a session ID instead
