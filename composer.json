@@ -1,0 +1,20 @@
+{
+	"name": "silverstripe/multiform",
+	"description": "MultiForm is a module for Sapphire, allowing flow control for forms,and step process to be automatically determined based on configuration variables on each step class. It augments the existing Form class in Sapphire.",
+	"type": "silverstripe-module",
+	"keywords": ["silverstripe", "multiform"],
+	"authors": [
+	{
+		"name": "Sean Harvey",
+		"email": "sean@silverstripe.com"
+	},
+	{
+		"name": "Ingo Schommer",
+		"email": "ingo@silverstripe.com"
+	}
+	],
+	"require":
+	{
+		"silverstripe/framework": ">=2.4"
+	}
+}
