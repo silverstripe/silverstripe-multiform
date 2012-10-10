@@ -195,10 +195,13 @@ abstract class MultiForm extends Form {
 		} 
 		
 		// Always fall back to creating a new step (in case the session or request data is invalid)
-		if(!$currentStep) {
+		if(!$currentStep || !$currentStep->ID) {
 			$currentStep = new $startStepClass();
 			$currentStep->SessionID = $this->session->ID;
 			$currentStep->write();
+			$this->session->CurrentStepID = $currentStep->ID;
+			$this->session->write();
+			$this->session->flushCache();
 		}
 		
 		if($currentStep) $currentStep->setForm($this);
