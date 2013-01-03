@@ -108,7 +108,8 @@ class MultiFormTest_StepOne extends MultiFormStep implements TestOnly {
 	public static $next_steps = 'MultiFormTest_StepTwo';
 	
 	function getFields() {
-		return new FieldList(
+		$class = (class_exists('FieldList')) ? 'FieldList' : 'FieldSet';
+		return new $class(
 			new TextField('FirstName', 'First name'),
 			new TextField('Surname', 'Surname'),
 			new EmailField('Email', 'Email address')
@@ -121,7 +122,8 @@ class MultiFormTest_StepTwo extends MultiFormStep implements TestOnly {
 	public static $next_steps = 'MultiFormTest_StepThree';
 	
 	function getFields() {
-		return new FieldList(
+		$class = (class_exists('FieldList')) ? 'FieldList' : 'FieldSet';
+		return new $class(
 			new TextareaField('Comments', 'Tell us a bit about yourself...')
 		);
 	}
@@ -132,7 +134,8 @@ class MultiFormTest_StepThree extends MultiFormStep implements TestOnly {
 	public static $is_final_step = true;
 	
 	function getFields() {
-		return new FieldList(
+		$class = (class_exists('FieldList')) ? 'FieldList' : 'FieldSet';
+		return new $class(
 			new TextField('Test', 'Anything else you\'d like to tell us?')
 		);
 	}
