@@ -50,5 +50,3 @@ class MultiFormPurgeTask extends DailyTask {
 	}
 	
 }
-
-?>

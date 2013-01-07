@@ -66,5 +66,3 @@ class MultiFormSession extends DataObject {
 	}
 
 }
-
-?>

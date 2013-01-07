@@ -362,5 +362,3 @@ class MultiFormStep extends DataObject {
 	}
 	
 }
-
-?>

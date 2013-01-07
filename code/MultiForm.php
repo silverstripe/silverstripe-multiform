@@ -635,5 +635,3 @@ abstract class MultiForm extends Form {
 	}
 
 }
-
-?>
