@@ -14,7 +14,7 @@
  *
  * @package multiform
  */
-class MultiFormObjectDecorator extends DataObjectDecorator {
+class MultiFormObjectDecorator extends DataExtension {
 	
 	public function updateDBFields() {
 		return array(
@@ -55,5 +55,3 @@ class MultiFormObjectDecorator extends DataObjectDecorator {
 	}
 	
 }
-
-?>
