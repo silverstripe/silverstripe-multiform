@@ -1,0 +1,11 @@
+en:
+  MultiForm:
+    BACK: Terug
+    NEXT: Volgende
+    SUBMIT: Verzenden
+  MultiFormSession:
+    PLURALNAME: 'Multi Form Sessies'
+    SINGULARNAME: 'Multi Form Sessie'
+  MultiFormStep:
+    PLURALNAME: 'Multi Form Stappen'
+    SINGULARNAME: 'Multi Form Stap'
