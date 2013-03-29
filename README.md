@@ -1,5 +1,7 @@
 # MultiForm Module #
 
+[![Build Status](https://secure.travis-ci.org/silverstripe/silverstripe-multiform.png?branch=master)](http://travis-ci.org/silverstripe/silverstripe-multiform)
+
 ## Introduction ##
 
 MultiForm is a module for Sapphire, allowing flow control for forms, and step process to be
