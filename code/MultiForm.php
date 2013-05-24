@@ -436,6 +436,9 @@ abstract class MultiForm extends Form {
 			return false;
 		}
 
+		// validation succeeded so we reset it to remove errors and messages
+		$this->resetValidation();
+
 		// Determine whether we can use a step already in the DB, or have to create a new one
 		if(!$nextStep = DataObject::get_one($nextStepClass, "\"SessionID\" = {$this->session->ID}")) {
 			$nextStep = new $nextStepClass();
