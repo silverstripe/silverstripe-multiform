@@ -16,16 +16,13 @@
  */
 class MultiFormObjectDecorator extends DataExtension {
 	
-	public function updateDBFields() {
-		return array(
-			'db' => array(
-				'MultiFormIsTemporary' => 'Boolean',
-			),
-			'has_one' => array(
-				'MultiFormSession' => 'MultiFormSession',
-			)
-		);
-	}
+	private static $db = array(
+		'MultiFormIsTemporary' => 'Boolean',
+	);
+	
+	private static $has_one = array(
+		'MultiFormSession' => 'MultiFormSession',
+	);
 	
 	public function augmentSQL(SQLQuery &$query) {
 		// If you're querying by ID, ignore the sub-site - this is a bit ugly...
@@ -49,9 +46,11 @@ class MultiFormObjectDecorator extends DataExtension {
 	 */
 	protected function wantsTemporary($query) {
 		foreach($query->where as $whereClause) {
-			if($whereClause == "\"{$query->from[0]}\".\"MultiFormIsTemporary\" = 1") return true;
+			if($whereClause == "\"{$query->from[0]}\".\"MultiFormIsTemporary\" = 1") {
+				return true;
+			}
 		}
+
 		return false;
 	}
-	
 }
