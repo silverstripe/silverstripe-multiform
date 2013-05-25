@@ -99,7 +99,7 @@ class MultiFormTest_Form extends MultiForm implements TestOnly {
 	public static $start_step = 'MultiFormTest_StepOne';
 	
 	function getStartStep() {
-		return $this->stat('start_step');
+		return self::$start_step;
 	}
 
 }

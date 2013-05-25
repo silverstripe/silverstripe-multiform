@@ -11,11 +11,11 @@
  */
 class MultiFormStep extends DataObject {
 
-	static $db = array(
+	private static $db = array(
 		'Data' => 'Text' // stores serialized maps with all session information
 	);
 	
-	static $has_one = array(
+	private static $has_one = array(
 		'Session' => 'MultiFormSession'
 	);
 	
@@ -204,7 +204,7 @@ class MultiFormStep extends DataObject {
 	 * @return String Classname of a {@link MultiFormStep} subclass
 	 */
 	public function getNextStep() {
-		$nextSteps = $this->stat('next_steps');
+		$nextSteps = static::$next_steps;
 
 		// Check if next_steps have been implemented properly if not the final step
 		if(!$this->isFinalStep()) {
@@ -231,7 +231,8 @@ class MultiFormStep extends DataObject {
 	 */
 	public function getNextStepFromDatabase() {
 		if($this->SessionID && is_numeric($this->SessionID)) {
-			$nextSteps = $this->stat('next_steps');
+			$nextSteps = static::$next_steps;
+
 			if(is_string($nextSteps)) {
 				return DataObject::get_one($nextSteps, "\"SessionID\" = {$this->SessionID}");
 			} elseif(is_array($nextSteps)) {
@@ -248,7 +249,7 @@ class MultiFormStep extends DataObject {
 	 * @return string|array
 	 */
 	public function getNextSteps() {
-		return $this->stat('next_steps');
+		return static::$next_steps;
 	}
 	
 	/**
@@ -336,7 +337,7 @@ class MultiFormStep extends DataObject {
 	 * @return boolean
 	 */
 	public function canGoBack() {
-		return $this->stat('can_go_back');
+		return static::$can_go_back;
 	}
 	
 	/**
@@ -346,7 +347,7 @@ class MultiFormStep extends DataObject {
 	 * @return boolean
 	 */
 	public function isFinalStep() {
-		return $this->stat('is_final_step');
+		return static::$is_final_step;
 	}
 	
 	/**

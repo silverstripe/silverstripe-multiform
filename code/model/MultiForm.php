@@ -7,8 +7,9 @@
  * 
  * CAUTION: If you're using controller permission control,
  * you have to allow the following methods:
+ *
  * <code>
- * static $allowed_actions = array('next','prev');
+ * private static $allowed_actions = array('next','prev');
  * </code> 
  * 
  * @package multiform
@@ -120,13 +121,7 @@ abstract class MultiForm extends Form {
 		$validator = null;
 		$applyValidation = true;
 
-		// Check if the $_REQUEST action that user clicked is an exempt one
-		// if the Config class is available, use that instead of get_static() which is deprecated in SS 3.x
-		if(class_exists('Config')) {
-			$actionNames = Config::inst()->get(get_class($this), 'actions_exempt_from_validation', Config::FIRST_SET);
-		} else {
-			$actionNames = Object::get_static(get_class($this),'actions_exempt_from_validation');
-		}
+		$actionNames = static::$actions_exempt_from_validation;
 
 		if( $actionNames ) {
 			foreach( $actionNames as $exemptAction) {
@@ -180,7 +175,7 @@ abstract class MultiForm extends Form {
 	 * @return MultiFormStep subclass
 	 */
 	public function getCurrentStep() {
-		$startStepClass = $this->stat('start_step');
+		$startStepClass = static::$start_step;
 		
 		// Check if there was a start step defined on the subclass of MultiForm
 		if(!isset($startStepClass)) user_error('MultiForm::init(): Please define a $startStep on ' . $this->class, E_USER_ERROR);
@@ -498,7 +493,7 @@ abstract class MultiForm extends Form {
 		$currentStep = $this->getCurrentStep();
 		if(is_array($data)) {
 			foreach($data as $field => $value) {
-				if(in_array($field, $this->stat('ignored_fields'))) {
+				if(in_array($field, static::$ignored_fields)) {
 					unset($data[$field]);
 				}
 			}
@@ -557,7 +552,7 @@ abstract class MultiForm extends Form {
 	public function getAllStepsLinear() {
 		$stepsFound = (class_exists('ArrayList')) ? new ArrayList() : new DataObjectSet();
 		
-		$firstStep = DataObject::get_one($this->stat('start_step'), "\"SessionID\" = {$this->session->ID}");
+		$firstStep = DataObject::get_one(static::$start_step, "\"SessionID\" = {$this->session->ID}");
 		$firstStep->LinkingMode = ($firstStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link';
 		$firstStep->setForm($this);
 		$stepsFound->push($firstStep);
