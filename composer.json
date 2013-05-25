@@ -3,19 +3,14 @@
 	"description": "SilverStripe forms with multiple steps, flow control and state persistence",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "forms"],
-	"authors": [
-	{
+	"authors": [{
 		"name": "Ingo Schommer",
 		"email": "ingo@silverstripe.com"
-	},
-	{
+	}, {
 		"name": "Sean Harvey",
 		"email": "sean@silverstripe.com"
-	}
-	],
-
-	"require":
-	{
-		"silverstripe/framework": "3.*"
+	}],
+	"require": {
+		"silverstripe/framework": ">=3.1.x-dev,<4.0"
 	}
 }
