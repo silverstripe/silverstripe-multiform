@@ -11,11 +11,11 @@
  */
 class MultiFormStep extends DataObject {
 
-	private static $db = array(
+	public static $db = array(
 		'Data' => 'Text' // stores serialized maps with all session information
 	);
 	
-	private static $has_one = array(
+	public static $has_one = array(
 		'Session' => 'MultiFormSession'
 	);
 	
