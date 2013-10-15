@@ -5,8 +5,10 @@
  * 
  * Setup Instructions:
  * You need to create an automated task for your system (cronjobs on unix)
- * which triggers the run() method through cli-script.php:
- * /your/path/sapphire/cli-script.php MultiFormPurgeTask/run
+ * which triggers the process() method through cli-script.php:
+ * `php framework/cli-script.php MultiFormPurgeTask`
+ * or
+ * `framework/sake MultiFormPurgeTask`
  * 
  * @package multiform
  */
@@ -27,11 +29,12 @@ class MultiFormPurgeTask extends DailyTask {
 	 * are older than the days specified in $session_expiry_days
 	 * and delete them.
 	 */
-	public function run() {
+	public function process() {
 		$sessions = $this->getExpiredSessions();
 		$delCount = 0;
 		if($sessions) foreach($sessions as $session) {
-			if($session->delete()) $delCount++;
+			$session->delete();
+			$delCount++;
 		}
 		echo $delCount . ' session records deleted that were older than ' . self::$session_expiry_days . ' days.';
 	}
