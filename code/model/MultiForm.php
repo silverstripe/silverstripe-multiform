@@ -629,7 +629,7 @@ abstract class MultiForm extends Form {
 	 * @return float
 	 */
 	public function getCompletedPercent() {
-		return (float)$this->CompletedStepCount * 100 / $this->TotalStepCount;
+		return (float)$this->getCompletedStepCount() * 100 / $this->getTotalStepCount();
 	}
 
 }
