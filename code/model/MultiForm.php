@@ -191,7 +191,7 @@ abstract class MultiForm extends Form {
 		
 		// Always fall back to creating a new step (in case the session or request data is invalid)
 		if(!$currentStep || !$currentStep->ID) {
-			$currentStep = new $startStepClass();
+			$currentStep = Object::create($startStepClass);
 			$currentStep->SessionID = $this->session->ID;
 			$currentStep->write();
 			$this->session->CurrentStepID = $currentStep->ID;
@@ -436,7 +436,7 @@ abstract class MultiForm extends Form {
 
 		// Determine whether we can use a step already in the DB, or have to create a new one
 		if(!$nextStep = DataObject::get_one($nextStepClass, "\"SessionID\" = {$this->session->ID}")) {
-			$nextStep = new $nextStepClass();
+			$nextStep = Object::create($nextStepClass);
 			$nextStep->SessionID = $this->session->ID;
 			$nextStep->write();
 		}
