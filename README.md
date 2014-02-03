@@ -466,7 +466,7 @@ If you'd like a pre-existing template on how to customise the form step, have a
 look at Form.ss that's found within the sapphire module. Use that template, as 
 a base for your new MembershipForm.ss template in your project templates.
 
-For more information on this, please [look at the Form documentation](http://doc.silverstripe.org/framework/en/topics/forms#custom-form-templates) under "Using a custom template".
+For more information on this, please [look at the Form documentation](http://doc.silverstripe.org/framework/en/topics/forms#custom-form-templates).
 
 ### getNextStep()
 
