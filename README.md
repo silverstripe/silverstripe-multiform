@@ -18,7 +18,7 @@ individual implementation can be customized to the project requirements.
 
 ## Requirements
 
-SilverStripe 2.4 or higher is required.
+SilverStripe 3.1+.
 
 ## What it does do
 
@@ -70,17 +70,15 @@ before.
 If you are not familiar with SilverStripe, it is highly recommended you run 
 through the tutorials before attempting to start with this one.
 
-*  [View a listing of all available tutorials](/tutorials)
+*  [View a listing of all available tutorials](http://doc.silverstripe.org/tutorials)
 
 ### 1. Installing
 
-[Download a version of multiform](multiform#downloading). Install it as a 
-sibling of the top level directories (framework and cms) in your installation.
+Using [Composer](https://getcomposer.org/), you can install multiform into your
+SilverStripe site using this command (while in the directory where your site is
+currently located)
 
-If you use composer to manage your SilverStripe installation add the following
-line to your composer.json file
-
-	"silverstripe/multiform": "dev-master"
+	composer require "silverstripe/multiform:*"
 
 ### 2. Create subclass of MultiForm
 
@@ -93,8 +91,8 @@ site called "Bob's Chicken Shack" then a good name would be *BCSMultiForm*.
 This makes sense, as it is specific to the project that you're developing a 
 multi-form for.
 
-Keep in mind the PHP file you create must be in the mysite/code directory, and 
-the filename must be the same as the class name, with the .php extension.
+Keep in mind the PHP file you create must be in the `mysite/code` directory, and 
+the filename must be the same as the class name, with the `.php` extension.
 
 For the above example, our multi-form will be called *BCSMultiForm.php*
 
@@ -168,7 +166,7 @@ the `$start_step` variable *BCSMultiForm*, but we call it `$next_steps`.
 	}
 
 
-At the very least, each step also has to have a ''getFields()'' method returning 
+At the very least, each step also has to have a `getFields()` method returning 
 a *FieldSet* with some form field objects. These are the fields that the form 
 will render for the given step.
 
@@ -202,7 +200,7 @@ However, we've forgotten one thing. We need to create a method on a page-type so
 that the form can be rendered into a given template.
 
 So, if we want to render our multi-form as `$BCSMultiForm` in the *Page.ss* 
-template, we need to create a BCSMultiForm method (function) on Page_Controller:
+template, we need to create a BCSMultiForm method (function) on the controller:
 
 	:::php
 	<?php
@@ -233,7 +231,7 @@ template, we need to create a BCSMultiForm method (function) on Page_Controller:
 	}
 
 
-The BCSMultiForm() function will create a new instance our subclass of 
+The `BCSMultiForm()` function will create a new instance our subclass of 
 MultiForm, which in this example, is *BCSMultiForm*. This in turn will then set 
 up all the form fields, actions, and validation available to each step, as well 
 as the session.
@@ -260,7 +258,7 @@ Your template should look something like this, to render the form in:
 
 
 In this case, the above template example is a *sub-template* inside the *Layout* 
-directory for the templates. Note that we have also included ''$Form'', so 
+directory for the templates. Note that we have also included `$Form`, so 
 standard forms are still able to be used alongside our multi-step form.
 
 ### 6. Adding a step indicator
@@ -340,7 +338,7 @@ Now that we've got a structure set up to collect form data along each step, and
 progress through successfully, we need to customise what happens at the end of 
 the last step.
 
-On the final step, the ''finish()'' method is called to finalise all the data 
+On the final step, the `finish()` method is called to finalise all the data 
 from the steps we completed. This method can be found on *MultiForm*. However, 
 we cannot automatically save each step, because we don't know where to save it. 
 So, we must write some code on our subclass of *MultiForm*, overloading 
@@ -402,7 +400,7 @@ Here is an example of what we could do here:
 
 #### Organization
 
-The class Organisation() is mentioned in the above example but doesn't exist at 
+The class Organisation is mentioned in the above example but doesn't exist at 
 the moment (unlike the existing Member() class which looks after the member 
 groups in SilverStripe) so we need to create it:
 
@@ -468,7 +466,7 @@ If you'd like a pre-existing template on how to customise the form step, have a
 look at Form.ss that's found within the sapphire module. Use that template, as 
 a base for your new MembershipForm.ss template in your project templates.
 
-For more information on this, please [look at the Form documentation](/form#using_a_custom_template) under "Using a custom template".
+For more information on this, please [look at the Form documentation](http://doc.silverstripe.org/framework/en/topics/forms#custom-form-templates) under "Using a custom template".
 
 ### getNextStep()
 
@@ -499,7 +497,7 @@ step should be. An example:
 
 To define validation on a step-by-step basis, please define getValidator() and 
 return a Validator object, such as RequiredFields - for more information on form 
-validation see [:form](/form).
+validation see [:form](http://doc.silverstripe.org/form-validation).
 
 e.g.
 
@@ -589,12 +587,11 @@ You can run the task from the URL, by using http://mysite.com/MultiFormPurgeTask
 MultiFormPurgeTask is a subclass of *DailyTask*, so can be used alongside the 
 cli-script.php automated  tasks which are included with SilverStripe.
 
-One way of automatically running this on a UNIX based machine is by cron. For 
-more information, see [:scheduledtask](/scheduledtask) for more information.
+One way of automatically running this on a UNIX based machine is by cron.
 
 ## TODO
 
-*  Code example on how to use ''$form->saveInto()'' with MultiForm, as it doesn't have all steps in the $form context at ''finish()''
+*  Code example on how to use `$form->saveInto()` with MultiForm, as it doesn't have all steps in the $form context at `finish()`
 
 *  Allowing a user to click a link, and have an email sent to them with the current state, so they can come back and use the form exactly where they left off
 
@@ -602,18 +599,17 @@ more information, see [:scheduledtask](/scheduledtask) for more information.
 
 *  Different presentation of the URL to identify each step.
 
-*  Allow customisation of ''prev()'' and ''next()'' on each step. Currently you can only customise for the entire MultiForm subclass. There is a way to customise on a per step basis, which could be described in a small recipe.
+*  Allow customisation of `prev()` and `next()` on each step. Currently you can only customise for the entire MultiForm subclass. There is a way to customise on a per step basis, which could be described in a small recipe.
 
-*  More detailed explanation, and recipe example on how to make branched multistep forms. For example, clicking a different action takes you to an alternative next step than the one defined in ''$next_steps''
+*  More detailed explanation, and recipe example on how to make branched multistep forms. For example, clicking a different action takes you to an alternative next step than the one defined in `$next_steps`
 
 
 ## Related
 
 *  [Form](/form)
-     * [Form field types](/form-field-types)
-     * [Form recipes](recipes/forms)
+     * [Form field types](http://doc.silverstripe.org/form-field-types)
 
 *  [Tutorials](/tutorials)
-     * [Tutorial 3 - Forms](tutorial/3-forms)
+     * [Tutorial 3 - Forms](http://doc.silverstripe.org/framework/en/tutorials/3-forms)
 
-*  [Templates](/templates)
+*  [Templates](http://doc.silverstripe.org/framework/en/reference/templates)
