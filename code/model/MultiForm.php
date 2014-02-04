@@ -178,7 +178,7 @@ abstract class MultiForm extends Form {
 		$startStepClass = static::$start_step;
 		
 		// Check if there was a start step defined on the subclass of MultiForm
-		if(!isset($startStepClass)) user_error('MultiForm::init(): Please define a $startStep on ' . $this->class, E_USER_ERROR);
+		if(!isset($startStepClass)) user_error('MultiForm::init(): Please define a $start_step on ' . $this->class, E_USER_ERROR);
 		
 		// Determine whether we use the current step, or create one if it doesn't exist
 		$currentStep = null;

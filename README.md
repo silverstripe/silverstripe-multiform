@@ -39,7 +39,8 @@ means you can build extended security or logging.
 *  Basic flexibility on the URL presented to the user when they are using the 
 forms. By default it stores an encrypted hash of the session in the URL, but you 
 can reference it by the ID instead. It's recommend that additional security, 
-such as checking the user who first started the session be applied if you want to reference by ID.
+such as checking the user who first started the session be applied if you want 
+to reference by ID.
 
 ## What it doesn't do
 
@@ -133,7 +134,7 @@ is the first step.
 	
 	class BCSMultiForm extends MultiForm {
 	
-	   private static $start_step = 'BCSPersonalDetailsFormStep';
+		public static $start_step = 'BCSPersonalDetailsFormStep';
 	
 	}
 
@@ -154,14 +155,14 @@ the `$start_step` variable *BCSMultiForm*, but we call it `$next_steps`.
 	
 	class BCSPersonalDetailsFormStep extends MultiFormStep {
 	
-	   private static $next_steps = 'BCSOrganisationDetailsFormStep';
-		
-	   function getFields() {
-	      return new FieldSet(
-	         new TextField('FirstName', 'First name'),
-	         new TextField('Surname', 'Surname')
-	      );
-	   }
+		public static $next_steps = 'BCSOrganisationDetailsFormStep';
+
+		function getFields() {
+			return new FieldList(
+				new TextField('FirstName', 'First name'),
+				new TextField('Surname', 'Surname')
+			);
+		}
 	
 	}
 
@@ -182,7 +183,7 @@ BCSOrganisationDetailsFormStep, then we can do something like this:
 	
 	class BCSOrganisationDetailsFormStep extends MultiFormStep {
 	
-	   private static $is_final_step = true;
+		public static $is_final_step = true;
 	
 	}
 
@@ -214,17 +215,23 @@ template, we need to create a BCSMultiForm method (function) on the controller:
 	class Page_Controller extends ContentController {
 	
 	// ...
-	
-	   function BCSMultiForm() {
-	      return new BCSMultiForm($this, 'BCSMultiForm');
-	   }
-	
-	   function finished() {
-	      return array(
-	         'Title' => 'Thank you for your submission',
-	         'Content' => `<p>`You have successfully submitted the form!`</p>`
-	      );
-	   }
+
+		// 
+		private static $allowed_actions = array(
+			'BCSMultiForm',
+			'finished'
+		);
+
+		public function BCSMultiForm() {
+			return new BCSMultiForm($this, 'Form');
+		}
+		
+		public function finished() {
+			return array(
+				'Title' => 'Thank you for your submission',
+				'Content' => '<p>You have successfully submitted the form!</p>'
+			);
+		}
 	
 	// ...
 	
@@ -351,7 +358,7 @@ Here is an example of what we could do here:
 	 
 	class BCSMultiForm extends MultiForm {
 	 
-	   private static $start_step = 'BCSPersonalDetailsForm';
+	   public static $start_step = 'BCSPersonalDetailsForm';
 	 
 	   public function finish($data, $form) {
 	      parent::finish($data, $form);
@@ -536,7 +543,7 @@ For example:
 	
 	class BCSMultiForm extends MultiForm {
 	
-	   private static $start_step = 'BCSPersonalDetailsForm';
+	   public static $start_step = 'BCSPersonalDetailsForm';
 	
 	   public function finish($data, $form) {
 	      parent::finish($data, $form);
