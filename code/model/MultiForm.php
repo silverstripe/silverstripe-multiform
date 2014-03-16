@@ -335,17 +335,17 @@ abstract class MultiForm extends Form {
 		if($step->isFinalStep()) {
 			$actions->push(new FormAction('finish', $step->getSubmitText()));
 		} else {
-			$actions->push(new FormAction('next', $step->getNextText()));
+			$actions->push(new FormAction('next', $step::$next_button_text));
 		}
 		
 		// If there is a previous step defined, add the back button
 		if($step->getPreviousStep() && $step->canGoBack()) {
 			// If there is a next step, insert the action before the next action
 			if($step->getNextStep()) {
-				$actions->insertBefore(new FormAction('prev', $step->getPrevText()), 'action_next');
+				$actions->insertBefore(new FormAction('prev', $step::$previous_button_text), 'action_next');
 			// Assume that this is the last step, insert the action before the finish action
 			} else {
-				$actions->insertBefore(new FormAction('prev', $step->getPrevText()), 'action_finish');
+				$actions->insertBefore(new FormAction('prev', $step::$previous_button_text), 'action_finish');
 			}
 		}
 

@@ -71,7 +71,22 @@ class MultiFormStep extends DataObject {
 	 * @var MultiForm subclass
 	 */
 	protected $form;
-	
+
+    /**
+     * Title of the next button (For next step)
+     *
+     * @var string
+     */
+    static $next_button_text = 'Next';
+
+    /**
+     * Title of the previous button (For previous step)
+     *
+     * @var string
+     */
+    static $previous_button_text = 'Back';
+
+
 	/**
 	 * Form fields to be rendered with this step.
 	 * (Form object is created in {@link MultiForm}.
