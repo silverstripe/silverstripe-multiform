@@ -83,24 +83,14 @@ currently located)
 
 ### 2. Create subclass of MultiForm
 
-First of all, we need to create a new subclass of *MultiForm*, which can be 
-called anything.
+First of all, we need to create a new subclass of *MultiForm*.
 
-A suggestion for a good name, is an abbreviation of the project this multi-form 
-is for, with "MultiForm" appended to the end. For example, if I was doing a 
-site called "Bob's Chicken Shack" then a good name would be *BCSMultiForm*. 
-This makes sense, as it is specific to the project that you're developing a 
-multi-form for.
-
-Keep in mind the PHP file you create must be in the `mysite/code` directory, and 
-the filename must be the same as the class name, with the `.php` extension.
-
-For the above example, our multi-form will be called *BCSMultiForm.php*
+For the above example, our multi-form will be called *SurveyForm*
 
 	:::php
 	<?php
 	
-	class BCSMultiForm extends MultiForm {
+	class SurveyForm extends MultiForm {
 	
 	}
 
@@ -120,21 +110,21 @@ personal details of the form user, then we might have this class:
 	:::php
 	<?php
 	
-	class BCSPersonalDetailsFormStep extends MultiFormStep {
+	class SurveyFormPersonalDetailsStep extends MultiFormStep {
 	
 	}
 
 
 Now that we've got our first step of the form defined, we need to go back to our 
-subclass of MultiForm, BCSMultiForm, and tell it that BCSPersonalDetailsFormStep 
+subclass of MultiForm, SurveyForm, and tell it that SurveyFormPersonalDetailsStep 
 is the first step.
 
 	:::php
 	<?php
 	
-	class BCSMultiForm extends MultiForm {
+	class SurveyForm extends MultiForm {
 	
-		public static $start_step = 'BCSPersonalDetailsFormStep';
+		public static $start_step = 'SurveyFormPersonalDetailsStep';
 	
 	}
 
@@ -148,16 +138,16 @@ To get more than one step, each step needs to know what it's next step is in
 order to use flow control in our system.
 
 To let the step know what step is next in the process, we do the same as setting 
-the `$start_step` variable *BCSMultiForm*, but we call it `$next_steps`.
+the `$start_step` variable *SurveyForm*, but we call it `$next_steps`.
 
 	:::php
 	<?php
 	
-	class BCSPersonalDetailsFormStep extends MultiFormStep {
+	class SurveyFormPersonalDetailsStep extends MultiFormStep {
 	
-		public static $next_steps = 'BCSOrganisationDetailsFormStep';
+		public static $next_steps = 'SurveyFormOrganisationDetailsStep';
 
-		function getFields() {
+		public function getFields() {
 			return new FieldList(
 				new TextField('FirstName', 'First name'),
 				new TextField('Surname', 'Surname')
@@ -176,12 +166,12 @@ final, and needs to have another variable set to let the multi-form system know
 this is the final step.
 
 So, if we assume that the last step in our process is 
-BCSOrganisationDetailsFormStep, then we can do something like this:
+SurveyFormOrganisationDetailsStep, then we can do something like this:
 
 	:::php
 	<?php
 	
-	class BCSOrganisationDetailsFormStep extends MultiFormStep {
+	class SurveyFormOrganisationDetailsStep extends MultiFormStep {
 	
 		public static $is_final_step = true;
 	
@@ -200,8 +190,8 @@ may receive errors.*
 However, we've forgotten one thing. We need to create a method on a page-type so 
 that the form can be rendered into a given template.
 
-So, if we want to render our multi-form as `$BCSMultiForm` in the *Page.ss* 
-template, we need to create a BCSMultiForm method (function) on the controller:
+So, if we want to render our multi-form as `$SurveyForm` in the *Page.ss* 
+template, we need to create a SurveyForm method (function) on the controller:
 
 	:::php
 	<?php
@@ -218,12 +208,12 @@ template, we need to create a BCSMultiForm method (function) on the controller:
 
 		// 
 		private static $allowed_actions = array(
-			'BCSMultiForm',
+			'SurveyForm',
 			'finished'
 		);
 
-		public function BCSMultiForm() {
-			return new BCSMultiForm($this, 'Form');
+		public function SurveyForm() {
+			return new SurveyForm($this, 'Form');
 		}
 		
 		public function finished() {
@@ -238,27 +228,27 @@ template, we need to create a BCSMultiForm method (function) on the controller:
 	}
 
 
-The `BCSMultiForm()` function will create a new instance our subclass of 
-MultiForm, which in this example, is *BCSMultiForm*. This in turn will then set 
+The `SurveyForm()` function will create a new instance our subclass of 
+MultiForm, which in this example, is *SurveyForm*. This in turn will then set 
 up all the form fields, actions, and validation available to each step, as well 
 as the session.
 
-You can of course, put the *BCSMultiForm* method on any controller class you 
+You can of course, put the *SurveyForm* method on any controller class you 
 like.
 
 Your template should look something like this, to render the form in:
 
 	:::html
 	<div id="content">
-		<% if Content %>
+		<% if $Content %>
 			$Content
 		<% end_if %>
 		
-		<% if BCSMultiForm %>
-			$BCSMultiForm
+		<% if $SurveyForm %>
+			$SurveyForm
 		<% end_if %>
 		
-		<% if Form %>
+		<% if $Form %>
 			$Form
 		<% end_if %>
 	</div>
@@ -288,31 +278,31 @@ To include these with our instance of multiform, we just need to add an
 For example:
 
 	:::html
-	<% with BCSMultiForm %>
+	<% with $SurveyForm %>
 		<% include MultiFormProgressList %>
 	<% end_with %>
 
 
 This means the included template is rendered within the scope of the 
-BCSMultiForm instance returned, instead of the top level controller context. 
+SurveyForm instance returned, instead of the top level controller context. 
 This gives us the data to show the progression of the steps.
 
 Putting it together, we might have something looking like this:
 
 	:::html
 	<div id="content">
-		<% if Content %>
+		<% if $Content %>
 			$Content
 		<% end_if %>
 		
-		<% if BCSMultiForm %>
-			<% with BCSMultiForm %>
+		<% if $SurveyForm %>
+			<% with $SurveyForm %>
 				<% include MultiFormProgressList %>
 			<% end_with %>
 
-			$BCSMultiForm
+			$SurveyForm
 		<% end_if %>
-		<% if Form %>
+		<% if $Form %>
 			$Form
 		<% end_if %>
 	</div>
@@ -334,7 +324,7 @@ The default progress indicators make use of the above functions in the
 templates.
 
 To use a custom method of your own, simply create a new method on your subclass 
-of MultiForm. In this example, *BCSMultiForm* would be the one to customise. 
+of MultiForm. In this example, *SurveyForm* would be the one to customise. 
 This new method you create would then become available in the progress indicator
 template.
 
@@ -356,9 +346,9 @@ Here is an example of what we could do here:
 	:::php
 	<?php
 	 
-	class BCSMultiForm extends MultiForm {
+	class SurveyForm extends MultiForm {
 	 
-	   public static $start_step = 'BCSPersonalDetailsForm';
+	   public static $start_step = 'SurveyFormPersonalDetailsStep';
 	 
 	   public function finish($data, $form) {
 	      parent::finish($data, $form);
@@ -370,7 +360,7 @@ Here is an example of what we could do here:
 	      
 	      if($steps) {
 	         foreach($steps as $step) {
-	            if($step->class == 'BCSPersonalDetailsFormStep') {
+	            if($step->class == 'SurveyFormPersonalDetailsStep') {
 	               $member = new Member();
 	               $data = $step->loadData();
 
@@ -380,7 +370,7 @@ Here is an example of what we could do here:
 	               }
 	            }
 	
-	            if($step->class == 'BCSOrganisationDetailsFormStep') {
+	            if($step->class == 'SurveyOrganisationDetailsStep') {
 	               $organisation = new Organisation();
 	               $data = $step->loadData();
 
@@ -399,20 +389,19 @@ Here is an example of what we could do here:
 	         }
 	      }
 
-	      $controller = $this->getController();
-	      $controller->redirect($controller->Link() . 'finished');
+	      $this->controller->redirect($controller->Link() . 'finished');
 	   }
 	}
 
 
-#### Organization
+#### 8. Organisation data model
 
 The class Organisation is mentioned in the above example but doesn't exist at 
 the moment (unlike the existing Member() class which looks after the member 
 groups in SilverStripe) so we need to create it:
 
-(I have chosen in this example to create Organisation as a separate DataObject 
-but you may wish to change the code and add the data to the Member class).
+This example has been chosen as a separate DataObject but you may wish to change
+the code and add the data to the Member class instead.
 
 	:::php
 	<?php
@@ -541,9 +530,9 @@ For example:
 	:::php
 	<?php
 	
-	class BCSMultiForm extends MultiForm {
+	class SurveyForm extends MultiForm {
 	
-	   public static $start_step = 'BCSPersonalDetailsForm';
+	   public static $start_step = 'SurveyFormPersonalDetailsStep';
 	
 	   public function finish($data, $form) {
 	      parent::finish($data, $form);
