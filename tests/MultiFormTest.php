@@ -91,7 +91,7 @@ class MultiFormTest extends FunctionalTest {
 			session ID parameter");
 
 		Config::unnest();
-	}
+}
 	
 }
 
@@ -143,7 +143,7 @@ class MultiFormTest_StepOne extends MultiFormStep implements TestOnly {
 		);
 	}
 }
-
+	
 /**
  * @package multiform
  * @subpackage tests
@@ -159,7 +159,7 @@ class MultiFormTest_StepTwo extends MultiFormStep implements TestOnly {
 		);
 	}
 }
-
+	
 /**
  * @package multiform
  * @subpackage tests

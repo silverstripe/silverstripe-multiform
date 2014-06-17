@@ -1,0 +1,10 @@
+MultiFormObjectDecorator_DataObject:
+  test-data-1:
+    Name: Test 1
+    MultiFormIsTemporary: 0
+  test-data-2:
+    Name: Test 2
+    MultiFormIsTemporary: 0
+  test-data-3:
+    Name: Test 3
+    MultiFormIsTemporary: 1
