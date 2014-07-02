@@ -69,18 +69,22 @@ class MultiFormTest extends FunctionalTest {
 		$this->form->setCurrentSessionHash($this->form->session->Hash);
 		$this->assertInstanceOf('MultiFormSession', $this->form->getCurrentSession());
 		$this->form->session->markCompleted();
-		$this->assertFalse($this->form->getCurrentSession());
+		$this->assertNull($this->form->getCurrentSession());
 	}
 	
 	function testIncorrectSessionIdentifier() {
 		$this->form->setCurrentSessionHash('sdfsdf3432325325sfsdfdf'); // made up!
-		$this->assertFalse($this->form->getCurrentSession());
 		
 		// A new session is generated, even though we made up the identifier
 		$this->assertInstanceOf('MultiFormSession', $this->form->session);
 	}
 	
 }
+
+/**
+ * @package multiform
+ * @subpackage tests
+ */
 class MultiFormTest_Controller extends Controller implements TestOnly {
 
 	function Link() {
@@ -92,8 +96,12 @@ class MultiFormTest_Controller extends Controller implements TestOnly {
 		$form->setHTMLID('MultiFormTest_Form');
 		return $form;
 	}
-
 }
+
+/**
+ * @package multiform
+ * @subpackage tests
+ */
 class MultiFormTest_Form extends MultiForm implements TestOnly {
 
 	public static $start_step = 'MultiFormTest_StepOne';
@@ -103,6 +111,11 @@ class MultiFormTest_Form extends MultiForm implements TestOnly {
 	}
 
 }
+
+/**
+ * @package multiform
+ * @subpackage tests
+ */
 class MultiFormTest_StepOne extends MultiFormStep implements TestOnly {
 	
 	public static $next_steps = 'MultiFormTest_StepTwo';
@@ -115,8 +128,12 @@ class MultiFormTest_StepOne extends MultiFormStep implements TestOnly {
 			new EmailField('Email', 'Email address')
 		);
 	}
-	
 }
+
+/**
+ * @package multiform
+ * @subpackage tests
+ */
 class MultiFormTest_StepTwo extends MultiFormStep implements TestOnly {
 	
 	public static $next_steps = 'MultiFormTest_StepThree';
@@ -127,8 +144,12 @@ class MultiFormTest_StepTwo extends MultiFormStep implements TestOnly {
 			new TextareaField('Comments', 'Tell us a bit about yourself...')
 		);
 	}
-	
 }
+
+/**
+ * @package multiform
+ * @subpackage tests
+ */
 class MultiFormTest_StepThree extends MultiFormStep implements TestOnly {
 	
 	public static $is_final_step = true;

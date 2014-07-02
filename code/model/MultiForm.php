@@ -89,10 +89,6 @@ abstract class MultiForm extends Form {
 	 * @param string $name The form name, typically the same as the method name
 	 */
 	public function __construct($controller, $name) {
-		if(isset($_GET['MultiFormSessionID'])) {
-			$this->setCurrentSessionHash($_GET['MultiFormSessionID']);
-		}
-
 		// First set the controller and name manually so they are available for
 		// field construction.
 		$this->controller = $controller;
@@ -222,7 +218,7 @@ abstract class MultiForm extends Form {
 	 * 
 	 * @return MultiFormSession
 	 */
-	function getSession() {
+	public function getSession() {
 		return $this->session;
 	}
 	
@@ -244,7 +240,6 @@ abstract class MultiForm extends Form {
 		// If there was no session found, create a new one instead
 		if(!$this->session) {
 			$this->session = new MultiFormSession();
-			$this->session->write();
 		}
 		
 		// Create encrypted identification to the session instance if it doesn't exist
@@ -260,18 +255,30 @@ abstract class MultiForm extends Form {
 	 * 
 	 * @param string $hash Encrypted identification to session
 	 */
-	function setCurrentSessionHash($hash) {
+	public function setCurrentSessionHash($hash) {
 		$this->currentSessionHash = $hash;
+		$this->setSession();
 	}
 	
 	/**
 	 * Return the currently used {@link MultiFormSession}
 	 * @return MultiFormSession|boolean FALSE
 	 */
-	function getCurrentSession() {
-		if(!$this->currentSessionHash) return false;
-		$SQL_hash = Convert::raw2sql($this->currentSessionHash);
-		return DataObject::get_one('MultiFormSession', "\"Hash\" = '$SQL_hash' AND \"IsComplete\" = 0");
+	public function getCurrentSession() {
+		if(!$this->currentSessionHash) {
+			$this->currentSessionHash = $this->controller->request->getVar('MultiFormSessionID');
+
+			if(!$this->currentSessionHash) {
+				return false;
+			}
+		}
+
+		$this->session = MultiFormSession::get()->filter(array(
+			"Hash" => $this->currentSessionHash,
+			"IsComplete" => 0
+		))->first();
+
+		return $this->session;
 	}
 	
 	/**
