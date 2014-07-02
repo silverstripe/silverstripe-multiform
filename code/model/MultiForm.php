@@ -43,7 +43,7 @@ abstract class MultiForm extends Form {
 	 *
 	 * @var array
 	 */
-	public static $casting = array(
+	private static $casting = array(
 		'CompletedStepCount' => 'Int',
 		'TotalStepCount' => 'Int',
 		'CompletedPercent' => 'Float'
