@@ -391,6 +391,9 @@ abstract class MultiForm extends Form {
 	 * @param object $form The form that the action was called on
 	 */
 	public function finish($data, $form) {
+		// Save the form data for the current step
+		$this->save($data);
+
 		if(!$this->getCurrentStep()->isFinalStep()) {
 			$this->controller->redirectBack();
 			return false;
@@ -402,8 +405,6 @@ abstract class MultiForm extends Form {
 			return false;
 		}
 
-		// Save the form data for the current step
-		$this->save($data);
 	}
 	
 	/**
