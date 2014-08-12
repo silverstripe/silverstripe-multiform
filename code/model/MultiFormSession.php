@@ -12,17 +12,17 @@
  */
 class MultiFormSession extends DataObject {
 	
-	public static $db = array(
+	private static $db = array(
 		'Hash' => 'Varchar(40)', 	// cryptographic hash identification to this session
 		'IsComplete' => 'Boolean'	// flag to determine if this session is marked completed
 	);
 	
-	public static $has_one = array(
+	private static $has_one = array(
 		'Submitter' => 'Member',
 		'CurrentStep' => 'MultiFormStep'
 	);
 
-	public static $has_many = array(
+	private static $has_many = array(
 		'FormSteps' => 'MultiFormStep'
 	);
 	
