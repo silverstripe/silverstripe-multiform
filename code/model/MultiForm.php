@@ -372,13 +372,17 @@ abstract class MultiForm extends Form {
 	 * @return SSViewer object to render the template with
 	 */
 	function forTemplate() {
-		return $this->renderWith(array(
+		$return = $this->renderWith(array(
 			$this->getCurrentStep()->class,
 			'MultiFormStep',
 			$this->class,
 			'MultiForm',
 			'Form'
 		));
+
+		$this->clearMessage();
+
+		return $return;
 	}
 	
 	/**
