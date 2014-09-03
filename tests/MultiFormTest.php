@@ -78,7 +78,7 @@ class MultiFormTest extends FunctionalTest {
 		// A new session is generated, even though we made up the identifier
 		$this->assertInstanceOf('MultiFormSession', $this->form->session);
 	}
-	
+
 }
 
 /**
