@@ -24,7 +24,7 @@ class MultiFormObjectDecorator extends DataExtension {
 		'MultiFormSession' => 'MultiFormSession',
 	);
 	
-	public function augmentSQL(SQLQuery &$query) {
+	public function augmentSQL(SQLSelect $query) {
 		// If you're querying by ID, ignore the sub-site - this is a bit ugly...
 		if(
 			strpos($query->where[0], ".`ID` = ") === false 
