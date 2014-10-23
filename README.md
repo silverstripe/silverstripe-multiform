@@ -578,10 +578,9 @@ task can be used to purge expired session data on a regular basis. The date of
 expiry can be customised, and is given a default of 7 days to delete sessions 
 after their creation.
 
-You can run the task from the URL, by using http://mysite.com/MultiFormPurgeTask/run
+You can run the task from the URL, by using http://mysite.com/dev/tasks/MultiFormPurgeTask?flush=1
 
-MultiFormPurgeTask is a subclass of *DailyTask*, so can be used alongside the 
-cli-script.php automated  tasks which are included with SilverStripe.
+MultiFormPurgeTask is a subclass of *BuildTask*, so can be , so can be run using the [SilverStripe CLI tools](http://doc.silverstripe.org/framework/en/topics/commandline).
 
 One way of automatically running this on a UNIX based machine is by cron.
 
