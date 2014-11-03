@@ -12,7 +12,7 @@
  * 
  * @package multiform
  */
-class MultiFormPurgeTask extends DailyTask {
+class MultiFormPurgeTask extends BuildTask {
 	
 	/**
 	 * Days after which sessions expire and
@@ -29,7 +29,7 @@ class MultiFormPurgeTask extends DailyTask {
 	 * are older than the days specified in $session_expiry_days
 	 * and delete them.
 	 */
-	public function process() {
+	public function run($request) {
 		$sessions = $this->getExpiredSessions();
 		$delCount = 0;
 		if($sessions) foreach($sessions as $session) {
