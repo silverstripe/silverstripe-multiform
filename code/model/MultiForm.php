@@ -349,11 +349,13 @@ abstract class MultiForm extends Form {
 		if($step->getPreviousStep() && $step->canGoBack()) {
 			// If there is a next step, insert the action before the next action
 			if($step->getNextStep()) {
-				$actions->insertBefore(new FormAction('prev', $step->getPrevText()), 'action_next');
+				$actions->insertBefore($prev = new FormAction('prev', $step->getPrevText()), 'action_next');
 			// Assume that this is the last step, insert the action before the finish action
 			} else {
-				$actions->insertBefore(new FormAction('prev', $step->getPrevText()), 'action_finish');
+				$actions->insertBefore($prev = new FormAction('prev', $step->getPrevText()), 'action_finish');
 			}
+			//remove browser validation from prev action
+			$prev->setAttribute("formnovalidate", "formnovalidate");
 		}
 
 		// Merge any extra action fields defined on the step
