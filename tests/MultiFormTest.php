@@ -78,6 +78,20 @@ class MultiFormTest extends FunctionalTest {
 		// A new session is generated, even though we made up the identifier
 		$this->assertInstanceOf('MultiFormSession', $this->form->session);
 	}
+
+	function testCustomGetVar() {
+		Config::nest();
+		Config::inst()->update('MultiForm', 'get_var', 'SuperSessionID');
+
+		$form = $this->controller->Form();
+		$this->assertContains('SuperSessionID', $form::$ignored_fields, "GET var wasn't added to ignored fields");
+		$this->assertContains('SuperSessionID', $form->FormAction(), "Form action doesn't contain correct session 
+			ID parameter");
+		$this->assertContains('SuperSessionID', $form->getCurrentStep()->Link(), "Form step doesn't contain correct 
+			session ID parameter");
+
+		Config::unnest();
+	}
 	
 }
 
