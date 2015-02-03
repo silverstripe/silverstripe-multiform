@@ -48,6 +48,11 @@ abstract class MultiForm extends Form {
 		'TotalStepCount' => 'Int',
 		'CompletedPercent' => 'Float'
 	);
+
+	/**
+	 * @var string
+	 */
+	private static $get_var = 'MultiFormSessionID';
 	
 	/**
 	 * These fields are ignored when saving the raw form data into session.
@@ -59,7 +64,6 @@ abstract class MultiForm extends Form {
 	public static $ignored_fields = array(
 		'url',
 		'executeForm',
-		'MultiFormSessionID',
 		'SecurityID'
 	);
 	
@@ -138,8 +142,10 @@ abstract class MultiForm extends Form {
 		// Give the fields, actions, and validation for the current step back to the parent Form class
 		parent::__construct($controller, $name, $fields, $actions, $validator);
 
+		$getVar = $this->config()->get_var;
+
 		// Set a hidden field in our form with an encrypted hash to identify this session.
-		$this->fields->push(new HiddenField('MultiFormSessionID', false, $this->session->Hash));
+		$this->fields->push(new HiddenField($getVar, false, $this->session->Hash));
 		
 		// If there is saved data for the current step, we load it into the form it here
 		//(CAUTION: loadData() MUST unserialize first!)
@@ -149,6 +155,8 @@ abstract class MultiForm extends Form {
 		
 		// Disable security token - we tie a form to a session ID instead
 		$this->disableSecurityToken();
+
+		self::$ignored_fields[] = $getVar;
 	}
 
 	/**
@@ -266,7 +274,7 @@ abstract class MultiForm extends Form {
 	 */
 	public function getCurrentSession() {
 		if(!$this->currentSessionHash) {
-			$this->currentSessionHash = $this->controller->request->getVar('MultiFormSessionID');
+			$this->currentSessionHash = $this->controller->request->getVar($this->config()->get_var);
 
 			if(!$this->currentSessionHash) {
 				return false;
@@ -528,7 +536,7 @@ abstract class MultiForm extends Form {
 	function FormAction() {
 		$action = parent::FormAction();
 		$action .= (strpos($action, '?')) ? '&amp;' : '?';
-		$action .= "MultiFormSessionID={$this->session->Hash}";
+		$action .= "{$this->config()->get_var}={$this->session->Hash}";
 		
 		return $action;
 	}
