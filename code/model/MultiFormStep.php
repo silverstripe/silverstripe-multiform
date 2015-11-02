@@ -6,7 +6,7 @@
  * encapsulates the functionality required for the step to be aware of itself
  * in the process by knowing what it's next step is, and if applicable, it's previous
  * step.
- * 
+ *
  * @package multiform
  */
 class MultiFormStep extends DataObject {
@@ -14,14 +14,14 @@ class MultiFormStep extends DataObject {
 	private static $db = array(
 		'Data' => 'Text' // stores serialized maps with all session information
 	);
-	
+
 	private static $has_one = array(
 		'Session' => 'MultiFormSession'
 	);
-	
+
 	/**
 	 * Centerpiece of the flow control for the form.
-	 * 
+	 *
 	 * If set to a string, you have a linear form flow
 	 * If set to an array, you should use {@link getNextStep()}
 	 * to enact flow control and branching to different form
@@ -31,7 +31,7 @@ class MultiFormStep extends DataObject {
 	 * @var array|string
 	 */
 	public static $next_steps;
-	
+
 	/**
 	 * Each {@link MultiForm} subclass needs at least
 	 * one step which is marked as the "final" one
@@ -45,7 +45,7 @@ class MultiFormStep extends DataObject {
 	/**
 	 * This variable determines whether a user can use
 	 * the "back" action from this step.
-	 * 
+	 *
 	 * @TODO This does not check if the arbitrarily chosen step
 	 * using the step indicator is actually a previous step, so
 	 * unless you remove the link from the indicator template, or
@@ -55,23 +55,23 @@ class MultiFormStep extends DataObject {
 	 * @var boolean
 	 */
 	protected static $can_go_back = true;
-	
+
 	/**
 	 * Title of this step.
-	 * 
+	 *
 	 * Used for the step indicator templates.
 	 *
 	 * @var string
 	 */
 	protected $title;
-	
+
 	/**
 	 * Form class that this step is directly related to.
 	 *
 	 * @var MultiForm subclass
 	 */
 	protected $form;
-	
+
 	/**
 	 * Form fields to be rendered with this step.
 	 * (Form object is created in {@link MultiForm}.
@@ -84,7 +84,7 @@ class MultiFormStep extends DataObject {
 	public function getFields() {
 		user_error('Please implement getFields on your MultiFormStep subclass', E_USER_ERROR);
 	}
-	
+
 	/**
 	 * Additional form actions to be added to this step.
 	 * (Form object is created in {@link MultiForm}.
@@ -97,26 +97,26 @@ class MultiFormStep extends DataObject {
 	public function getExtraActions() {
 		return (class_exists('FieldList')) ? new FieldList() : new FieldSet();
 	}
-	
+
 	/**
 	 * Get a validator specific to this form.
 	 * The form is automatically validated in {@link Form->httpSubmission()}.
-	 * 
+	 *
 	 * @return Validator
 	 */
 	public function getValidator() {
 		return false;
 	}
-	
+
 	/**
 	 * Accessor method for $this->title
-	 * 
+	 *
 	 * @return string Title of this step
 	 */
 	public function getTitle() {
 		return $this->title ? $this->title : $this->class;
 	}
-	
+
 	/**
 	 * Gets a direct link to this step (only works
 	 * if you're allowed to skip steps, or this step
@@ -133,21 +133,21 @@ class MultiFormStep extends DataObject {
 	 * Unserialize stored session data and return it.
 	 * This is used for loading data previously saved
 	 * in session back into the form.
-	 * 
+	 *
 	 * You need to overload this method onto your own
 	 * step if you require custom loading. An example
 	 * would be selective loading specific fields, leaving
 	 * others that are not required.
-	 * 
+	 *
 	 * @return array
 	 */
 	public function loadData() {
 		return ($this->Data && is_string($this->Data)) ? unserialize($this->Data) : array();
 	}
-	
+
 	/**
 	 * Save the data for this step into session, serializing it first.
-	 * 
+	 *
 	 * To selectively save fields, instead of it all, this
 	 * method would need to be overloaded on your step class.
 	 *
@@ -157,7 +157,7 @@ class MultiFormStep extends DataObject {
 		$this->Data = serialize($data);
 		$this->write();
 	}
-	
+
 	/**
 	 * Save the data on this step into an object,
 	 * similiar to {@link Form->saveInto()} - by building
@@ -180,7 +180,7 @@ class MultiFormStep extends DataObject {
 		$form->saveInto($obj);
 		return $obj;
 	}
-	
+
 	/**
 	 * Custom validation for a step. In most cases, it should be sufficient
 	 * to have built-in validation through the {@link Validator} class
@@ -197,10 +197,10 @@ class MultiFormStep extends DataObject {
 	public function validateStep($data, $form) {
 		return true;
 	}
-	
+
 	/**
 	 * Returns the first value of $next_step
-	 * 
+	 *
 	 * @return String Classname of a {@link MultiFormStep} subclass
 	 */
 	public function getNextStep() {
@@ -210,7 +210,7 @@ class MultiFormStep extends DataObject {
 		if(!$this->isFinalStep()) {
 			if(!isset($nextSteps)) user_error('MultiFormStep->getNextStep(): Please define at least one $next_steps on ' . $this->class, E_USER_ERROR);
 		}
-		
+
 		if(is_string($nextSteps)) {
 			return $nextSteps;
 		} elseif(is_array($nextSteps) && count($nextSteps)) {
@@ -223,10 +223,10 @@ class MultiFormStep extends DataObject {
 
 	/**
 	 * Returns the next step to the current step in the database.
-	 * 
+	 *
 	 * This will only return something if you've previously visited
 	 * the step ahead of the current step, and then gone back a step.
-	 * 
+	 *
 	 * @return MultiFormStep|boolean
 	 */
 	public function getNextStepFromDatabase() {
@@ -242,22 +242,22 @@ class MultiFormStep extends DataObject {
 			}
 		}
 	}
-	
+
 	/**
 	 * Accessor method for self::$next_steps
-	 * 
+	 *
 	 * @return string|array
 	 */
 	public function getNextSteps() {
 		return static::$next_steps;
 	}
-	
+
 	/**
 	 * Returns the previous step, if there is one.
-	 * 
+	 *
 	 * To determine if there is a previous step, we check the database to see if there's
 	 * a previous step for this multi form session ID.
-	 * 
+	 *
 	 * @return String Classname of a {@link MultiFormStep} subclass
 	 */
 	public function getPreviousStep() {
@@ -274,7 +274,7 @@ class MultiFormStep extends DataObject {
 			}
 		}
 	}
-	
+
 	/**
 	 * Retrieves the previous step class record from the database.
 	 *
@@ -320,26 +320,26 @@ class MultiFormStep extends DataObject {
 	public function setForm($form) {
 		$this->form = $form;
 	}
-	
+
 	/**
 	 * @return Form
 	 */
 	public function getForm() {
 		return $this->form;
 	}
-	
+
 	// ##################### Utility ####################
-	
+
 	/**
 	 * Determines whether the user is able to go back using the "action_back"
 	 * form action, based on the boolean value of $can_go_back.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function canGoBack() {
 		return static::$can_go_back;
 	}
-	
+
 	/**
 	 * Determines whether this step is the final step in the multi-step process or not,
 	 * based on the variable $is_final_step - which must be defined on at least one step.
@@ -349,17 +349,17 @@ class MultiFormStep extends DataObject {
 	public function isFinalStep() {
 		return static::$is_final_step;
 	}
-	
+
 	/**
 	 * Determines whether the currently viewed step is the current step set in the session.
 	 * This assumes you are checking isCurrentStep() against a data record of a MultiFormStep
 	 * subclass, otherwise it doesn't work. An example of this is using a singleton instance - it won't
 	 * work because there's no data.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function isCurrentStep() {
 		return ($this->class == $this->Session()->CurrentStep()->class) ? true : false;
 	}
-	
+
 }

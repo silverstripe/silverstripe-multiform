@@ -4,18 +4,18 @@
  * MultiForm manages the loading of single form steps, and acts as a state
  * machine that connects to a {@link MultiFormSession} object as a persistence
  * layer.
- * 
+ *
  * CAUTION: If you're using controller permission control,
  * you have to allow the following methods:
  *
  * <code>
  * private static $allowed_actions = array('next','prev');
- * </code> 
- * 
+ * </code>
+ *
  * @package multiform
  */
 abstract class MultiForm extends Form {
-	
+
 	/**
 	 * A session object stored in the database, to identify and store
 	 * data for this MultiForm instance.
@@ -23,13 +23,13 @@ abstract class MultiForm extends Form {
 	 * @var MultiFormSession
 	 */
 	protected $session;
-	
+
 	/**
 	 * The current encrypted MultiFormSession identification.
 	 * @var string
 	 */
 	protected $currentSessionHash;
-	
+
 	/**
 	 * Defines which subclass of {@link MultiFormStep} should be the first
 	 * step in the multi-step process.
@@ -37,7 +37,7 @@ abstract class MultiForm extends Form {
 	 * @var string Classname of a {@link MultiFormStep} subclass
 	 */
 	public static $start_step;
-	
+
 	/**
 	 * Set the casting for these fields.
 	 *
@@ -48,7 +48,7 @@ abstract class MultiForm extends Form {
 		'TotalStepCount' => 'Int',
 		'CompletedPercent' => 'Float'
 	);
-	
+
 	/**
 	 * These fields are ignored when saving the raw form data into session.
 	 * This ensures only field data is saved, and nothing else that's useless
@@ -62,15 +62,15 @@ abstract class MultiForm extends Form {
 		'MultiFormSessionID',
 		'SecurityID'
 	);
-	
+
 	/**
 	 * Any of the actions defined in this variable are exempt from
 	 * being validated.
-	 * 
+	 *
 	 * This is most useful for the "Back" (action_prev) action, as
 	 * you typically don't validate the form when the user is going
 	 * back a step.
-	 * 
+	 *
 	 * @var array
 	 */
 	public static $actions_exempt_from_validation = array(
@@ -124,7 +124,7 @@ abstract class MultiForm extends Form {
 				if(!empty($_REQUEST[$exemptAction])) {
 					$applyValidation = false;
 					break;
-				} 
+				}
 			}
 		}
 
@@ -134,19 +134,19 @@ abstract class MultiForm extends Form {
 				$validator = $currentStep->getValidator();
 			}
 		}
-		
+
 		// Give the fields, actions, and validation for the current step back to the parent Form class
 		parent::__construct($controller, $name, $fields, $actions, $validator);
 
 		// Set a hidden field in our form with an encrypted hash to identify this session.
 		$this->fields->push(new HiddenField('MultiFormSessionID', false, $this->session->Hash));
-		
+
 		// If there is saved data for the current step, we load it into the form it here
 		//(CAUTION: loadData() MUST unserialize first!)
 		if($data = $currentStep->loadData()) {
 			$this->loadDataFrom($data);
 		}
-		
+
 		// Disable security token - we tie a form to a session ID instead
 		$this->disableSecurityToken();
 	}
@@ -159,23 +159,23 @@ abstract class MultiForm extends Form {
 	public function getController() {
 		return $this->controller;
 	}
-	
+
 	/**
 	 * Get the current step.
-	 * 
+	 *
 	 * If StepID has been set in the URL, we attempt to get that record
 	 * by the ID. Otherwise, we check if there's a current step ID in
 	 * our session record. Failing those cases, we assume that the form has
 	 * just been started, and so we create the first step and return it.
-	 * 
+	 *
 	 * @return MultiFormStep subclass
 	 */
 	public function getCurrentStep() {
 		$startStepClass = static::$start_step;
-		
+
 		// Check if there was a start step defined on the subclass of MultiForm
 		if(!isset($startStepClass)) user_error('MultiForm::init(): Please define a $start_step on ' . $this->class, E_USER_ERROR);
-		
+
 		// Determine whether we use the current step, or create one if it doesn't exist
 		$currentStep = null;
 		if(isset($_GET['StepID'])) {
@@ -183,8 +183,8 @@ abstract class MultiForm extends Form {
 			$currentStep = DataObject::get_one('MultiFormStep', "\"SessionID\" = {$this->session->ID} AND \"ID\" = {$stepID}");
 		} elseif($this->session->CurrentStepID) {
 			$currentStep = $this->session->CurrentStep();
-		} 
-		
+		}
+
 		// Always fall back to creating a new step (in case the session or request data is invalid)
 		if(!$currentStep || !$currentStep->ID) {
 			$currentStep = Object::create($startStepClass);
@@ -194,15 +194,15 @@ abstract class MultiForm extends Form {
 			$this->session->write();
 			$this->session->flushCache();
 		}
-		
+
 		if($currentStep) $currentStep->setForm($this);
-		
+
 		return $currentStep;
 	}
 
 	/**
 	 * Set the step passed in as the current step.
-	 * 
+	 *
 	 * @param MultiFormStep $step A subclass of MultiFormStep
 	 * @return boolean The return value of write()
 	 */
@@ -212,54 +212,54 @@ abstract class MultiForm extends Form {
 
 		return $this->session->write();
 	}
-	
+
 	/**
 	 * Accessor method to $this->session.
-	 * 
+	 *
 	 * @return MultiFormSession
 	 */
 	public function getSession() {
 		return $this->session;
 	}
-	
+
 	/**
 	 * Set up the session.
-	 * 
+	 *
 	 * If MultiFormSessionID isn't set, we assume that this is a new
 	 * multiform that requires a new session record to be created.
-	 * 
+	 *
 	 * @TODO Fix the fact you can continually refresh and create new records
 	 * if MultiFormSessionID isn't set.
-	 * 
+	 *
 	 * @TODO Not sure if we should bake the session stuff directly into MultiForm.
 	 * Perhaps it would be best dealt with on a separate class?
 	 */
 	protected function setSession() {
 		$this->session = $this->getCurrentSession();
-		
+
 		// If there was no session found, create a new one instead
 		if(!$this->session) {
 			$this->session = new MultiFormSession();
 		}
-		
+
 		// Create encrypted identification to the session instance if it doesn't exist
 		if(!$this->session->Hash) {
 			$this->session->Hash = sha1($this->session->ID . '-' . microtime());
 			$this->session->write();
 		}
 	}
-	
+
 	/**
 	 * Set the currently used encrypted hash to identify
 	 * the MultiFormSession.
-	 * 
+	 *
 	 * @param string $hash Encrypted identification to session
 	 */
 	public function setCurrentSessionHash($hash) {
 		$this->currentSessionHash = $hash;
 		$this->setSession();
 	}
-	
+
 	/**
 	 * Return the currently used {@link MultiFormSession}
 	 * @return MultiFormSession|boolean FALSE
@@ -280,13 +280,13 @@ abstract class MultiForm extends Form {
 
 		return $this->session;
 	}
-	
+
 	/**
 	 * Get all steps saved in the database for the currently active session,
 	 * in the order they were saved, oldest to newest (automatically ordered by ID).
 	 * If you want a full chain of steps regardless if they've already been saved
 	 * to the database, use {@link getAllStepsLinear()}.
-	 * 
+	 *
 	 * @param String $filter SQL WHERE statement
 	 * @return DataObjectSet|boolean A set of MultiFormStep subclasses
 	 */
@@ -295,18 +295,18 @@ abstract class MultiForm extends Form {
 		$filter .= sprintf("\"SessionID\" = '%s'", $this->session->ID);
 		return DataObject::get('MultiFormStep', $filter);
 	}
-	
+
 	/**
 	 * Get a step which was previously saved to the database in the current session.
 	 * Caution: This might cause unexpected behaviour if you have multiple steps
 	 * in your chain with the same classname.
-	 * 
+	 *
 	 * @param string $className Classname of a {@link MultiFormStep} subclass
 	 * @return MultiFormStep
 	 */
 	function getSavedStepByClass($className) {
 		return DataObject::get_one(
-			'MultiFormStep', 
+			'MultiFormStep',
 			sprintf("\"SessionID\" = '%s' AND \"ClassName\" = '%s'",
 				$this->session->ID,
 				Convert::raw2sql($className)
@@ -336,7 +336,7 @@ abstract class MultiForm extends Form {
 	function actionsFor($step) {
 		// Create default multi step actions (next, prev), and merge with extra actions, if any
 		$actions = (class_exists('FieldList')) ? new FieldList() : new FieldSet();
-		
+
 		// If the form is at final step, create a submit button to perform final actions
 		// The last step doesn't have a next button, so add that action to any step that isn't the final one
 		if($step->isFinalStep()) {
@@ -344,7 +344,7 @@ abstract class MultiForm extends Form {
 		} else {
 			$actions->push(new FormAction('next', $step->getNextText()));
 		}
-		
+
 		// If there is a previous step defined, add the back button
 		if($step->getPreviousStep() && $step->canGoBack()) {
 			// If there is a next step, insert the action before the next action
@@ -358,10 +358,10 @@ abstract class MultiForm extends Form {
 
 		// Merge any extra action fields defined on the step
 		$actions->merge($step->getExtraActions());
-		
+
 		return $actions;
 	}
-	
+
 	/**
 	 * Return a rendered version of this form, with a specific template.
 	 * Looks through the step ancestory templates (MultiFormStep, current step
@@ -384,13 +384,13 @@ abstract class MultiForm extends Form {
 
 		return $return;
 	}
-	
+
 	/**
 	 * This method saves the data on the final step, after submitting.
 	 * It should always be overloaded with parent::finish($data, $form)
 	 * so you can create your own functionality which handles saving
 	 * of all the data collected through each step of the form.
-	 * 
+	 *
 	 * @param array $data The request data returned from the form
 	 * @param object $form The form that the action was called on
 	 */
@@ -410,15 +410,15 @@ abstract class MultiForm extends Form {
 		}
 
 	}
-	
+
 	/**
 	 * Determine what to do when the next action is called.
-	 * 
+	 *
 	 * Saves the current step session data to the database, creates the
 	 * new step based on getNextStep() of the current step (or fetches
 	 * an existing one), resets the current step to the next step,
 	 * then redirects to the newly set step.
-	 * 
+	 *
 	 * @param array $data The request data returned from the form
 	 * @param object $form The form that the action was called on
 	 */
@@ -428,7 +428,7 @@ abstract class MultiForm extends Form {
 
 		// Get the next step class
 		$nextStepClass = $this->getCurrentStep()->getNextStep();
-		
+
 		if(!$nextStepClass) {
 			$this->controller->redirectBack();
 			return false;
@@ -455,18 +455,18 @@ abstract class MultiForm extends Form {
 
 		// Set the next step found as the current step
 		$this->setCurrentStep($nextStep);
-		
+
 		// Redirect to the next step
 		$this->controller->redirect($nextStep->Link());
 	}
-	
+
 	/**
 	 * Determine what to do when the previous action is called.
-	 * 
+	 *
 	 * Retrieves the previous step class, finds the record for that
 	 * class in the DB, and sets the current step to that step found.
 	 * Finally, it redirects to that step.
-	 * 
+	 *
 	 * @param array $data The request data returned from the form
 	 * @param object $form The form that the action was called on
 	 */
@@ -484,21 +484,21 @@ abstract class MultiForm extends Form {
 
 		// Get the previous step of the class instance returned from $currentStep->getPreviousStep()
 		$prevStep = DataObject::get_one($prevStepClass, "\"SessionID\" = {$this->session->ID}");
-		
+
 		// Set the current step as the previous step
 		$this->setCurrentStep($prevStep);
-		
+
 		// Redirect to the previous step
 		$this->controller->redirect($prevStep->Link());
 	}
 
 	/**
 	 * Save the raw data given back from the form into session.
-	 * 
+	 *
 	 * Take the submitted form data for the current step, removing
 	 * any key => value pairs that shouldn't be saved, then saves
 	 * the data into the session.
-	 * 
+	 *
 	 * @param array $data An array of data to save
 	 */
 	protected function save($data) {
@@ -513,21 +513,21 @@ abstract class MultiForm extends Form {
 		}
 		return;
 	}
-	
+
 	// ############ Misc ############
-	
+
 	/**
 	 * Add the MultiFormSessionID variable to the URL on form submission.
 	 * This is a means to persist the session, by adding it's identification
 	 * to the URL, which ties it back to this MultiForm instance.
-	 * 
+	 *
 	 * @return string
 	 */
 	function FormAction() {
 		$action = parent::FormAction();
 		$action .= (strpos($action, '?')) ? '&amp;' : '?';
 		$action .= "MultiFormSessionID={$this->session->Hash}";
-		
+
 		return $action;
 	}
 
@@ -563,17 +563,17 @@ abstract class MultiForm extends Form {
 	 */
 	public function getAllStepsLinear() {
 		$stepsFound = (class_exists('ArrayList')) ? new ArrayList() : new DataObjectSet();
-		
+
 		$firstStep = DataObject::get_one(static::$start_step, "\"SessionID\" = {$this->session->ID}");
 		$firstStep->LinkingMode = ($firstStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link';
 		$firstStep->setForm($this);
 		$stepsFound->push($firstStep);
 
 		$this->getAllStepsRecursive($firstStep, $stepsFound);
-		
+
 		return $stepsFound;
 	}
-	
+
 	/**
 	 * Recursively run through steps using the getNextStep() method on each step
 	 * to determine what the next step is, gathering each step along the way.
@@ -581,7 +581,7 @@ abstract class MultiForm extends Form {
 	 * If a step in the chain was already saved to the database in the current
 	 * session, its used - otherwise a singleton of this step is used.
 	 * Caution: Doesn't consider branching for steps which aren't in the database yet.
-	 * 
+	 *
 	 * @param $step Subclass of MultiFormStep to find the next step of
 	 * @param $stepsFound $stepsFound DataObjectSet reference, the steps found to call back on
 	 * @return DataObjectSet of MultiFormStep instances
@@ -595,7 +595,7 @@ abstract class MultiForm extends Form {
 				if(!$nextStep) {
 					// If it's not in the DB, we use a singleton instance of it instead - this step hasn't been accessed yet
 					$nextStep = singleton($step->getNextStep());
-				} 
+				}
 				$nextStep->LinkingMode = ($nextStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link';
 				$nextStep->setForm($this);
 				// Add the array data, and do a callback
@@ -607,23 +607,23 @@ abstract class MultiForm extends Form {
 			return $stepsFound;
 		}
 	}
-	
+
 	/**
 	 * Number of steps already completed (excluding currently started step).
 	 * The way we determine a step is complete is to check if it has the Data
 	 * field filled out with a serialized value, then we know that the user has
 	 * clicked next on the given step, to proceed.
-	 * 
+	 *
 	 * @TODO Not sure if it's entirely appropriate to check if Data is set as a
 	 * way to determine a step is "completed".
-	 * 
+	 *
 	 * @return int
 	 */
 	public function getCompletedStepCount() {
 		$steps = DataObject::get('MultiFormStep', "\"SessionID\" = {$this->session->ID} && \"Data\" IS NOT NULL");
 		return $steps ? $steps->Count() : 0;
 	}
-	
+
 	/**
 	 * Total number of steps in the shortest path (only counting straight path without any branching)
 	 * The way we determine this is to check if each step has a next_step string variable set. If it's
@@ -634,7 +634,7 @@ abstract class MultiForm extends Form {
 	public function getTotalStepCount() {
 		return $this->getAllStepsLinear() ? $this->getAllStepsLinear()->Count() : 0;
 	}
-	
+
 	/**
 	 * Percentage of steps completed (excluding currently started step)
 	 *

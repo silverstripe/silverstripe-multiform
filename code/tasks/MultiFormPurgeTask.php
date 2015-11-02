@@ -2,29 +2,29 @@
 
 /**
  * Task to clean out all {@link MultiFormSession} objects from the database.
- * 
+ *
  * Setup Instructions:
  * You need to create an automated task for your system (cronjobs on unix)
  * which triggers the process() method through cli-script.php:
  * `php framework/cli-script.php MultiFormPurgeTask`
  * or
  * `framework/sake MultiFormPurgeTask`
- * 
+ *
  * @package multiform
  */
 class MultiFormPurgeTask extends BuildTask {
-	
+
 	/**
 	 * Days after which sessions expire and
 	 * are automatically deleted.
-	 * 
+	 *
 	 * @var int
 	 */
 	public static $session_expiry_days = 7;
 
 	/**
 	 * Run this cron task.
-	 * 
+	 *
 	 * Go through all MultiFormSession records that
 	 * are older than the days specified in $session_expiry_days
 	 * and delete them.
@@ -51,5 +51,5 @@ class MultiFormPurgeTask extends BuildTask {
 			"DATEDIFF(NOW(), \"MultiFormSession\".\"Created\") > " . self::$session_expiry_days
 		);
 	}
-	
+
 }

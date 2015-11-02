@@ -5,7 +5,7 @@
  * to the database directly by a {@link MultiFormStep}.
  * Only needed for objects which aren't stored in the session,
  * which is the default.
- * 
+ *
  * This decorator also augments get() requests to the datalayer
  * by automatically filtering out temporary objects.
  * You can override this filter by putting the following statement
@@ -15,27 +15,27 @@
  * @package multiform
  */
 class MultiFormObjectDecorator extends DataExtension {
-	
+
 	private static $db = array(
 		'MultiFormIsTemporary' => 'Boolean',
 	);
-	
+
 	private static $has_one = array(
 		'MultiFormSession' => 'MultiFormSession',
 	);
-	
+
 	public function augmentSQL(SQLSelect $query) {
 		// If you're querying by ID, ignore the sub-site - this is a bit ugly...
 		if(
-			strpos($query->where[0], ".`ID` = ") === false 
-			&& strpos($query->where[0], ".ID = ") === false 
+			strpos($query->where[0], ".`ID` = ") === false
+			&& strpos($query->where[0], ".ID = ") === false
 			&& strpos($query->where[0], "ID = ") !== 0
 			&& !$this->wantsTemporary($query)
 		) {
-			$query->where[] = "\"{$query->from[0]}\".\"MultiFormIsTemporary\" = 0"; 
+			$query->where[] = "\"{$query->from[0]}\".\"MultiFormIsTemporary\" = 0";
 		}
 	}
-	
+
 	/**
 	 * Determines if the current query is supposed
 	 * to be exempt from the automatic filtering out
