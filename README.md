@@ -502,7 +502,7 @@ e.g.
 	
 	   ...
 	
-	   function getValidator() {
+	   public function getValidator() {
 	      return new RequiredFields(array(
 	         'Name',
 	         'Email'
