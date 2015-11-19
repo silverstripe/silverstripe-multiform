@@ -12,5 +12,6 @@
 	}],
 	"require": {
 		"silverstripe/framework": "~3.2"
-	}
+	},
+	"license": "BSD-3-Clause"
 }
