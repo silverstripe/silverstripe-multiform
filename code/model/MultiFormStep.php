@@ -73,6 +73,13 @@ class MultiFormStep extends DataObject {
 	protected $form;
 
 	/**
+	 * List of additional CSS classes for this step
+	 *
+	 * @var array $extraClasses
+	 */
+	protected $extraClasses = array();
+
+	/**
 	 * Form fields to be rendered with this step.
 	 * (Form object is created in {@link MultiForm}.
 	 *
@@ -332,6 +339,8 @@ class MultiFormStep extends DataObject {
 
 	/**
 	 * Determines whether the user is able to go back using the "action_back"
+	 * Determines whether the user is able to go back using the "action_back"
+	 * Determines whether the user is able to go back using the "action_back"
 	 * form action, based on the boolean value of $can_go_back.
 	 *
 	 * @return boolean
@@ -362,4 +371,42 @@ class MultiFormStep extends DataObject {
 		return ($this->class == $this->Session()->CurrentStep()->class) ? true : false;
 	}
 
+	/**
+	 * Add a CSS-class to the step. If needed, multiple classes can be added by delimiting a string with spaces.
+	 *
+	 * @param string $class A string containing a classname or several class names delimited by a space.
+	 * @return MultiFormStep
+	 */
+	public function addExtraClass($class) {
+		// split at white space
+		$classes = preg_split('/\s+/', $class);
+		foreach($classes as $class) {
+			// add classes one by one
+			$this->extraClasses[$class] = $class;
+		}
+		return $this;
+	}
+
+	/**
+	 * Remove a CSS-class from the step. Multiple classes names can be passed through as a space delimited string.
+	 *
+	 * @param string $class
+	 * @return MultiFormStep
+	 */
+	public function removeExtraClass($class) {
+		// split at white space
+		$classes = preg_split('/\s+/', $class);
+		foreach ($classes as $class) {
+			// unset one by one
+			unset($this->extraClasses[$class]);
+		}
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getExtraClasses() {
+		return join(' ', array_keys($this->extraClasses));
+	}
 }

@@ -26,6 +26,7 @@ abstract class MultiForm extends Form {
 
 	/**
 	 * The current encrypted MultiFormSession identification.
+	 *
 	 * @var string
 	 */
 	protected $currentSessionHash;
@@ -81,6 +82,13 @@ abstract class MultiForm extends Form {
 	 * @var string
 	 */
 	protected $displayLink;
+
+	/**
+	 * Flag which is being used in getAllStepsRecursive() to allow adding the completed flag on the steps
+	 *
+	 * @var boolean
+	 */
+	protected $currentStepHasBeenFound = false;
 
 	/**
 	 * Start the MultiForm instance.
@@ -566,8 +574,12 @@ abstract class MultiForm extends Form {
 
 		$firstStep = DataObject::get_one(static::$start_step, "\"SessionID\" = {$this->session->ID}");
 		$firstStep->LinkingMode = ($firstStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link';
+		$firstStep->addExtraClass('completed');
 		$firstStep->setForm($this);
 		$stepsFound->push($firstStep);
+
+		// mark the further steps as non-completed if the first step is the current
+		if ($firstStep->ID == $this->getCurrentStep()->ID) $this->currentStepHasBeenFound = true;
 
 		$this->getAllStepsRecursive($firstStep, $stepsFound);
 
@@ -593,11 +605,21 @@ abstract class MultiForm extends Form {
 				// Is this step in the DB? If it is, we use that
 				$nextStep = $step->getNextStepFromDatabase();
 				if(!$nextStep) {
-					// If it's not in the DB, we use a singleton instance of it instead - this step hasn't been accessed yet
+					// If it's not in the DB, we use a singleton instance of it instead -
+					// - this step hasn't been accessed yet
 					$nextStep = singleton($step->getNextStep());
 				}
+
+				// once the current steps has been found we won't add the completed class anymore.
+				if ($nextStep->ID == $this->getCurrentStep()->ID) $this->currentStepHasBeenFound = true;
+
 				$nextStep->LinkingMode = ($nextStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link';
+
+				// add the completed class
+				if (!$this->currentStepHasBeenFound) $nextStep->addExtraClass('completed');
+
 				$nextStep->setForm($this);
+
 				// Add the array data, and do a callback
 				$stepsFound->push($nextStep);
 				$this->getAllStepsRecursive($nextStep, $stepsFound);
