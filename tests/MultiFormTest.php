@@ -23,24 +23,24 @@ class MultiFormTest extends FunctionalTest {
 
 	protected $controller;
 
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 
 		$this->controller = new MultiFormTest_Controller();
 		$this->form = $this->controller->Form();
 	}
 
-	function testInitialisingForm() {
+	public function testInitialisingForm() {
 		$this->assertTrue(is_numeric($this->form->getCurrentStep()->ID) && ($this->form->getCurrentStep()->ID > 0));
 		$this->assertTrue(is_numeric($this->form->getSession()->ID) && ($this->form->getSession()->ID > 0));
 		$this->assertEquals('MultiFormTest_StepOne', $this->form->getStartStep());
 	}
 
-	function testSessionGeneration() {
+	public function testSessionGeneration() {
 		$this->assertTrue($this->form->session->ID > 0);
 	}
 
-	function testMemberLogging() {
+	public function testMemberLogging() {
 		// Grab any user to fake being logged in as, and ensure that after a session is written it has
 		// that user as the submitter.
 		$userId = Member::get_one("Member")->ID;
@@ -52,27 +52,27 @@ class MultiFormTest extends FunctionalTest {
 		$this->assertEquals($userId, $session->SubmitterID);
 	}
 
-	function testSecondStep() {
+	public function testSecondStep() {
 		$this->assertEquals('MultiFormTest_StepTwo', $this->form->getCurrentStep()->getNextStep());
 	}
 
-	function testParentForm() {
+	public function testParentForm() {
 		$currentStep = $this->form->getCurrentStep();
 		$this->assertEquals($currentStep->getForm()->class, $this->form->class);
 	}
 
-	function testTotalStepCount() {
+	public function testTotalStepCount() {
 		$this->assertEquals(3, $this->form->getAllStepsLinear()->Count());
 	}
 
-	function testCompletedSession() {
+	public function testCompletedSession() {
 		$this->form->setCurrentSessionHash($this->form->session->Hash);
 		$this->assertInstanceOf('MultiFormSession', $this->form->getCurrentSession());
 		$this->form->session->markCompleted();
 		$this->assertNull($this->form->getCurrentSession());
 	}
 
-	function testIncorrectSessionIdentifier() {
+	public function testIncorrectSessionIdentifier() {
 		$this->form->setCurrentSessionHash('sdfsdf3432325325sfsdfdf'); // made up!
 
 		// A new session is generated, even though we made up the identifier
@@ -87,7 +87,7 @@ class MultiFormTest extends FunctionalTest {
  */
 class MultiFormTest_Controller extends Controller implements TestOnly {
 
-	function Link() {
+	public function Link() {
 		return 'MultiFormTest_Controller';
 	}
 
@@ -106,7 +106,7 @@ class MultiFormTest_Form extends MultiForm implements TestOnly {
 
 	public static $start_step = 'MultiFormTest_StepOne';
 
-	function getStartStep() {
+	public function getStartStep() {
 		return self::$start_step;
 	}
 
@@ -120,7 +120,7 @@ class MultiFormTest_StepOne extends MultiFormStep implements TestOnly {
 
 	public static $next_steps = 'MultiFormTest_StepTwo';
 
-	function getFields() {
+	public function getFields() {
 		$class = (class_exists('FieldList')) ? 'FieldList' : 'FieldSet';
 		return new $class(
 			new TextField('FirstName', 'First name'),
@@ -138,7 +138,7 @@ class MultiFormTest_StepTwo extends MultiFormStep implements TestOnly {
 
 	public static $next_steps = 'MultiFormTest_StepThree';
 
-	function getFields() {
+	public function getFields() {
 		$class = (class_exists('FieldList')) ? 'FieldList' : 'FieldSet';
 		return new $class(
 			new TextareaField('Comments', 'Tell us a bit about yourself...')
@@ -154,7 +154,7 @@ class MultiFormTest_StepThree extends MultiFormStep implements TestOnly {
 
 	public static $is_final_step = true;
 
-	function getFields() {
+	public function getFields() {
 		$class = (class_exists('FieldList')) ? 'FieldList' : 'FieldSet';
 		return new $class(
 			new TextField('Test', 'Anything else you\'d like to tell us?')

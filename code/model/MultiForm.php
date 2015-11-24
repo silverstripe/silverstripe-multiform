@@ -127,8 +127,8 @@ abstract class MultiForm extends Form {
 
 		$actionNames = static::$actions_exempt_from_validation;
 
-		if( $actionNames ) {
-			foreach( $actionNames as $exemptAction) {
+		if($actionNames) {
+			foreach ($actionNames as $exemptAction) {
 				if(!empty($_REQUEST[$exemptAction])) {
 					$applyValidation = false;
 					break;
@@ -182,7 +182,10 @@ abstract class MultiForm extends Form {
 		$startStepClass = static::$start_step;
 
 		// Check if there was a start step defined on the subclass of MultiForm
-		if(!isset($startStepClass)) user_error('MultiForm::init(): Please define a $start_step on ' . $this->class, E_USER_ERROR);
+		if(!isset($startStepClass)) user_error(
+			'MultiForm::init(): Please define a $start_step on ' . $this->class,
+			E_USER_ERROR
+		);
 
 		// Determine whether we use the current step, or create one if it doesn't exist
 		$currentStep = null;
@@ -295,10 +298,10 @@ abstract class MultiForm extends Form {
 	 * If you want a full chain of steps regardless if they've already been saved
 	 * to the database, use {@link getAllStepsLinear()}.
 	 *
-	 * @param String $filter SQL WHERE statement
+	 * @param string $filter SQL WHERE statement
 	 * @return DataObjectSet|boolean A set of MultiFormStep subclasses
 	 */
-	function getSavedSteps($filter = null) {
+	public function getSavedSteps($filter = null) {
 		$filter .= ($filter) ? ' AND ' : '';
 		$filter .= sprintf("\"SessionID\" = '%s'", $this->session->ID);
 		return DataObject::get('MultiFormStep', $filter);
@@ -312,7 +315,7 @@ abstract class MultiForm extends Form {
 	 * @param string $className Classname of a {@link MultiFormStep} subclass
 	 * @return MultiFormStep
 	 */
-	function getSavedStepByClass($className) {
+	public function getSavedStepByClass($className) {
 		return DataObject::get_one(
 			'MultiFormStep',
 			sprintf("\"SessionID\" = '%s' AND \"ClassName\" = '%s'",
@@ -341,7 +344,7 @@ abstract class MultiForm extends Form {
 	 * @param $currentStep Subclass of MultiFormStep
 	 * @return FieldList of FormAction objects
 	 */
-	function actionsFor($step) {
+	public function actionsFor($step) {
 		// Create default multi step actions (next, prev), and merge with extra actions, if any
 		$actions = (class_exists('FieldList')) ? new FieldList() : new FieldSet();
 
@@ -379,7 +382,7 @@ abstract class MultiForm extends Form {
 	 *
 	 * @return SSViewer object to render the template with
 	 */
-	function forTemplate() {
+	public function forTemplate() {
 		$return = $this->renderWith(array(
 			$this->getCurrentStep()->class,
 			'MultiFormStep',
@@ -416,7 +419,6 @@ abstract class MultiForm extends Form {
 			$this->controller->redirectBack();
 			return false;
 		}
-
 	}
 
 	/**
@@ -531,7 +533,7 @@ abstract class MultiForm extends Form {
 	 *
 	 * @return string
 	 */
-	function FormAction() {
+	public function FormAction() {
 		$action = parent::FormAction();
 		$action .= (strpos($action, '?')) ? '&amp;' : '?';
 		$action .= "MultiFormSessionID={$this->session->Hash}";
@@ -643,6 +645,7 @@ abstract class MultiForm extends Form {
 	 */
 	public function getCompletedStepCount() {
 		$steps = DataObject::get('MultiFormStep', "\"SessionID\" = {$this->session->ID} && \"Data\" IS NOT NULL");
+
 		return $steps ? $steps->Count() : 0;
 	}
 
@@ -663,7 +666,6 @@ abstract class MultiForm extends Form {
 	 * @return float
 	 */
 	public function getCompletedPercent() {
-		return (float)$this->getCompletedStepCount() * 100 / $this->getTotalStepCount();
+		return (float) $this->getCompletedStepCount() * 100 / $this->getTotalStepCount();
 	}
-
 }
