@@ -208,7 +208,7 @@ class MultiFormStep extends DataObject {
 	/**
 	 * Returns the first value of $next_step
 	 *
-	 * @return String Classname of a {@link MultiFormStep} subclass
+	 * @return string Classname of a {@link MultiFormStep} subclass
 	 */
 	public function getNextStep() {
 		$nextSteps = static::$next_steps;
@@ -265,7 +265,7 @@ class MultiFormStep extends DataObject {
 	 * To determine if there is a previous step, we check the database to see if there's
 	 * a previous step for this multi form session ID.
 	 *
-	 * @return String Classname of a {@link MultiFormStep} subclass
+	 * @return string Classname of a {@link MultiFormStep} subclass
 	 */
 	public function getPreviousStep() {
 		$steps = DataObject::get('MultiFormStep', "\"SessionID\" = {$this->SessionID}", '"LastEdited" DESC');
