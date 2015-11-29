@@ -24,15 +24,26 @@ class MultiFormObjectDecorator extends DataExtension {
 		'MultiFormSession' => 'MultiFormSession',
 	);
 
+	/**
+	 * Augment any queries to MultiFormObjectDecorator and only
+	 * return anything that isn't considered temporary.
+	 */
 	public function augmentSQL(SQLQuery &$query) {
-		// If you're querying by ID, ignore the sub-site - this is a bit ugly...
+		$where = $query->getWhere();
+		if(!$where && !$this->wantsTemporary($query)) {
+			$from = array_values($query->getFrom());
+			$query->addWhere("{$from[0]}.MultiFormIsTemporary = 0");
+			return;
+		}
+
 		if(
-			strpos($query->where[0], ".`ID` = ") === false
-			&& strpos($query->where[0], ".ID = ") === false
-			&& strpos($query->where[0], "ID = ") !== 0
+			strpos($where[0], ".`ID` = ") === false 
+			&& strpos($where[0], ".ID = ") === false 
+			&& strpos($where[0], "ID = ") !== 0
 			&& !$this->wantsTemporary($query)
 		) {
-			$query->where[] = "\"{$query->from[0]}\".\"MultiFormIsTemporary\" = 0";
+			$from = array_values($query->getFrom());
+			$query->addWhere("{$from[0]}.MultiFormIsTemporary = 0");
 		}
 	}
 
@@ -45,8 +56,10 @@ class MultiFormObjectDecorator extends DataExtension {
 	 * @return boolean
 	 */
 	protected function wantsTemporary($query) {
-		foreach($query->where as $whereClause) {
-			if($whereClause == "\"{$query->from[0]}\".\"MultiFormIsTemporary\" = 1") {
+		foreach($query->getWhere() as $whereClause) {
+			$from = array_values($query->getFrom());
+			// SQLQuery will automatically add double quotes and single quotes to values, so check against that.
+			if($whereClause == "{$from[0]}.\"MultiFormIsTemporary\" = '1'") {
 				return true;
 			}
 		}
