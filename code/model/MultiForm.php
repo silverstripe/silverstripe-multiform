@@ -574,12 +574,15 @@ abstract class MultiForm extends Form {
 
 		$firstStep = DataObject::get_one(static::$start_step, "\"SessionID\" = {$this->session->ID}");
 		$firstStep->LinkingMode = ($firstStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link';
-		$firstStep->addExtraClass('completed');
 		$firstStep->setForm($this);
 		$stepsFound->push($firstStep);
 
 		// mark the further steps as non-completed if the first step is the current
-		if ($firstStep->ID == $this->getCurrentStep()->ID) $this->currentStepHasBeenFound = true;
+		if ($firstStep->ID == $this->getCurrentStep()->ID) {
+			$this->currentStepHasBeenFound = true;
+		} else {
+			$firstStep->addExtraClass('completed');
+		}
 
 		$this->getAllStepsRecursive($firstStep, $stepsFound);
 
