@@ -176,6 +176,15 @@ abstract class MultiForm extends Form {
 	}
 
 	/**
+	 * Returns the get_var to the template engine
+	 *
+	 * @return string
+	 */
+	public function get_var() {
+		return $this->config()->get_var;;
+	}
+
+	/**
 	 * Get the current step.
 	 *
 	 * If StepID has been set in the URL, we attempt to get that record
