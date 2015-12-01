@@ -32,18 +32,18 @@ class MultiFormObjectDecorator extends DataExtension {
 		$where = $query->getWhere();
 		if(!$where && !$this->wantsTemporary($query)) {
 			$from = array_values($query->getFrom());
-			$query->addWhere("{$from[0]}.MultiFormIsTemporary = 0");
+			$query->addWhere("{$from[0]}.\"MultiFormIsTemporary\" = '0'");
 			return;
 		}
 
 		if(
-			strpos($where[0], ".`ID` = ") === false 
-			&& strpos($where[0], ".ID = ") === false 
+			strpos($where[0], ".`ID` = ") === false
+			&& strpos($where[0], ".ID = ") === false
 			&& strpos($where[0], "ID = ") !== 0
 			&& !$this->wantsTemporary($query)
 		) {
 			$from = array_values($query->getFrom());
-			$query->addWhere("{$from[0]}.MultiFormIsTemporary = 0");
+			$query->addWhere("{$from[0]}.\"MultiFormIsTemporary\" = '0'");
 		}
 	}
 
