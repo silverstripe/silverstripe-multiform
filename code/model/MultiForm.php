@@ -180,8 +180,8 @@ abstract class MultiForm extends Form {
 	 *
 	 * @return string
 	 */
-	public function get_var() {
-		return $this->config()->get_var;;
+	public function getGetVar() {
+		return $this->config()->get_var;
 	}
 
 	/**
