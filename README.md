@@ -1,6 +1,10 @@
 # MultiForm Module
 
-[![Build Status](https://secure.travis-ci.org/silverstripe/silverstripe-multiform.png?branch=master)](http://travis-ci.org/silverstripe/silverstripe-multiform)
+[![Build Status](https://api.travis-ci.org/silverstripe/silverstripe-multiform.svg?branch=master)](https://travis-ci.org/silverstripe/silverstripe-multiform)
+[![Latest Stable Version](https://poser.pugx.org/silverstripe/multiform/version.svg)](https://github.com/silverstripe/silverstripe-multiform/releases)
+[![Latest Unstable Version](https://poser.pugx.org/silverstripe/multiform/v/unstable.svg)](https://packagist.org/packages/silverstripe/multiform)
+[![Total Downloads](https://poser.pugx.org/silverstripe/multiform/downloads.svg)](https://packagist.org/packages/silverstripe/multiform)
+[![License](https://poser.pugx.org/silverstripe/multiform/license.svg)](https://github.com/silverstripe/silverstripe-multiform/blob/master/license.md)
 
 ## Introduction
 
