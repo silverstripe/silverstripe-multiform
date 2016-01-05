@@ -54,6 +54,7 @@ abstract class MultiForm extends Form {
 	 * @var string
 	 */
 	private static $get_var = 'MultiFormSessionID';
+
 	/**
 	 * These fields are ignored when saving the raw form data into session.
 	 * This ensures only field data is saved, and nothing else that's useless
@@ -205,9 +206,15 @@ abstract class MultiForm extends Form {
 
 		// Determine whether we use the current step, or create one if it doesn't exist
 		$currentStep = null;
-		if(isset($_GET['StepID'])) {
-			$stepID = (int)$_GET['StepID'];
-			$currentStep = DataObject::get_one('MultiFormStep', "\"SessionID\" = {$this->session->ID} AND \"ID\" = {$stepID}");
+		$StepID = $this->controller->request->getVar('StepID');
+		if(isset($StepID)) {
+			$currentStep = DataObject::get_one(
+				'MultiFormStep',
+				array(
+					'SessionID' => $this->session->ID,
+					'ID' => $StepID
+				)
+			);
 		} elseif($this->session->CurrentStepID) {
 			$currentStep = $this->session->CurrentStep();
 		}
@@ -594,12 +601,15 @@ abstract class MultiForm extends Form {
 
 		$firstStep = DataObject::get_one(static::$start_step, "\"SessionID\" = {$this->session->ID}");
 		$firstStep->LinkingMode = ($firstStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link';
-		$firstStep->addExtraClass('completed');
 		$firstStep->setForm($this);
 		$stepsFound->push($firstStep);
 
 		// mark the further steps as non-completed if the first step is the current
-		if ($firstStep->ID == $this->getCurrentStep()->ID) $this->currentStepHasBeenFound = true;
+		if ($firstStep->ID == $this->getCurrentStep()->ID) {
+			$this->currentStepHasBeenFound = true;
+		} else {
+			$firstStep->addExtraClass('completed');
+		}
 
 		$this->getAllStepsRecursive($firstStep, $stepsFound);
 
