@@ -80,6 +80,13 @@ class MultiFormStep extends DataObject {
 	protected $extraClasses = array();
 
 	/**
+	 * Temporary cache to increase the performance for repeated look ups.
+	 *
+	 * @var array $cache
+	 */
+	protected $cache = array();
+
+	/**
 	 * Form fields to be rendered with this step.
 	 * (Form object is created in {@link MultiForm}.
 	 *
@@ -409,5 +416,42 @@ class MultiFormStep extends DataObject {
 	 */
 	public function getExtraClasses() {
 		return join(' ', array_keys($this->extraClasses));
+	}
+
+	/**
+	 * Returns the submitted value, if any, of any steps.
+	 *
+	 * @param string $fromStep (classname)
+	 * @param string $key
+	 * @return mixed
+	 */
+	public function getValueFromOtherStep($fromStep, $key) {
+		// load the steps in the cache, if this one doesn't exist
+		if (!array_key_exists('steps_' . $fromStep, $this->cache)) {
+			$steps = MultiFormStep::get()->filter('SessionID', $this->form->session->ID);
+
+			if($steps) foreach($steps as $step) {
+				$this->cache['steps_' . $step->ClassName] = $step->loadData();
+			}
+		}
+
+		// check both as PHP isn't recursive
+		return (isset($this->cache['steps_' . $fromStep]) && isset($this->cache['steps_' . $fromStep][$key])) ?
+			$this->cache['steps_' . $fromStep][$key] : null;
+	}
+
+	/**
+	 * allows to get a value from another step copied over
+	 *
+	 * @param FieldList $fields
+	 * @param string    $formStep
+	 * @param string    $fieldName
+	 * @param string    $fieldNameTarget (optional)
+	 */
+	public function copyValueFromOtherStep(FieldList $fields, $formStep, $fieldName, $fieldNameTarget = null) {
+		// if a target field isn't defined use the same fieldname
+		if (!$fieldNameTarget) $fieldNameTarget = $fieldName;
+
+		$fields->fieldByName($fieldNameTarget)->setValue($this->getValueFromOtherStep($formStep, $fieldName));
 	}
 }

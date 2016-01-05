@@ -333,7 +333,49 @@ This new method you create would then become available in the progress indicator
 template.
 
 
-### 7. Finishing it up
+### 7. Loading values from other steps
+
+There are several use cases were you want to pre-populate a value based
+based on the submission value of another step. There are two methods supporting this:
+
+* `getValueFromOtherStep()` load any submitted value from another step from the session
+* `copyValueFromOtherStep()` saves you the repeated work of adding the same lines of code again and again.
+
+Here is an example of how to populate the email address from step 1 in step2 :
+
+	:::php
+	<?php
+
+	class Step1 extends MultiFormStep
+	{
+		public static $next_steps = 'Step2';
+
+		public function getFields() {
+			return new FieldList(
+				new EmailField('Email', 'Your email')
+			);
+		}
+	}
+
+	class Step2 extends MultiFormStep
+	{
+		public static $next_steps = 'Step3';
+
+		public function getFields() {
+			$fields = new FieldList(
+				new EmailField('Email', 'E-mail'),
+				new EmailField('Email2', 'Verify E-Mail')
+			);
+
+			// set the email field to the input from Step 1
+			$this->copyValueFromOtherStep($fields, 'Step1', 'Email');
+
+			return $fields;
+		}
+	}
+
+
+### 8. Finishing it up
 
 Now that we've got a structure set up to collect form data along each step, and
 progress through successfully, we need to customise what happens at the end of 
@@ -398,7 +440,7 @@ Here is an example of what we could do here:
 	}
 
 
-#### 8. Organisation data model
+#### 9. Organisation data model
 
 The class Organisation is mentioned in the above example but doesn't exist at 
 the moment (unlike the existing Member() class which looks after the member 
