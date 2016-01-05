@@ -421,7 +421,7 @@ class MultiFormStep extends DataObject {
 	/**
 	 * Returns the submitted value, if any, of any steps.
 	 *
-	 * @param string $fromStep
+	 * @param string $fromStep (classname)
 	 * @param string $key
 	 * @return mixed
 	 */
