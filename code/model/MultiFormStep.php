@@ -421,8 +421,6 @@ class MultiFormStep extends DataObject {
 	/**
 	 * Returns the submitted value, if any, of any steps.
 	 *
-	 * @todo  to be removed once https://github.com/silverstripe/silverstripe-multiform/pull/55 is merged in
-	 *
 	 * @param string $fromStep
 	 * @param string $key
 	 * @return mixed
@@ -433,7 +431,7 @@ class MultiFormStep extends DataObject {
 			$steps = MultiFormStep::get()->filter('SessionID', $this->form->session->ID);
 
 			if($steps) foreach($steps as $step) {
-				$this->cache['steps_' . $step] = $step->loadData();
+				$this->cache['steps_' . $step->ClassName] = $step->loadData();
 			}
 		}
 
