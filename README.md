@@ -435,7 +435,7 @@ Here is an example of what we could do here:
 	         }
 	      }
 
-	      $this->controller->redirect($controller->Link() . 'finished');
+	      $this->controller->redirect($this->controller->Link() . 'finished');
 	   }
 	}
 
