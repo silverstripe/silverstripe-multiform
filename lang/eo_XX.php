@@ -10,10 +10,10 @@ i18n::include_locale_file('modules: multiform', 'en_US');
 
 global $lang;
 
-if(array_key_exists('eo_XX', $lang) && is_array($lang['eo_XX'])) {
-	$lang['eo_XX'] = array_merge($lang['en_US'], $lang['eo_XX']);
+if (array_key_exists('eo_XX', $lang) && is_array($lang['eo_XX'])) {
+    $lang['eo_XX'] = array_merge($lang['en_US'], $lang['eo_XX']);
 } else {
-	$lang['eo_XX'] = $lang['en_US'];
+    $lang['eo_XX'] = $lang['en_US'];
 }
 
 $lang['eo_XX']['MultiForm']['BACK'] = 'Retro';
@@ -27,5 +27,3 @@ $lang['eo_XX']['MultiFormSession']['singular_name'] = '(neniu)';
 $lang['eo_XX']['MultiFormStep']['db_Data'] = 'Datumoj';
 $lang['eo_XX']['MultiFormStep']['plural_name'] = '(neniu)';
 $lang['eo_XX']['MultiFormStep']['singular_name'] = '(neniu)';
-
-?>

@@ -10,10 +10,10 @@ i18n::include_locale_file('modules: multiform', 'en_US');
 
 global $lang;
 
-if(array_key_exists('es_MX', $lang) && is_array($lang['es_MX'])) {
-	$lang['es_MX'] = array_merge($lang['en_US'], $lang['es_MX']);
+if (array_key_exists('es_MX', $lang) && is_array($lang['es_MX'])) {
+    $lang['es_MX'] = array_merge($lang['en_US'], $lang['es_MX']);
 } else {
-	$lang['es_MX'] = $lang['en_US'];
+    $lang['es_MX'] = $lang['en_US'];
 }
 
 $lang['es_MX']['MultiForm']['BACK'] = 'Atrás';
@@ -27,5 +27,3 @@ $lang['es_MX']['MultiFormSession']['singular_name'] = '(ningún)';
 $lang['es_MX']['MultiFormStep']['db_Data'] = 'Datos';
 $lang['es_MX']['MultiFormStep']['plural_name'] = '(ningunos)';
 $lang['es_MX']['MultiFormStep']['singular_name'] = '(ningún)';
-
-?>

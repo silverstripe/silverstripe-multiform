@@ -14,56 +14,58 @@
  *
  * @package multiform
  */
-class MultiFormObjectDecorator extends DataExtension {
+class MultiFormObjectDecorator extends DataExtension
+{
 
-	private static $db = array(
-		'MultiFormIsTemporary' => 'Boolean',
-	);
+    private static $db = array(
+        'MultiFormIsTemporary' => 'Boolean',
+    );
 
-	private static $has_one = array(
-		'MultiFormSession' => 'MultiFormSession',
-	);
+    private static $has_one = array(
+        'MultiFormSession' => 'MultiFormSession',
+    );
 
-	/**
-	 * Augment any queries to MultiFormObjectDecorator and only
-	 * return anything that isn't considered temporary.
-	 */
-	public function augmentSQL(SQLQuery &$query) {
-		$where = $query->getWhere();
-		if(!$where && !$this->wantsTemporary($query)) {
-			$from = array_values($query->getFrom());
-			$query->addWhere("{$from[0]}.\"MultiFormIsTemporary\" = '0'");
-			return;
-		}
+    /**
+     * Augment any queries to MultiFormObjectDecorator and only
+     * return anything that isn't considered temporary.
+     */
+    public function augmentSQL(SQLQuery &$query)
+    {
+        $where = $query->getWhere();
+        if (!$where && !$this->wantsTemporary($query)) {
+            $from = array_values($query->getFrom());
+            $query->addWhere("{$from[0]}.\"MultiFormIsTemporary\" = '0'");
+            return;
+        }
 
-		if(
-			strpos($where[0], ".`ID` = ") === false
-			&& strpos($where[0], ".ID = ") === false
-			&& strpos($where[0], "ID = ") !== 0
-			&& !$this->wantsTemporary($query)
-		) {
-			$from = array_values($query->getFrom());
-			$query->addWhere("{$from[0]}.\"MultiFormIsTemporary\" = '0'");
-		}
-	}
+        if (strpos($where[0], ".`ID` = ") === false
+            && strpos($where[0], ".ID = ") === false
+            && strpos($where[0], "ID = ") !== 0
+            && !$this->wantsTemporary($query)
+        ) {
+            $from = array_values($query->getFrom());
+            $query->addWhere("{$from[0]}.\"MultiFormIsTemporary\" = '0'");
+        }
+    }
 
-	/**
-	 * Determines if the current query is supposed
-	 * to be exempt from the automatic filtering out
-	 * of temporary records.
-	 *
-	 * @param SQLQuery $query
-	 * @return boolean
-	 */
-	protected function wantsTemporary($query) {
-		foreach($query->getWhere() as $whereClause) {
-			$from = array_values($query->getFrom());
-			// SQLQuery will automatically add double quotes and single quotes to values, so check against that.
-			if($whereClause == "{$from[0]}.\"MultiFormIsTemporary\" = '1'") {
-				return true;
-			}
-		}
+    /**
+     * Determines if the current query is supposed
+     * to be exempt from the automatic filtering out
+     * of temporary records.
+     *
+     * @param SQLQuery $query
+     * @return boolean
+     */
+    protected function wantsTemporary($query)
+    {
+        foreach ($query->getWhere() as $whereClause) {
+            $from = array_values($query->getFrom());
+            // SQLQuery will automatically add double quotes and single quotes to values, so check against that.
+            if ($whereClause == "{$from[0]}.\"MultiFormIsTemporary\" = '1'") {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

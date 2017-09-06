@@ -10,10 +10,10 @@ i18n::include_locale_file('modules: multiform', 'en_US');
 
 global $lang;
 
-if(array_key_exists('tr_TR', $lang) && is_array($lang['tr_TR'])) {
-	$lang['tr_TR'] = array_merge($lang['en_US'], $lang['tr_TR']);
+if (array_key_exists('tr_TR', $lang) && is_array($lang['tr_TR'])) {
+    $lang['tr_TR'] = array_merge($lang['en_US'], $lang['tr_TR']);
 } else {
-	$lang['tr_TR'] = $lang['en_US'];
+    $lang['tr_TR'] = $lang['en_US'];
 }
 
 $lang['tr_TR']['MultiForm']['BACK'] = 'Geri';
@@ -27,5 +27,3 @@ $lang['tr_TR']['MultiFormSession']['singular_name'] = '(hiçbiri)';
 $lang['tr_TR']['MultiFormStep']['db_Data'] = 'Veri';
 $lang['tr_TR']['MultiFormStep']['plural_name'] = '(hiçbiri)';
 $lang['tr_TR']['MultiFormStep']['singular_name'] = '(hiçbiri)';
-
-?>

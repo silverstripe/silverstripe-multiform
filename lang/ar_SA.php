@@ -10,10 +10,10 @@ i18n::include_locale_file('modules: multiform', 'en_US');
 
 global $lang;
 
-if(array_key_exists('ar_SA', $lang) && is_array($lang['ar_SA'])) {
-	$lang['ar_SA'] = array_merge($lang['en_US'], $lang['ar_SA']);
+if (array_key_exists('ar_SA', $lang) && is_array($lang['ar_SA'])) {
+    $lang['ar_SA'] = array_merge($lang['en_US'], $lang['ar_SA']);
 } else {
-	$lang['ar_SA'] = $lang['en_US'];
+    $lang['ar_SA'] = $lang['en_US'];
 }
 
 $lang['ar_SA']['MultiForm']['BACK'] = 'السابق';
@@ -27,5 +27,3 @@ $lang['ar_SA']['MultiFormSession']['singular_name'] = '(لايوجد)';
 $lang['ar_SA']['MultiFormStep']['db_Data'] = 'بيانات';
 $lang['ar_SA']['MultiFormStep']['plural_name'] = '(لايوجد)';
 $lang['ar_SA']['MultiFormStep']['singular_name'] = '(لايوجد)';
-
-?>

@@ -83,7 +83,7 @@ Using [Composer](https://getcomposer.org/), you can install multiform into your
 SilverStripe site using this command (while in the directory where your site is
 currently located)
 
-	composer require "silverstripe/multiform:*"
+`composer require "silverstripe/multiform:*"`
 
 ### 2. Create subclass of MultiForm
 
@@ -91,13 +91,11 @@ First of all, we need to create a new subclass of *MultiForm*.
 
 For the above example, our multi-form will be called *SurveyForm*
 
-	:::php
-	<?php
-	
-	class SurveyForm extends MultiForm {
-	
-	}
+```php
+class SurveyForm extends MultiForm {
 
+}
+```
 
 ### 3. Set up first step
 
@@ -111,27 +109,23 @@ form.
 So, for example, if we were going to have a first step which collects the 
 personal details of the form user, then we might have this class:
 
-	:::php
-	<?php
-	
-	class SurveyFormPersonalDetailsStep extends MultiFormStep {
-	
-	}
+```php
+class SurveyFormPersonalDetailsStep extends MultiFormStep {
 
+}
+```
 
 Now that we've got our first step of the form defined, we need to go back to our 
 subclass of MultiForm, SurveyForm, and tell it that SurveyFormPersonalDetailsStep 
 is the first step.
 
-	:::php
-	<?php
-	
-	class SurveyForm extends MultiForm {
-	
-		public static $start_step = 'SurveyFormPersonalDetailsStep';
-	
-	}
+```php
+class SurveyForm extends MultiForm {
 
+    public static $start_step = 'SurveyFormPersonalDetailsStep';
+
+}
+```
 
 ### 4. Define next step, and final step
 
@@ -144,22 +138,20 @@ order to use flow control in our system.
 To let the step know what step is next in the process, we do the same as setting 
 the `$start_step` variable *SurveyForm*, but we call it `$next_steps`.
 
-	:::php
-	<?php
-	
-	class SurveyFormPersonalDetailsStep extends MultiFormStep {
-	
-		public static $next_steps = 'SurveyFormOrganisationDetailsStep';
+```php
+class SurveyFormPersonalDetailsStep extends MultiFormStep {
 
-		public function getFields() {
-			return new FieldList(
-				new TextField('FirstName', 'First name'),
-				new TextField('Surname', 'Surname')
-			);
-		}
-	
-	}
+    public static $next_steps = 'SurveyFormOrganisationDetailsStep';
 
+    public function getFields() {
+        return new FieldList(
+            new TextField('FirstName', 'First name'),
+            new TextField('Surname', 'Surname')
+        );
+    }
+
+}
+```
 
 At the very least, each step also has to have a `getFields()` method returning 
 a *FieldSet* with some form field objects. These are the fields that the form 
@@ -172,15 +164,13 @@ this is the final step.
 So, if we assume that the last step in our process is 
 SurveyFormOrganisationDetailsStep, then we can do something like this:
 
-	:::php
-	<?php
-	
-	class SurveyFormOrganisationDetailsStep extends MultiFormStep {
-	
-		public static $is_final_step = true;
-	
-	}
+```php
+class SurveyFormOrganisationDetailsStep extends MultiFormStep {
 
+    public static $is_final_step = true;
+
+}
+```
 
 ### 5. Run database integrity check
 
@@ -197,40 +187,38 @@ that the form can be rendered into a given template.
 So, if we want to render our multi-form as `$SurveyForm` in the *Page.ss* 
 template, we need to create a SurveyForm method (function) on the controller:
 
-	:::php
-	<?php
-	
-	class Page extends SiteTree {
-	
-	// ...
-	
-	}
-	
-	class Page_Controller extends ContentController {
-	
-	// ...
+```php
+class Page extends SiteTree {
 
-		// 
-		private static $allowed_actions = array(
-			'SurveyForm',
-			'finished'
-		);
+// ...
 
-		public function SurveyForm() {
-			return new SurveyForm($this, 'Form');
-		}
-		
-		public function finished() {
-			return array(
-				'Title' => 'Thank you for your submission',
-				'Content' => '<p>You have successfully submitted the form!</p>'
-			);
-		}
-	
-	// ...
-	
-	}
+}
 
+class Page_Controller extends ContentController {
+
+// ...
+
+    // 
+    private static $allowed_actions = array(
+        'SurveyForm',
+        'finished'
+    );
+
+    public function SurveyForm() {
+        return new SurveyForm($this, 'Form');
+    }
+    
+    public function finished() {
+        return array(
+            'Title' => 'Thank you for your submission',
+            'Content' => '<p>You have successfully submitted the form!</p>'
+        );
+    }
+
+// ...
+
+}
+```
 
 The `SurveyForm()` function will create a new instance our subclass of 
 MultiForm, which in this example, is *SurveyForm*. This in turn will then set 
@@ -242,21 +230,21 @@ like.
 
 Your template should look something like this, to render the form in:
 
-	:::html
-	<div id="content">
-		<% if $Content %>
-			$Content
-		<% end_if %>
-		
-		<% if $SurveyForm %>
-			$SurveyForm
-		<% end_if %>
-		
-		<% if $Form %>
-			$Form
-		<% end_if %>
-	</div>
-
+```html
+<div id="content">
+    <% if $Content %>
+        $Content
+    <% end_if %>
+    
+    <% if $SurveyForm %>
+        $SurveyForm
+    <% end_if %>
+    
+    <% if $Form %>
+        $Form
+    <% end_if %>
+</div>
+```
 
 In this case, the above template example is a *sub-template* inside the *Layout* 
 directory for the templates. Note that we have also included `$Form`, so 
@@ -281,11 +269,11 @@ To include these with our instance of multiform, we just need to add an
 
 For example:
 
-	:::html
-	<% with $SurveyForm %>
-		<% include MultiFormProgressList %>
-	<% end_with %>
-
+```html
+<% with $SurveyForm %>
+    <% include MultiFormProgressList %>
+<% end_with %>
+```
 
 This means the included template is rendered within the scope of the 
 SurveyForm instance returned, instead of the top level controller context. 
@@ -293,24 +281,24 @@ This gives us the data to show the progression of the steps.
 
 Putting it together, we might have something looking like this:
 
-	:::html
-	<div id="content">
-		<% if $Content %>
-			$Content
-		<% end_if %>
-		
-		<% if $SurveyForm %>
-			<% with $SurveyForm %>
-				<% include MultiFormProgressList %>
-			<% end_with %>
+```html
+<div id="content">
+    <% if $Content %>
+        $Content
+    <% end_if %>
+    
+    <% if $SurveyForm %>
+        <% with $SurveyForm %>
+            <% include MultiFormProgressList %>
+        <% end_with %>
 
-			$SurveyForm
-		<% end_if %>
-		<% if $Form %>
-			$Form
-		<% end_if %>
-	</div>
-
+        $SurveyForm
+    <% end_if %>
+    <% if $Form %>
+        $Form
+    <% end_if %>
+</div>
+```
 
 Feel free to play around with the progress indicators. If you need something 
 specific to your project, just create a new "Include" template inside your own 
@@ -343,37 +331,35 @@ based on the submission value of another step. There are two methods supporting 
 
 Here is an example of how to populate the email address from step 1 in step2 :
 
-	:::php
-	<?php
+```php
+class Step1 extends MultiFormStep
+{
+    public static $next_steps = 'Step2';
 
-	class Step1 extends MultiFormStep
-	{
-		public static $next_steps = 'Step2';
+    public function getFields() {
+        return new FieldList(
+            new EmailField('Email', 'Your email')
+        );
+    }
+}
 
-		public function getFields() {
-			return new FieldList(
-				new EmailField('Email', 'Your email')
-			);
-		}
-	}
+class Step2 extends MultiFormStep
+{
+    public static $next_steps = 'Step3';
 
-	class Step2 extends MultiFormStep
-	{
-		public static $next_steps = 'Step3';
+    public function getFields() {
+        $fields = new FieldList(
+            new EmailField('Email', 'E-mail'),
+            new EmailField('Email2', 'Verify E-Mail')
+        );
 
-		public function getFields() {
-			$fields = new FieldList(
-				new EmailField('Email', 'E-mail'),
-				new EmailField('Email2', 'Verify E-Mail')
-			);
+        // set the email field to the input from Step 1
+        $this->copyValueFromOtherStep($fields, 'Step1', 'Email');
 
-			// set the email field to the input from Step 1
-			$this->copyValueFromOtherStep($fields, 'Step1', 'Email');
-
-			return $fields;
-		}
-	}
-
+        return $fields;
+    }
+}
+```
 
 ### 8. Finishing it up
 
@@ -389,56 +375,54 @@ So, we must write some code on our subclass of *MultiForm*, overloading
 
 Here is an example of what we could do here:
 
-	:::php
-	<?php
-	 
-	class SurveyForm extends MultiForm {
-	 
-	   public static $start_step = 'SurveyFormPersonalDetailsStep';
-	 
-	   public function finish($data, $form) {
-	      parent::finish($data, $form);
+```php 
+class SurveyForm extends MultiForm {
+ 
+   public static $start_step = 'SurveyFormPersonalDetailsStep';
+ 
+   public function finish($data, $form) {
+      parent::finish($data, $form);
 
-	      $steps = DataObject::get(
-	      	'MultiFormStep', 
-	      	"SessionID = {$this->session->ID}"
-	      );
-	      
-	      if($steps) {
-	         foreach($steps as $step) {
-	            if($step->class == 'SurveyFormPersonalDetailsStep') {
-	               $member = new Member();
-	               $data = $step->loadData();
+      $steps = DataObject::get(
+        'MultiFormStep', 
+        "SessionID = {$this->session->ID}"
+      );
+      
+      if($steps) {
+         foreach($steps as $step) {
+            if($step->class == 'SurveyFormPersonalDetailsStep') {
+               $member = new Member();
+               $data = $step->loadData();
 
-	               if($data) {
-	                  $member->update($data);
-	                  $member->write();
-	               }
-	            }
-	
-	            if($step->class == 'SurveyOrganisationDetailsStep') {
-	               $organisation = new Organisation();
-	               $data = $step->loadData();
+               if($data) {
+                  $member->update($data);
+                  $member->write();
+               }
+            }
 
-	               if($data) {
-	                  $organisation->update($data);
+            if($step->class == 'SurveyOrganisationDetailsStep') {
+               $organisation = new Organisation();
+               $data = $step->loadData();
 
-	                  if($member && $member->ID) {
-	                  	$organisation->MemberID = $member->ID;
-	                  }
+               if($data) {
+                  $organisation->update($data);
 
-	                  $organisation->write();
-	               }
-	            }
-				// Shows the step data (unserialized by loadData)
-	            // Debug::show($step->loadData());
-	         }
-	      }
+                  if($member && $member->ID) {
+                    $organisation->MemberID = $member->ID;
+                  }
 
-	      $this->controller->redirect($this->controller->Link() . 'finished');
-	   }
-	}
+                  $organisation->write();
+               }
+            }
+            // Shows the step data (unserialized by loadData)
+            // Debug::show($step->loadData());
+         }
+      }
 
+      $this->controller->redirect($this->controller->Link() . 'finished');
+   }
+}
+```
 
 #### 9. Organisation data model
 
@@ -449,17 +433,14 @@ groups in SilverStripe) so we need to create it:
 This example has been chosen as a separate DataObject but you may wish to change
 the code and add the data to the Member class instead.
 
-	:::php
-	<?php
-	 
-	class Organisation extends DataObject {
-		
-		private static $db = array(
-			// Add your Organisation fields here
-		);
-	 
-	}
-
+```php
+class Organisation extends DataObject {
+    
+    private static $db = array(
+        // Add your Organisation fields here
+    );
+}
+```
 #### Warning
 
 If you're dealing with sensitive data, it's best to delete the session and step 
@@ -468,9 +449,9 @@ data immediately after the form is successfully submitted.
 You can delete it by calling this method on the finish() for your MultiForm 
 subclass:
 
-	:::php
-	$this->session->delete();
-
+```php
+$this->session->delete();
+```
 
 This will also go through each of it's steps and delete them as well.
 
@@ -517,24 +498,24 @@ be something different based on a user's choice of input during the step, you
 can override getNextStep() on any given step to manually override what the next 
 step should be. An example:
 
-	:::php
-	class MyStep extends MultiFormStep
-	
-	// ...
-	
-	   public function getNextStep() {
-	      $data = $this->loadData();
-	      if(@$data['Gender'] == 'Male') {
-	         return 'TestThirdCase1Step';
-	      } else {
-	         return 'TestThirdCase2Step';
-	      }
-	   }
-	
-	// ...
-	
-	}
+```php
+class MyStep extends MultiFormStep
 
+// ...
+
+   public function getNextStep() {
+      $data = $this->loadData();
+      if(@$data['Gender'] == 'Male') {
+         return 'TestThirdCase1Step';
+      } else {
+         return 'TestThirdCase2Step';
+      }
+   }
+
+// ...
+
+}
+```
 ### Validation
 
 To define validation on a step-by-step basis, please define getValidator() and 
@@ -543,22 +524,22 @@ validation see [:form](http://doc.silverstripe.org/form-validation).
 
 e.g.
 
-	:::php
-	class MyStep extends MultiFormStep {
-	
-	   ...
-	
-	   public function getValidator() {
-	      return new RequiredFields(array(
-	         'Name',
-	         'Email'
-	      ));
-	   }
-	
-	   ...
-	
-	}
+```php
+class MyStep extends MultiFormStep {
 
+   ...
+
+   public function getValidator() {
+      return new RequiredFields(array(
+         'Name',
+         'Email'
+      ));
+   }
+
+   ...
+
+}
+```
 
 ### finish()
 
@@ -573,29 +554,27 @@ won't be saved.
 
 For example:
 
-	:::php
-	<?php
-	
-	class SurveyForm extends MultiForm {
-	
-	   public static $start_step = 'SurveyFormPersonalDetailsStep';
-	
-	   public function finish($data, $form) {
-	      parent::finish($data, $form);
+```php
+class SurveyForm extends MultiForm {
 
-	      $steps =	MultiFormStep::get()->filter(array(
-	      	"SessionID" => $this->session->ID
-	      ));
+   public static $start_step = 'SurveyFormPersonalDetailsStep';
 
-	      if($steps) {
-	         foreach($steps as $step) {
-	         	// Shows the step data (unserialized by loadData)
-	            Debug::show($step->loadData()); 
-	         }
-	      }
-	   }
-	}
+   public function finish($data, $form) {
+      parent::finish($data, $form);
 
+      $steps =	MultiFormStep::get()->filter(array(
+        "SessionID" => $this->session->ID
+      ));
+
+      if($steps) {
+         foreach($steps as $step) {
+            // Shows the step data (unserialized by loadData)
+            Debug::show($step->loadData()); 
+         }
+      }
+   }
+}
+```
 
 The above is a sample bit of code that simply fetches all the steps in the 
 database that were saved. Further refinement could include getting steps only 
@@ -613,9 +592,9 @@ idea to immediately delete this data after the user has submitted.
 This can be easily achieved by adding the following line at the end of your 
 `finish()` method on your MultiForm subclass.
 
-	:::php
-	$this->session->delete();
-
+```php
+$this->session->delete();
+```
 
 ### Expiring old session data
 

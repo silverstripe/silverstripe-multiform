@@ -10,10 +10,10 @@ i18n::include_locale_file('modules: multiform', 'en_US');
 
 global $lang;
 
-if(array_key_exists('zh_CN', $lang) && is_array($lang['zh_CN'])) {
-	$lang['zh_CN'] = array_merge($lang['en_US'], $lang['zh_CN']);
+if (array_key_exists('zh_CN', $lang) && is_array($lang['zh_CN'])) {
+    $lang['zh_CN'] = array_merge($lang['en_US'], $lang['zh_CN']);
 } else {
-	$lang['zh_CN'] = $lang['en_US'];
+    $lang['zh_CN'] = $lang['en_US'];
 }
 
 $lang['zh_CN']['MultiForm']['BACK'] = '区域';
@@ -27,5 +27,3 @@ $lang['zh_CN']['MultiFormSession']['singular_name'] = '单名称';
 $lang['zh_CN']['MultiFormStep']['db_Data'] = '数据';
 $lang['zh_CN']['MultiFormStep']['plural_name'] = '多名称';
 $lang['zh_CN']['MultiFormStep']['singular_name'] = '单名称';
-
-?>
