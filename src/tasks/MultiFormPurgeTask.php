@@ -1,5 +1,11 @@
 <?php
 
+namespace SilverStripe\MultiForm;
+
+use SilverStripe\Dev\BuildTask;
+use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\DataObject;
+
 /**
  * Task to clean out all {@link MultiFormSession} objects from the database.
  *
@@ -14,7 +20,6 @@
  */
 class MultiFormPurgeTask extends BuildTask
 {
-
     /**
      * Days after which sessions expire and
      * are automatically deleted.
@@ -47,12 +52,12 @@ class MultiFormPurgeTask extends BuildTask
      * Return all MultiFormSession database records that are older than
      * the days specified in $session_expiry_days
      *
-     * @return DataObjectSet
+     * @return DataList
      */
     protected function getExpiredSessions()
     {
         return DataObject::get(
-            'MultiFormSession',
+            MultiFormSession::class,
             "DATEDIFF(NOW(), \"MultiFormSession\".\"Created\") > " . self::$session_expiry_days
         );
     }

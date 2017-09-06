@@ -1,5 +1,10 @@
 <?php
 
+namespace SilverStripe\MultiForm\Models;
+
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Security;
+
 /**
  * Serializes one or more {@link MultiFormStep}s into
  * a database object.
@@ -12,20 +17,21 @@
  */
 class MultiFormSession extends DataObject
 {
-
-    private static $db = array(
+    private static $db = [
         'Hash' => 'Varchar(40)',    // cryptographic hash identification to this session
         'IsComplete' => 'Boolean'   // flag to determine if this session is marked completed
-    );
+    ];
 
-    private static $has_one = array(
+    private static $has_one = [
         'Submitter' => 'Member',
         'CurrentStep' => 'MultiFormStep'
-    );
+    ];
 
-    private static $has_many = array(
+    private static $has_many = [
         'FormSteps' => 'MultiFormStep'
-    );
+    ];
+
+    private static $table_name = 'MultiFormSession';
 
     /**
      * Mark this session as completed.
@@ -45,8 +51,8 @@ class MultiFormSession extends DataObject
     public function onBeforeWrite()
     {
         // save submitter if a Member is logged in
-        $currentMember = Member::currentUser();
-        if (!$this->SubmitterID && $currentMember) {
+        $currentMember = Security::getCurrentUser();
+        if (!$this->SubmitterID && $currentMember->ID) {
             $this->SubmitterID = $currentMember->ID;
         }
 

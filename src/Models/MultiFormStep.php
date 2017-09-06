@@ -1,5 +1,13 @@
 <?php
 
+namespace SilverStripe\MultiForm\Models;
+
+use SilverStripe\Control\Controller;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\Validator;
+use SilverStripe\ORM\DataObject;
+
 /**
  * MultiFormStep controls the behaviour of a single form step in the MultiForm
  * process. All form steps are required to be subclasses of this class, as it
@@ -11,14 +19,15 @@
  */
 class MultiFormStep extends DataObject
 {
-
-    private static $db = array(
+    private static $db = [
         'Data' => 'Text' // stores serialized maps with all session information
-    );
+    ];
 
-    private static $has_one = array(
+    private static $has_one = [
         'Session' => 'MultiFormSession'
-    );
+    ];
+
+    private static $table_name = 'MultiFormStep';
 
     /**
      * Centerpiece of the flow control for the form.
@@ -78,14 +87,14 @@ class MultiFormStep extends DataObject
      *
      * @var array $extraClasses
      */
-    protected $extraClasses = array();
+    protected $extraClasses = [];
 
     /**
      * Temporary cache to increase the performance for repeated look ups.
      *
      * @var array $cache
      */
-    protected $step_data_cache = array();
+    protected $step_data_cache = [];
 
     /**
      * Form fields to be rendered with this step.
@@ -112,14 +121,14 @@ class MultiFormStep extends DataObject
      */
     public function getExtraActions()
     {
-        return (class_exists('FieldList')) ? new FieldList() : new FieldSet();
+        return FieldList::create();
     }
 
     /**
      * Get a validator specific to this form.
      * The form is automatically validated in {@link Form->httpSubmission()}.
      *
-     * @return Validator
+     * @return bool|Validator
      */
     public function getValidator()
     {
@@ -147,7 +156,10 @@ class MultiFormStep extends DataObject
     public function Link()
     {
         $form = $this->form;
-        return Controller::join_links($form->getDisplayLink(), "?{$form->config()->get_var}={$this->Session()->Hash}");
+        return Controller::join_links(
+            $form->getDisplayLink(),
+            "?{$form->config()->get_var}={$this->getSession()->Hash}"
+        );
     }
 
     /**
@@ -164,7 +176,7 @@ class MultiFormStep extends DataObject
      */
     public function loadData()
     {
-        return ($this->Data && is_string($this->Data)) ? unserialize($this->Data) : array();
+        return ($this->Data && is_string($this->Data)) ? unserialize($this->Data) : [];
     }
 
     /**
@@ -191,14 +203,15 @@ class MultiFormStep extends DataObject
      * as a simple value outside of the original FormField context.
      *
      * @param DataObject $obj
+     * @return DataObject
      */
     public function saveInto($obj)
     {
-        $form = new Form(
+        $form = Form::create(
             Controller::curr(),
             'Form',
             $this->getFields(),
-            ((class_exists('FieldList')) ? new FieldList() : new FieldSet())
+            FieldList::create()
         );
         $form->loadDataFrom($this->loadData());
         $form->saveInto($obj);
@@ -235,7 +248,11 @@ class MultiFormStep extends DataObject
         // Check if next_steps have been implemented properly if not the final step
         if (!$this->isFinalStep()) {
             if (!isset($nextSteps)) {
-                user_error('MultiFormStep->getNextStep(): Please define at least one $next_steps on ' . $this->class, E_USER_ERROR);
+                user_error(
+                    'MultiFormStep->getNextStep(): Please define at least one $next_steps on '
+                    . $this->class,
+                    E_USER_ERROR
+                );
             }
         }
 
@@ -326,7 +343,7 @@ class MultiFormStep extends DataObject
      */
     public function getPrevText()
     {
-        return _t('MultiForm.BACK', 'Back');
+        return _t(__CLASS__ . '.BACK', 'Back');
     }
 
     /**
@@ -335,7 +352,7 @@ class MultiFormStep extends DataObject
      */
     public function getNextText()
     {
-        return _t('MultiForm.NEXT', 'Next');
+        return _t(__CLASS__ . '.NEXT', 'Next');
     }
 
     /**
@@ -344,13 +361,13 @@ class MultiFormStep extends DataObject
      */
     public function getSubmitText()
     {
-        return _t('MultiForm.SUBMIT', 'Submit');
+        return _t(__CLASS__ . '.SUBMIT', 'Submit');
     }
 
     /**
      * Sets the form that this step is directly related to.
      *
-     * @param MultiForm subclass $form
+     * @param MultiForm $form subclass
      */
     public function setForm($form)
     {
@@ -401,7 +418,7 @@ class MultiFormStep extends DataObject
      */
     public function isCurrentStep()
     {
-        return ($this->class == $this->Session()->CurrentStep()->class) ? true : false;
+        return ($this->class == $this->getSession()->CurrentStep()->class) ? true : false;
     }
 
     /**
@@ -458,7 +475,7 @@ class MultiFormStep extends DataObject
     {
         // load the steps in the cache, if this one doesn't exist
         if (!array_key_exists('steps_' . $fromStep, $this->step_data_cache)) {
-            $steps = MultiFormStep::get()->filter('SessionID', $this->form->session->ID);
+            $steps = self::get()->filter('SessionID', $this->form->session->ID);
 
             if ($steps) {
                 foreach ($steps as $step) {
@@ -493,5 +510,14 @@ class MultiFormStep extends DataObject
         }
 
         $fields->fieldByName($fieldNameTarget)->setValue($this->getValueFromOtherStep($formStep, $fieldName));
+    }
+
+    /**
+     * Gets the linked MultiFormSession
+     * @return MultiFormSession
+     */
+    public function getSession()
+    {
+        return $this->Session();
     }
 }

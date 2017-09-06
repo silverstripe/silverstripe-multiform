@@ -1,20 +1,24 @@
 <?php
+
+namespace SilverStripe\MultiForm\Tests;
+
+use SilverStripe\Dev\SapphireTest;
+
 class MultiFormObjectDecoratorTest extends SapphireTest
 {
-
     protected static $fixture_file = 'MultiFormObjectDecoratorTest.yml';
 
-    protected $requiredExtensions = array(
-        'MultiFormObjectDecorator_DataObject' => array('MultiFormObjectDecorator')
-    );
+    protected $requiredExtensions = [
+        'MultiFormObjectDecoratorDataObject' => ['MultiFormObjectDecorator']
+    ];
 
-    protected $extraDataObjects = array(
-        'MultiFormObjectDecorator_DataObject'
-    );
+    protected $extraDataObjects = [
+        'MultiFormObjectDecoratorDataObject'
+    ];
 
     public function testTemporaryDataFilteredQuery()
     {
-        $records = MultiFormObjectDecorator_DataObject::get()
+        $records = MultiFormObjectDecoratorDataObject::get()
             ->map('Name')
             ->toArray();
 
@@ -25,8 +29,8 @@ class MultiFormObjectDecoratorTest extends SapphireTest
 
     public function testTemporaryDataQuery()
     {
-        $records = MultiFormObjectDecorator_DataObject::get()
-            ->filter(array('MultiFormIsTemporary' => 1))
+        $records = MultiFormObjectDecoratorDataObject::get()
+            ->filter(['MultiFormIsTemporary' => 1])
             ->map('Name')
             ->toArray();
 
@@ -34,12 +38,4 @@ class MultiFormObjectDecoratorTest extends SapphireTest
         $this->assertNotContains('Test 2', $records);
         $this->assertContains('Test 3', $records);
     }
-}
-
-class MultiFormObjectDecorator_DataObject extends DataObject
-{
-
-    private static $db = array(
-        'Name' => 'Varchar'
-    );
 }
