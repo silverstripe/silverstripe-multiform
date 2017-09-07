@@ -11,7 +11,7 @@ use SilverStripe\Dev\TestOnly;
  */
 class MultiFormTestController extends Controller implements TestOnly
 {
-    public function Link()
+    public function Link($action = null)
     {
         return self::class;
     }

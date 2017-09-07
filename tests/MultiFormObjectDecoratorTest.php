@@ -3,17 +3,18 @@
 namespace SilverStripe\MultiForm\Tests;
 
 use SilverStripe\Dev\SapphireTest;
+use SilverStripe\MultiForm\Extensions\MultiFormObjectDecorator;
 
 class MultiFormObjectDecoratorTest extends SapphireTest
 {
     protected static $fixture_file = 'MultiFormObjectDecoratorTest.yml';
 
-    protected $requiredExtensions = [
-        'MultiFormObjectDecoratorDataObject' => ['MultiFormObjectDecorator']
+    protected static $required_extensions = [
+        MultiFormObjectDecoratorDataObject::class => [MultiFormObjectDecorator::class]
     ];
 
     protected $extraDataObjects = [
-        'MultiFormObjectDecoratorDataObject'
+        MultiFormObjectDecoratorDataObject::class
     ];
 
     public function testTemporaryDataFilteredQuery()

@@ -10,4 +10,6 @@ class MultiFormObjectDecoratorDataObject extends DataObject implements TestOnly
     private static $db = [
         'Name' => 'Varchar'
     ];
+
+    private static $table_name = 'MultiFormObjectDecoratorDataObject';
 }
