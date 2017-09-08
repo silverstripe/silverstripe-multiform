@@ -22,7 +22,7 @@ before_script:
 
   # Install composer dependencies
   - composer install --prefer-dist
-  - composer require --prefer-dist --no-update silverstripe/recipe-framework:1.0.x-dev
+  - composer require --prefer-dist --no-update silverstripe/recipe-core:1.0.x-dev
   - if [[ $DB == PGSQL ]]; then composer require --prefer-dist --no-update silverstripe/postgresql:2.0.x-dev; fi
   - composer update
 
