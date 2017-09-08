@@ -13,5 +13,10 @@
 	"require": {
 		"silverstripe/framework": "~3.2"
 	},
-	"license": "BSD-3-Clause"
+	"license": "BSD-3-Clause",
+	"extra": {
+		"branch-alias": {
+			"1.x-dev": "1.4.x-dev"
+		}
+	}
 }
