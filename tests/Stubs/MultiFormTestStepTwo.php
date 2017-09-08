@@ -1,15 +1,11 @@
 <?php
-namespace SilverStripe\MultiForm\Tests;
+namespace SilverStripe\MultiForm\Tests\Stubs;
 
 use SilverStripe\Dev\TestOnly;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\MultiForm\Models\MultiFormStep;
 
-/**
- * @package multiform
- * @subpackage tests
- */
 class MultiFormTestStepTwo extends MultiFormStep implements TestOnly
 {
     private static $next_steps = MultiFormTestStepThree::class;

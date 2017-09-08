@@ -19,7 +19,6 @@ use SilverStripe\ORM\Queries\SQLSelect;
  * in your WHERE clause:
  * `<MyDataObjectClass>`.`MultiFormIsTemporary` = 1
  *
- * @package multiform
  */
 class MultiFormObjectDecorator extends DataExtension
 {

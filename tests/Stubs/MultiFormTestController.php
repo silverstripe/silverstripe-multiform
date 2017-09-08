@@ -1,15 +1,11 @@
 <?php
 
-namespace SilverStripe\MultiForm\Tests;
+namespace SilverStripe\MultiForm\Tests\Stubs;
 
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\TestOnly;
 
-/**
- * @package multiform
- * @subpackage tests
- */
 class MultiFormTestController extends Controller implements TestOnly
 {
     private static $url_segment = 'MultiFormTestController';

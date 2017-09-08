@@ -1,11 +1,11 @@
 en:
-  MultiForm:
+  SilverStripe\MultiForm\MultiForm:
     BACK: Back
     NEXT: Next
     SUBMIT: Submit
-  MultiFormSession:
+  SilverStripe\MultiForm\MultiFormSession:
     PLURALNAME: 'Multi Form Sessions'
     SINGULARNAME: 'Multi Form Session'
-  MultiFormStep:
+  SilverStripe\MultiForm\MultiFormStep:
     PLURALNAME: 'Multi Form Steps'
     SINGULARNAME: 'Multi Form Step'

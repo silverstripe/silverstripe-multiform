@@ -1,16 +1,12 @@
 <?php
 
-namespace SilverStripe\MultiForm\Tests;
+namespace SilverStripe\MultiForm\Tests\Stubs;
 
 use SilverStripe\Dev\TestOnly;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\MultiForm\Models\MultiFormStep;
 
-/**
- * @package multiform
- * @subpackage tests
- */
 class MultiFormTestStepThree extends MultiFormStep implements TestOnly
 {
     private static $is_final_step = true;

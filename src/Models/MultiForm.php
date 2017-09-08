@@ -28,7 +28,6 @@ use SilverStripe\View\SSViewer;
  * private static $allowed_actions = array('next','prev');
  * </code>
  *
- * @package multiform
  */
 abstract class MultiForm extends Form
 {

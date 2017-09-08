@@ -14,7 +14,6 @@ use SilverStripe\Security\Security;
  * the {@link MultiForm} and {@link MultiFormStep} classes
  * know what the current step is.
  *
- * @package multiform
  */
 class MultiFormSession extends DataObject
 {

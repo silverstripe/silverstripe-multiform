@@ -9,6 +9,10 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\MultiForm\Models\MultiForm;
 use SilverStripe\MultiForm\Models\MultiFormSession;
+use SilverStripe\MultiForm\Tests\Stubs\MultiFormTestController;
+use SilverStripe\MultiForm\Tests\Stubs\MultiFormTestForm;
+use SilverStripe\MultiForm\Tests\Stubs\MultiFormTestStepOne;
+use SilverStripe\MultiForm\Tests\Stubs\MultiFormTestStepTwo;
 
 /**
  * MultiFormTest
@@ -25,8 +29,6 @@ use SilverStripe\MultiForm\Models\MultiFormSession;
  * is a simulation of a page where MultiFormTest_Form is a simple
  * multi-step contact form it belongs to.
  *
- * @package multiform
- * @subpackage tests
  */
 class MultiFormTest extends FunctionalTest
 {

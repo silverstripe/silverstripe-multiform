@@ -17,7 +17,6 @@ use SilverStripe\ORM\DataObject;
  * or
  * `framework/sake MultiFormPurgeTask`
  *
- * @package multiform
  */
 class MultiFormPurgeTask extends BuildTask
 {
@@ -28,6 +27,8 @@ class MultiFormPurgeTask extends BuildTask
      * @var int
      */
     private static $session_expiry_days = 7;
+
+    private static $segment = 'MultiFormPurgeTask';
 
     /**
      * Run this cron task.
@@ -46,7 +47,8 @@ class MultiFormPurgeTask extends BuildTask
                 $delCount++;
             }
         }
-        echo $delCount . ' session records deleted that were older than ' . $this->config()->get('session_expiry_days') . ' days.';
+        echo $delCount . ' session records deleted that were older than '
+            . $this->config()->get('session_expiry_days') . ' days.'. PHP_EOL;
     }
 
     /**

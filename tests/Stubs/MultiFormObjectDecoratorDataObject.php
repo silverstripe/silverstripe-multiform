@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\MultiForm\Tests;
+namespace SilverStripe\MultiForm\Tests\Stubs;
 
 use SilverStripe\Dev\TestOnly;
 use SilverStripe\ORM\DataObject;

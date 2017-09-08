@@ -15,7 +15,6 @@ use SilverStripe\ORM\DataObject;
  * in the process by knowing what it's next step is, and if applicable, it's previous
  * step.
  *
- * @package multiform
  */
 class MultiFormStep extends DataObject
 {
@@ -142,7 +141,7 @@ class MultiFormStep extends DataObject
      */
     public function getTitle()
     {
-        return $this->title ? $this->title : $this->class;
+        return $this->title ? $this->title : get_class($this);
     }
 
     /**
@@ -272,7 +271,7 @@ class MultiFormStep extends DataObject
      * This will only return something if you've previously visited
      * the step ahead of the current step, and then gone back a step.
      *
-     * @return MultiFormStep|boolean
+     * @return MultiFormStep|boolean|void
      */
     public function getNextStepFromDatabase()
     {
@@ -305,7 +304,7 @@ class MultiFormStep extends DataObject
      * To determine if there is a previous step, we check the database to see if there's
      * a previous step for this multi form session ID.
      *
-     * @return string Classname of a {@link MultiFormStep} subclass
+     * @return string|void Classname of a {@link MultiFormStep} subclass
      */
     public function getPreviousStep()
     {
