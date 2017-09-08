@@ -122,7 +122,7 @@ is the first step.
 ```php
 class SurveyForm extends MultiForm {
 
-    public static $start_step = 'SurveyFormPersonalDetailsStep';
+    private static $start_step = 'SurveyFormPersonalDetailsStep';
 
 }
 ```
@@ -141,7 +141,7 @@ the `$start_step` variable *SurveyForm*, but we call it `$next_steps`.
 ```php
 class SurveyFormPersonalDetailsStep extends MultiFormStep {
 
-    public static $next_steps = 'SurveyFormOrganisationDetailsStep';
+    private static $next_steps = 'SurveyFormOrganisationDetailsStep';
 
     public function getFields() {
         return new FieldList(
@@ -167,7 +167,7 @@ SurveyFormOrganisationDetailsStep, then we can do something like this:
 ```php
 class SurveyFormOrganisationDetailsStep extends MultiFormStep {
 
-    public static $is_final_step = true;
+    private static $is_final_step = true;
 
 }
 ```
@@ -334,7 +334,7 @@ Here is an example of how to populate the email address from step 1 in step2 :
 ```php
 class Step1 extends MultiFormStep
 {
-    public static $next_steps = 'Step2';
+    private static $next_steps = 'Step2';
 
     public function getFields() {
         return new FieldList(
@@ -345,7 +345,7 @@ class Step1 extends MultiFormStep
 
 class Step2 extends MultiFormStep
 {
-    public static $next_steps = 'Step3';
+    private static $next_steps = 'Step3';
 
     public function getFields() {
         $fields = new FieldList(
@@ -378,7 +378,7 @@ Here is an example of what we could do here:
 ```php 
 class SurveyForm extends MultiForm {
  
-   public static $start_step = 'SurveyFormPersonalDetailsStep';
+   private static $start_step = 'SurveyFormPersonalDetailsStep';
  
    public function finish($data, $form) {
       parent::finish($data, $form);
@@ -557,7 +557,7 @@ For example:
 ```php
 class SurveyForm extends MultiForm {
 
-   public static $start_step = 'SurveyFormPersonalDetailsStep';
+   private static $start_step = 'SurveyFormPersonalDetailsStep';
 
    public function finish($data, $form) {
       parent::finish($data, $form);

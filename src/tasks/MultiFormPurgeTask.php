@@ -27,7 +27,7 @@ class MultiFormPurgeTask extends BuildTask
      *
      * @var int
      */
-    public static $session_expiry_days = 7;
+    private static $session_expiry_days = 7;
 
     /**
      * Run this cron task.
@@ -46,7 +46,7 @@ class MultiFormPurgeTask extends BuildTask
                 $delCount++;
             }
         }
-        echo $delCount . ' session records deleted that were older than ' . self::$session_expiry_days . ' days.';
+        echo $delCount . ' session records deleted that were older than ' . $this->config()->get('session_expiry_days') . ' days.';
     }
 
     /**
@@ -59,7 +59,7 @@ class MultiFormPurgeTask extends BuildTask
     {
         return DataObject::get(
             MultiFormSession::class,
-            "DATEDIFF(NOW(), \"MultiFormSession\".\"Created\") > " . self::$session_expiry_days
+            "DATEDIFF(NOW(), \"MultiFormSession\".\"Created\") > " . $this->config()->get('session_expiry_days')
         );
     }
 }

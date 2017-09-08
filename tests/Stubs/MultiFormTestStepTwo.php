@@ -12,7 +12,7 @@ use SilverStripe\MultiForm\Models\MultiFormStep;
  */
 class MultiFormTestStepTwo extends MultiFormStep implements TestOnly
 {
-    public static $next_steps = MultiFormTestStepThree::class;
+    private static $next_steps = MultiFormTestStepThree::class;
 
     public function getFields()
     {

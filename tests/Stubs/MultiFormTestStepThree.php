@@ -13,7 +13,7 @@ use SilverStripe\MultiForm\Models\MultiFormStep;
  */
 class MultiFormTestStepThree extends MultiFormStep implements TestOnly
 {
-    public static $is_final_step = true;
+    private static $is_final_step = true;
 
     public function getFields()
     {

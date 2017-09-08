@@ -53,7 +53,7 @@ abstract class MultiForm extends Form
      *
      * @var string Classname of a {@link MultiFormStep} subclass
      */
-    public static $start_step;
+    private static $start_step;
 
     /**
      * Set the casting for these fields.
@@ -78,7 +78,7 @@ abstract class MultiForm extends Form
      *
      * @var array
      */
-    public static $ignored_fields = [
+    private static $ignored_fields = [
         'url',
         'executeForm',
         'SecurityID'
@@ -94,7 +94,7 @@ abstract class MultiForm extends Form
      *
      * @var array
      */
-    public static $actions_exempt_from_validation = [
+    private static $actions_exempt_from_validation = [
         'action_prev'
     ];
 
@@ -146,7 +146,7 @@ abstract class MultiForm extends Form
         $validator = null;
         $applyValidation = true;
 
-        $actionNames = static::$actions_exempt_from_validation;
+        $actionNames = $this->config()->get('actions_exempt_from_validation');
 
         if ($actionNames) {
             foreach ($actionNames as $exemptAction) {
@@ -181,7 +181,7 @@ abstract class MultiForm extends Form
         // Disable security token - we tie a form to a session ID instead
         $this->disableSecurityToken();
 
-        self::$ignored_fields[] = $getVar;
+        $this->config()->merge('ignored_fields', $getVar);
     }
 
     /**
@@ -216,7 +216,7 @@ abstract class MultiForm extends Form
      */
     public function getCurrentStep()
     {
-        $startStepClass = static::$start_step;
+        $startStepClass = $this->config()->get('start_step');
 
         // Check if there was a start step defined on the subclass of MultiForm
         if (!isset($startStepClass)) {
@@ -584,7 +584,7 @@ abstract class MultiForm extends Form
         $currentStep = $this->getCurrentStep();
         if (is_array($data)) {
             foreach ($data as $field => $value) {
-                if (in_array($field, static::$ignored_fields)) {
+                if (in_array($field, $this->config()->get('ignored_fields'))) {
                     unset($data[$field]);
                 }
             }
@@ -647,7 +647,7 @@ abstract class MultiForm extends Form
     {
         $stepsFound = ArrayList::create();
 
-        $firstStep = DataObject::get_one(static::$start_step, "\"SessionID\" = {$this->session->ID}");
+        $firstStep = DataObject::get_one($this->config()->get('start_step'), "\"SessionID\" = {$this->session->ID}");
         $firstStep->LinkingMode = ($firstStep->ID == $this->getCurrentStep()->ID) ? 'current' : 'link';
         $firstStep->setForm($this);
         $stepsFound->push($firstStep);

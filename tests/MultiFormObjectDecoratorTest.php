@@ -34,7 +34,6 @@ class MultiFormObjectDecoratorTest extends SapphireTest
             ->filter(['MultiFormIsTemporary' => 1])
             ->map('Name')
             ->toArray();
-
         $this->assertNotContains('Test 1', $records);
         $this->assertNotContains('Test 2', $records);
         $this->assertContains('Test 3', $records);

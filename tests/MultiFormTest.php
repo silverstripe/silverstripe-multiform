@@ -30,7 +30,7 @@ use SilverStripe\MultiForm\Models\MultiFormSession;
  */
 class MultiFormTest extends FunctionalTest
 {
-    public static $fixture_file = 'MultiFormTest.yml';
+    protected static $fixture_file = 'MultiFormTest.yml';
 
     /**
      * @var MultiFormTestController
@@ -120,7 +120,11 @@ class MultiFormTest extends FunctionalTest
         Config::modify()->set(MultiForm::class, 'get_var', 'SuperSessionID');
 
         $form = $this->controller->Form();
-        $this->assertContains('SuperSessionID', $form::$ignored_fields, "GET var wasn't added to ignored fields");
+        $this->assertContains(
+            'SuperSessionID',
+            $form->config()->get('ignored_fields'),
+            'GET var wasn\'t added to ignored fields'
+        );
         $this->assertContains(
             'SuperSessionID',
             $form->FormAction(),

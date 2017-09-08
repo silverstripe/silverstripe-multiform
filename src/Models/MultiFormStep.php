@@ -40,7 +40,7 @@ class MultiFormStep extends DataObject
      *
      * @var array|string
      */
-    public static $next_steps;
+    private static $next_steps;
 
     /**
      * Each {@link MultiForm} subclass needs at least
@@ -50,7 +50,7 @@ class MultiFormStep extends DataObject
      *
      * @var boolean
      */
-    public static $is_final_step = false;
+    private static $is_final_step = false;
 
     /**
      * This variable determines whether a user can use
@@ -243,7 +243,7 @@ class MultiFormStep extends DataObject
      */
     public function getNextStep()
     {
-        $nextSteps = static::$next_steps;
+        $nextSteps = $this->config()->get('next_steps');
 
         // Check if next_steps have been implemented properly if not the final step
         if (!$this->isFinalStep()) {
@@ -277,7 +277,7 @@ class MultiFormStep extends DataObject
     public function getNextStepFromDatabase()
     {
         if ($this->SessionID && is_numeric($this->SessionID)) {
-            $nextSteps = static::$next_steps;
+            $nextSteps = $this->config()->get('next_steps');
 
             if (is_string($nextSteps)) {
                 return DataObject::get_one($nextSteps, "\"SessionID\" = {$this->SessionID}");
@@ -296,7 +296,7 @@ class MultiFormStep extends DataObject
      */
     public function getNextSteps()
     {
-        return static::$next_steps;
+        return $this->config()->get('next_steps');
     }
 
     /**
@@ -394,7 +394,7 @@ class MultiFormStep extends DataObject
      */
     public function canGoBack()
     {
-        return static::$can_go_back;
+        return $this->config()->get('can_go_back');
     }
 
     /**
@@ -405,7 +405,7 @@ class MultiFormStep extends DataObject
      */
     public function isFinalStep()
     {
-        return static::$is_final_step;
+        return $this->config()->get('is_final_step');
     }
 
     /**

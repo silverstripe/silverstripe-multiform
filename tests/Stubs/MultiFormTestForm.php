@@ -11,10 +11,10 @@ use SilverStripe\MultiForm\Models\MultiForm;
  */
 class MultiFormTestForm extends MultiForm implements TestOnly
 {
-    public static $start_step = MultiFormTestStepOne::class;
+    private static $start_step = MultiFormTestStepOne::class;
 
     public function getStartStep()
     {
-        return self::$start_step;
+        return $this->config()->get('start_step');
     }
 }
