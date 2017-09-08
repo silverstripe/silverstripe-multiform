@@ -69,7 +69,8 @@ class MultiFormObjectDecorator extends DataExtension
         foreach ($query->getWhere() as $whereClause) {
             $from = array_values($query->getFrom());
             // SQLQuery will automatically add double quotes and single quotes to values, so check against that.
-            if ($whereClause == "{$from[0]}.\"MultiFormIsTemporary\" = '1'") {
+            $key = key($whereClause);
+            if ($key == "{$from[0]}.\"MultiFormIsTemporary\" = ?" && current($whereClause[$key]) == 1) {
                 return true;
             }
         }
