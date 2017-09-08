@@ -2,6 +2,7 @@
 
 namespace SilverStripe\MultiForm\Extensions;
 
+use SilverStripe\MultiForm\Models\MultiFormSession;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataQuery;
 use SilverStripe\ORM\Queries\SQLSelect;
@@ -22,13 +23,12 @@ use SilverStripe\ORM\Queries\SQLSelect;
  */
 class MultiFormObjectDecorator extends DataExtension
 {
-
     private static $db = [
         'MultiFormIsTemporary' => 'Boolean',
     ];
 
     private static $has_one = [
-        'MultiFormSession' => 'MultiFormSession',
+        'MultiFormSession' => MultiFormSession::class,
     ];
 
     /**
