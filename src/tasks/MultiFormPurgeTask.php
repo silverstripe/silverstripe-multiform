@@ -1,8 +1,9 @@
 <?php
 
-namespace SilverStripe\MultiForm;
+namespace SilverStripe\MultiForm\Tasks;
 
 use SilverStripe\Dev\BuildTask;
+use SilverStripe\MultiForm\Models\MultiFormSession;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 

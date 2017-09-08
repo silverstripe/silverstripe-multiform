@@ -3,4 +3,5 @@ Name: multisitelegacy
 ---
 SilverStripe\ORM\DatabaseAdmin:
   classname_value_remapping:
-    MultiFormSession: SilverStripe\MultiForm\Model\MultiFormSession
+    MultiFormSession: SilverStripe\MultiForm\Models\MultiFormSession
+    MultiFormStep: SilverStripe\MultiForm\Models\MultiFormStep
