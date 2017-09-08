@@ -1,44 +1,42 @@
 <?php
-class MultiFormObjectDecoratorTest extends SapphireTest {
 
-	protected static $fixture_file = 'MultiFormObjectDecoratorTest.yml';
+namespace SilverStripe\MultiForm\Tests;
 
-	protected $requiredExtensions = array(
-		'MultiFormObjectDecorator_DataObject' => array('MultiFormObjectDecorator')
-	);
+use SilverStripe\Dev\SapphireTest;
+use SilverStripe\MultiForm\Extensions\MultiFormObjectDecorator;
+use SilverStripe\MultiForm\Tests\Stubs\MultiFormObjectDecoratorDataObject;
 
-	protected $extraDataObjects = array(
-		'MultiFormObjectDecorator_DataObject'
-	);
+class MultiFormObjectDecoratorTest extends SapphireTest
+{
+    protected static $fixture_file = 'MultiFormObjectDecoratorTest.yml';
 
-	public function testTemporaryDataFilteredQuery() {
-		$records = MultiFormObjectDecorator_DataObject::get()
-			->map('Name')
-			->toArray();
+    protected static $required_extensions = [
+        MultiFormObjectDecoratorDataObject::class => [MultiFormObjectDecorator::class]
+    ];
 
-		$this->assertContains('Test 1', $records);
-		$this->assertContains('Test 2', $records);
-		$this->assertNotContains('Test 3', $records);
+    protected static $extra_dataobjects = [
+        MultiFormObjectDecoratorDataObject::class
+    ];
 
-	}
+    public function testTemporaryDataFilteredQuery()
+    {
+        $records = MultiFormObjectDecoratorDataObject::get()
+            ->map('Name')
+            ->toArray();
 
-	public function testTemporaryDataQuery() {
-		$records = MultiFormObjectDecorator_DataObject::get()
-			->filter(array('MultiFormIsTemporary' => 1))
-			->map('Name')
-			->toArray();
+        $this->assertContains('Test 1', $records);
+        $this->assertContains('Test 2', $records);
+        $this->assertNotContains('Test 3', $records);
+    }
 
-		$this->assertNotContains('Test 1', $records);
-		$this->assertNotContains('Test 2', $records);
-		$this->assertContains('Test 3', $records);
-	}
-
-}
-
-class MultiFormObjectDecorator_DataObject extends DataObject {
-
-	private static $db = array(
-		'Name' => 'Varchar'
-	);
-
+    public function testTemporaryDataQuery()
+    {
+        $records = MultiFormObjectDecoratorDataObject::get()
+            ->filter(['MultiFormIsTemporary' => 1])
+            ->map('Name')
+            ->toArray();
+        $this->assertNotContains('Test 1', $records);
+        $this->assertNotContains('Test 2', $records);
+        $this->assertContains('Test 3', $records);
+    }
 }

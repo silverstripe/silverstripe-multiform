@@ -1,4 +1,4 @@
-Member:
+SilverStripe\Security\Member:
    admin:
       FirstName: Admin
       Surname: Admin

@@ -1,0 +1,14 @@
+mappings:
+  MultiFormObjectDecorator: SilverStripe\MultiForm\Extensions\MultiFormObjectDecorator
+  MultiForm: SilverStripe\MultiForm\Models\MultiForm
+  MultiFormSession: SilverStripe\MultiForm\Models\MultiFormSession
+  MultiFormStep: SilverStripe\MultiForm\Models\MultiFormStep
+  MultiFormPurgeTask: SilverStripe\MultiForm\Tasks\MultiFormPurgeTask
+  MultiFormObjectDecoratorTest: SilverStripe\MultiForm\Tests\MultiFormObjectDecoratorTest
+  MultiFormObjectDecoratorDataObject: SilverStripe\MultiForm\Tests\Stubs\MultiFormObjectDecoratorDataObject
+  MultiFormTest: SilverStripe\MultiForm\Tests\MultiFormTest
+  MultiFormTestController: SilverStripe\MultiForm\Tests\Stubs\MultiFormTestController
+  MultiFormTestForm: SilverStripe\MultiForm\Tests\Stubs\MultiFormTestForm
+  MultiFormTestStepOne: SilverStripe\MultiForm\Tests\Stubs\MultiFormTestStepOne
+  MultiFormTestStepTwo: SilverStripe\MultiForm\Tests\Stubs\MultiFormTestStepTwo
+  MultiFormTestStepThree: SilverStripe\MultiForm\Tests\Stubs\MultiFormTestStepThree

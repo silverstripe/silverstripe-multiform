@@ -1,4 +1,4 @@
-MultiFormObjectDecorator_DataObject:
+SilverStripe\MultiForm\Tests\Stubs\MultiFormObjectDecoratorDataObject:
   test-data-1:
     Name: Test 1
     MultiFormIsTemporary: 0
