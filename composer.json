@@ -28,5 +28,11 @@
         "branch-alias": {
             "dev-master": "2.x-dev"
         }
+    },
+    "autoload": {
+        "psr-4": {
+            "SilverStripe\\MultiForm\\": "src/",
+            "SilverStripe\\MultiForm\\Tests\\": "tests/"
+        }
     }
 }
