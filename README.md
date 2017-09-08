@@ -83,7 +83,9 @@ Using [Composer](https://getcomposer.org/), you can install multiform into your
 SilverStripe site using this command (while in the directory where your site is
 currently located)
 
-```composer require "silverstripe/multiform:*"```
+```
+composer require "silverstripe/multiform:*"
+```
 
 ### 2. Create subclass of MultiForm
 
