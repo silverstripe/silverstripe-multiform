@@ -150,7 +150,7 @@ abstract class MultiForm extends Form
 
         if ($actionNames) {
             foreach ($actionNames as $exemptAction) {
-                if (!empty($_REQUEST[$exemptAction])) {
+                if (!empty($this->getRequest()->requestVar($exemptAction))) {
                     $applyValidation = false;
                     break;
                 }
@@ -160,14 +160,14 @@ abstract class MultiForm extends Form
         // Apply validation if the current step requires validation (is not exempt)
         if ($applyValidation) {
             if ($currentStep->getValidator()) {
-                $validator = $currentStep->getValidator();
+                $this->setValidator($currentStep->getValidator());
             }
         }
 
         // Give the fields, actions, and validation for the current step back to the parent Form class
-        parent::__construct($controller, $name, $fields, $actions, $validator);
+        parent::__construct($controller, $name, $fields, $actions);
 
-        $getVar = $this->config()->get_var;
+        $getVar = $this->getGetVar();
 
         // Set a hidden field in our form with an encrypted hash to identify this session.
         $this->fields->push(HiddenField::create($getVar, false, $this->session->Hash));
@@ -201,7 +201,7 @@ abstract class MultiForm extends Form
      */
     public function getGetVar()
     {
-        return $this->config()->get_var;
+        return $this->config()->get('get_var');
     }
 
     /**
@@ -231,7 +231,7 @@ abstract class MultiForm extends Form
         $StepID = $this->controller->getRequest()->getVar('StepID');
         if (isset($StepID)) {
             $currentStep = DataObject::get_one(
-                'MultiFormStep',
+                MultiFormStep::class,
                 [
                     'SessionID' => $this->session->ID,
                     'ID' => $StepID
@@ -277,8 +277,11 @@ abstract class MultiForm extends Form
      *
      * @return MultiFormSession
      */
-    public function getSession()
+    public function getMultiFormSession()
     {
+        if (!$this->session) {
+            $this->setSession();
+        }
         return $this->session;
     }
 
@@ -300,7 +303,7 @@ abstract class MultiForm extends Form
 
         // If there was no session found, create a new one instead
         if (!$this->session) {
-            $this->session = new MultiFormSession();
+            $this->session = MultiFormSession::create();
         }
 
         // Create encrypted identification to the session instance if it doesn't exist
@@ -329,7 +332,7 @@ abstract class MultiForm extends Form
     public function getCurrentSession()
     {
         if (!$this->currentSessionHash) {
-            $this->currentSessionHash = $this->controller->getRequest()->getVar($this->config()->get_var);
+            $this->currentSessionHash = $this->controller->getRequest()->getVar($this->getGetVar());
 
             if (!$this->currentSessionHash) {
                 return false;
@@ -357,7 +360,7 @@ abstract class MultiForm extends Form
     {
         $filter .= ($filter) ? ' AND ' : '';
         $filter .= sprintf("\"SessionID\" = '%s'", $this->session->ID);
-        return DataObject::get('MultiFormStep', $filter);
+        return DataObject::get(MultiFormStep::class, $filter);
     }
 
     /**
@@ -371,7 +374,7 @@ abstract class MultiForm extends Form
     public function getSavedStepByClass($className)
     {
         return DataObject::get_one(
-            'MultiFormStep',
+            MultiFormStep::class,
             sprintf(
                 "\"SessionID\" = '%s' AND \"ClassName\" = '%s'",
                 $this->session->ID,
@@ -476,7 +479,7 @@ abstract class MultiForm extends Form
         }
 
         if (!$this->getCurrentStep()->validateStep($data, $form)) {
-            Injector::inst()->get(Session::class)->set("FormInfo.{$form->FormName()}.data", $form->getData());
+            $this->getRequest()->getSession()->set("FormInfo.{$form->FormName()}.data", $form->getData());
             $this->controller->redirectBack();
             return false;
         }
@@ -511,7 +514,7 @@ abstract class MultiForm extends Form
         // built-in functionality). The data needs to be manually saved on error
         // so the form is re-populated.
         if (!$this->getCurrentStep()->validateStep($data, $form)) {
-            Injector::inst()->get(Session::class)->set("FormInfo.{$form->FormName()}.data", $form->getData());
+            $this->getRequest()->getSession()->set("FormInfo.{$form->FormName()}.data", $form->getData());
             $this->controller->redirectBack();
             return false;
         }
@@ -603,7 +606,7 @@ abstract class MultiForm extends Form
     {
         $action = parent::FormAction();
         $action .= (strpos($action, '?')) ? '&amp;' : '?';
-        $action .= "{$this->config()->get_var}={$this->session->Hash}";
+        $action .= "{$this->getGetVar()}={$this->session->Hash}";
 
         return $action;
     }
@@ -723,7 +726,7 @@ abstract class MultiForm extends Form
      */
     public function getCompletedStepCount()
     {
-        $steps = DataObject::get('MultiFormStep', "\"SessionID\" = {$this->session->ID} && \"Data\" IS NOT NULL");
+        $steps = DataObject::get(MultiFormStep::class, "\"SessionID\" = {$this->session->ID} && \"Data\" IS NOT NULL");
 
         return $steps ? $steps->Count() : 0;
     }

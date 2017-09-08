@@ -24,7 +24,7 @@ class MultiFormStep extends DataObject
     ];
 
     private static $has_one = [
-        'Session' => 'MultiFormSession'
+        'Session' => MultiFormSession::class
     ];
 
     private static $table_name = 'MultiFormStep';
@@ -158,7 +158,7 @@ class MultiFormStep extends DataObject
         $form = $this->form;
         return Controller::join_links(
             $form->getDisplayLink(),
-            "?{$form->config()->get_var}={$this->getSession()->Hash}"
+            "?{$form->getGetVar()}={$this->getSession()->Hash}"
         );
     }
 
@@ -309,7 +309,7 @@ class MultiFormStep extends DataObject
      */
     public function getPreviousStep()
     {
-        $steps = DataObject::get('MultiFormStep', "\"SessionID\" = {$this->SessionID}", '"LastEdited" DESC');
+        $steps = DataObject::get(MultiFormStep::class, "\"SessionID\" = {$this->SessionID}", '"LastEdited" DESC');
         if ($steps) {
             foreach ($steps as $step) {
                 $step->setForm($this->form);

@@ -3,6 +3,7 @@
 namespace SilverStripe\MultiForm\Models;
 
 use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
 /**
@@ -23,12 +24,12 @@ class MultiFormSession extends DataObject
     ];
 
     private static $has_one = [
-        'Submitter' => 'Member',
-        'CurrentStep' => 'MultiFormStep'
+        'Submitter' => Member::class,
+        'CurrentStep' => MultiFormStep::class
     ];
 
     private static $has_many = [
-        'FormSteps' => 'MultiFormStep'
+        'FormSteps' => MultiFormStep::class
     ];
 
     private static $table_name = 'MultiFormSession';
@@ -52,7 +53,7 @@ class MultiFormSession extends DataObject
     {
         // save submitter if a Member is logged in
         $currentMember = Security::getCurrentUser();
-        if (!$this->SubmitterID && $currentMember->ID) {
+        if (!$this->SubmitterID && $currentMember) {
             $this->SubmitterID = $currentMember->ID;
         }
 

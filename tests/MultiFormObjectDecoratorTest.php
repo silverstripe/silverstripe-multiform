@@ -13,7 +13,7 @@ class MultiFormObjectDecoratorTest extends SapphireTest
         MultiFormObjectDecoratorDataObject::class => [MultiFormObjectDecorator::class]
     ];
 
-    protected $extraDataObjects = [
+    protected static $extra_dataobjects = [
         MultiFormObjectDecoratorDataObject::class
     ];
 

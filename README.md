@@ -158,7 +158,7 @@ a *FieldSet* with some form field objects. These are the fields that the form
 will render for the given step.
 
 Keep in mind that our multi-form also requires an end point. This step is the 
-final, and needs to have another variable set to let the multi-form system know 
+final one, and needs to have another variable set to let the multi-form system know 
 this is the final step.
 
 So, if we assume that the last step in our process is 
@@ -220,7 +220,7 @@ class Page_Controller extends ContentController {
 }
 ```
 
-The `SurveyForm()` function will create a new instance our subclass of 
+The `SurveyForm()` function will create a new instance of our subclass of 
 MultiForm, which in this example, is *SurveyForm*. This in turn will then set 
 up all the form fields, actions, and validation available to each step, as well 
 as the session.
@@ -384,7 +384,7 @@ class SurveyForm extends MultiForm {
       parent::finish($data, $form);
 
       $steps = DataObject::get(
-        'MultiFormStep', 
+        MultiFormStep::class, 
         "SessionID = {$this->session->ID}"
       );
       
@@ -480,21 +480,21 @@ MultiForm class:
 
 More than likely, you'll want the first one to be available when the form 
 renders. To that effect, you can start placing templates in the 
-*templates/Includes* directory for your project. You need to call them the same 
+*templates/Includes* directory for your project. You need to name them the same 
 as the class name for each step. For example, if you want *MembershipForm*, a 
 subclass of *MultiFormStep* to have it's own template, you would put 
 *MembershipForm.ss* into that directory, and run *?flush=1*.
 
 If you'd like a pre-existing template on how to customise the form step, have a 
-look at Form.ss that's found within the sapphire module. Use that template, as 
+look at Form.ss that's found within the framework module. Use that template, as 
 a base for your new MembershipForm.ss template in your project templates.
 
 For more information on this, please [look at the Form documentation](http://doc.silverstripe.org/framework/en/topics/forms#custom-form-templates).
 
 ### getNextStep()
 
-If you are wanting to override the next step (so, if you want the next step to 
-be something different based on a user's choice of input during the step, you 
+If you are wanting to override the next step (for example if you want the next step to 
+be something different based on a user's choice of input during the step) you 
 can override getNextStep() on any given step to manually override what the next 
 step should be. An example:
 

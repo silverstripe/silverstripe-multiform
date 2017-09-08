@@ -3,6 +3,7 @@
 namespace SilverStripe\MultiForm\Tests;
 
 use SilverStripe\Control\Controller;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\TestOnly;
 
 /**
@@ -11,15 +12,11 @@ use SilverStripe\Dev\TestOnly;
  */
 class MultiFormTestController extends Controller implements TestOnly
 {
-    public function Link($action = null)
-    {
-        return self::class;
-    }
+    private static $url_segment = 'MultiFormTestController';
 
-    public function Form($request = null)
+    public function Form()
     {
-        $form = new MultiFormTestForm($this, 'Form');
-        $form->setHTMLID(self::class);
-        return $form;
+        return Injector::inst()->get(MultiFormTestForm::class, false, [$this, 'Form'])
+            ->setHTMLID(MultiFormTestForm::class);
     }
 }

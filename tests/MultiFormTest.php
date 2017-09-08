@@ -2,8 +2,13 @@
 
 namespace SilverStripe\MultiForm\Tests;
 
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\Session;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\MultiForm\Models\MultiForm;
+use SilverStripe\MultiForm\Models\MultiFormSession;
 
 /**
  * MultiFormTest
@@ -25,9 +30,11 @@ use SilverStripe\Dev\FunctionalTest;
  */
 class MultiFormTest extends FunctionalTest
 {
-
     public static $fixture_file = 'MultiFormTest.yml';
 
+    /**
+     * @var MultiFormTestController
+     */
     protected $controller;
 
     /**
@@ -35,24 +42,32 @@ class MultiFormTest extends FunctionalTest
      */
     protected $form;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
         $this->controller = new MultiFormTestController();
-        $this->form = $this->controller->Form();
+        $this->controller->setRequest(new HTTPRequest('GET', '/'));
+        $this->controller->getRequest()->setSession(new Session([]));
+        $this->controller->pushCurrent();
+        $form = $this->form = $this->controller->Form();
+        Injector::inst()->registerService($form, MultiForm::class);
+        $this->form =  $form;
     }
 
     public function testInitialisingForm()
     {
         $this->assertTrue(is_numeric($this->form->getCurrentStep()->ID) && ($this->form->getCurrentStep()->ID > 0));
-        $this->assertTrue(is_numeric($this->form->getSession()->ID) && ($this->form->getSession()->ID > 0));
+        $this->assertTrue(
+            is_numeric($this->form->getMultiFormSession()->ID)
+            && ($this->form->getMultiFormSession()->ID > 0)
+        );
         $this->assertEquals(MultiFormTestStepOne::class, $this->form->getStartStep());
     }
 
     public function testSessionGeneration()
     {
-        $this->assertTrue($this->form->getSession()->ID > 0);
+        $this->assertTrue($this->form->getMultiFormSession()->ID > 0);
     }
 
     public function testMemberLogging()
@@ -62,7 +77,7 @@ class MultiFormTest extends FunctionalTest
 
         $userId = $this->logInWithPermission('ADMIN');
 
-        $session = $this->form->getSession();
+        $session = $this->form->getMultiFormSession();
         $session->write();
 
         $this->assertEquals($userId, $session->SubmitterID);
@@ -86,9 +101,9 @@ class MultiFormTest extends FunctionalTest
 
     public function testCompletedSession()
     {
-        $this->form->setCurrentSessionHash($this->form->getSession()->Hash);
-        $this->assertInstanceOf('MultiFormSession', $this->form->getCurrentSession());
-        $this->form->getSession()->markCompleted();
+        $this->form->setCurrentSessionHash($this->form->getMultiFormSession()->Hash);
+        $this->assertInstanceOf(MultiFormSession::class, $this->form->getCurrentSession());
+        $this->form->getMultiFormSession()->markCompleted();
         $this->assertNull($this->form->getCurrentSession());
     }
 
@@ -97,13 +112,12 @@ class MultiFormTest extends FunctionalTest
         $this->form->setCurrentSessionHash('sdfsdf3432325325sfsdfdf'); // made up!
 
         // A new session is generated, even though we made up the identifier
-        $this->assertInstanceOf('MultiFormSession', $this->form->getSession());
+        $this->assertInstanceOf(MultiFormSession::class, $this->form->getMultiFormSession());
     }
 
     public function testCustomGetVar()
     {
-        Config::nest();
-        Config::modify()->set('MultiForm', 'get_var', 'SuperSessionID');
+        Config::modify()->set(MultiForm::class, 'get_var', 'SuperSessionID');
 
         $form = $this->controller->Form();
         $this->assertContains('SuperSessionID', $form::$ignored_fields, "GET var wasn't added to ignored fields");
@@ -117,7 +131,5 @@ class MultiFormTest extends FunctionalTest
             $form->getCurrentStep()->Link(),
             "Form step doesn't contain correct session ID parameter"
         );
-
-        Config::unnest();
     }
 }
