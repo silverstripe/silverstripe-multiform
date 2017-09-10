@@ -146,9 +146,9 @@ class SurveyFormPersonalDetailsStep extends MultiFormStep {
     private static $next_steps = 'SurveyFormOrganisationDetailsStep';
 
     public function getFields() {
-        return new FieldList(
-            new TextField('FirstName', 'First name'),
-            new TextField('Surname', 'Surname')
+        return FieldList::create(
+            TextField::create('FirstName', 'First name'),
+            TextField::create('Surname', 'Surname')
         );
     }
 
@@ -207,7 +207,7 @@ class Page_Controller extends ContentController {
     );
 
     public function SurveyForm() {
-        return new SurveyForm($this, 'Form');
+        return SurveyForm::create($this, 'Form');
     }
     
     public function finished() {
@@ -339,8 +339,8 @@ class Step1 extends MultiFormStep
     private static $next_steps = 'Step2';
 
     public function getFields() {
-        return new FieldList(
-            new EmailField('Email', 'Your email')
+        return FieldList::create(
+            EmailField::create('Email', 'Your email')
         );
     }
 }
@@ -350,9 +350,9 @@ class Step2 extends MultiFormStep
     private static $next_steps = 'Step3';
 
     public function getFields() {
-        $fields = new FieldList(
-            new EmailField('Email', 'E-mail'),
-            new EmailField('Email2', 'Verify E-Mail')
+        $fields = FieldList::create(
+            EmailField::create('Email', 'E-mail'),
+            EmailField::create('Email2', 'Verify E-Mail')
         );
 
         // set the email field to the input from Step 1
@@ -393,7 +393,7 @@ class SurveyForm extends MultiForm {
       if($steps) {
          foreach($steps as $step) {
             if($step->class == 'SurveyFormPersonalDetailsStep') {
-               $member = new Member();
+               $member = Member::create();
                $data = $step->loadData();
 
                if($data) {
@@ -403,7 +403,7 @@ class SurveyForm extends MultiForm {
             }
 
             if($step->class == 'SurveyOrganisationDetailsStep') {
-               $organisation = new Organisation();
+               $organisation = Organisation::create();
                $data = $step->loadData();
 
                if($data) {
@@ -532,7 +532,7 @@ class MyStep extends MultiFormStep {
    ...
 
    public function getValidator() {
-      return new RequiredFields(array(
+      return RequiredFields::create(array(
          'Name',
          'Email'
       ));
