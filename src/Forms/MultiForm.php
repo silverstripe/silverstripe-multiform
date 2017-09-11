@@ -1,20 +1,20 @@
 <?php
 
-namespace SilverStripe\MultiForm\Models;
+namespace SilverStripe\MultiForm\Forms;
 
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPResponse;
-use SilverStripe\Control\Session;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\HiddenField;
+use SilverStripe\MultiForm\Models\MultiFormSession;
+use SilverStripe\MultiForm\Models\MultiFormStep;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\View\SSViewer;
 
 /**
  * MultiForm manages the loading of single form steps, and acts as a state

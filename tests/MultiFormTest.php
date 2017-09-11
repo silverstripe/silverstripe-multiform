@@ -7,7 +7,7 @@ use SilverStripe\Control\Session;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
-use SilverStripe\MultiForm\Models\MultiForm;
+use SilverStripe\MultiForm\Forms\MultiForm;
 use SilverStripe\MultiForm\Models\MultiFormSession;
 use SilverStripe\MultiForm\Tests\Stubs\MultiFormTestController;
 use SilverStripe\MultiForm\Tests\Stubs\MultiFormTestForm;
