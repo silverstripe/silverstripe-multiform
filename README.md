@@ -22,7 +22,7 @@ individual implementation can be customized to the project requirements.
 
 ## Requirements
 
-SilverStripe 3.1+.
+SilverStripe 4.0+. For SilverStripe 3 support please use `1.3` or below.
 
 ## What it does do
 
