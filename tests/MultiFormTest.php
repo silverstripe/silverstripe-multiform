@@ -93,7 +93,7 @@ class MultiFormTest extends FunctionalTest
     public function testParentForm()
     {
         $currentStep = $this->form->getCurrentStep();
-        $this->assertEquals($currentStep->getForm()->class, $this->form->class);
+        $this->assertEquals(get_class($currentStep->getForm()), get_class($this->form));
     }
 
     public function testTotalStepCount()

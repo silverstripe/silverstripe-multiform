@@ -78,4 +78,14 @@ class MultiFormSession extends DataObject
 
         parent::onBeforeDelete();
     }
+
+    public function onAfterWrite()
+    {
+        parent::onAfterWrite();
+        // Create encrypted identification to the session instance if it doesn't exist
+        if (!$this->Hash) {
+            $this->Hash = sha1($this->ID . '-' . microtime());
+            $this->write();
+        }
+    }
 }

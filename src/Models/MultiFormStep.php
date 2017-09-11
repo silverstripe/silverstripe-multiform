@@ -63,7 +63,7 @@ class MultiFormStep extends DataObject
      *
      * @var boolean
      */
-    protected static $can_go_back = true;
+    private static $can_go_back = true;
 
     /**
      * Title of this step.
@@ -249,7 +249,7 @@ class MultiFormStep extends DataObject
             if (!isset($nextSteps)) {
                 user_error(
                     'MultiFormStep->getNextStep(): Please define at least one $next_steps on '
-                    . $this->class,
+                    . static::class,
                     E_USER_ERROR
                 );
             }
@@ -314,8 +314,8 @@ class MultiFormStep extends DataObject
                 $step->setForm($this->form);
 
                 if ($step->getNextStep()) {
-                    if ($step->getNextStep() == $this->class) {
-                        return $step->class;
+                    if ($step->getNextStep() == static::class) {
+                        return get_class($step);
                     }
                 }
             }
@@ -417,7 +417,7 @@ class MultiFormStep extends DataObject
      */
     public function isCurrentStep()
     {
-        return ($this->class == $this->getSession()->CurrentStep()->class) ? true : false;
+        return (static::class == get_class($this->getSession()->CurrentStep())) ? true : false;
     }
 
     /**

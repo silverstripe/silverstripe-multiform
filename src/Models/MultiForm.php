@@ -180,7 +180,7 @@ abstract class MultiForm extends Form
         // Disable security token - we tie a form to a session ID instead
         $this->disableSecurityToken();
 
-        $this->config()->merge('ignored_fields', $getVar);
+        $this->config()->merge('ignored_fields', [$getVar]);
     }
 
     /**
@@ -220,7 +220,7 @@ abstract class MultiForm extends Form
         // Check if there was a start step defined on the subclass of MultiForm
         if (!isset($startStepClass)) {
             user_error(
-                'MultiForm::init(): Please define a $start_step on ' . $this->class,
+                'MultiForm::init(): Please define a $start_step on ' . static::class,
                 E_USER_ERROR
             );
         }
@@ -302,13 +302,9 @@ abstract class MultiForm extends Form
 
         // If there was no session found, create a new one instead
         if (!$this->session) {
-            $this->session = MultiFormSession::create();
-        }
-
-        // Create encrypted identification to the session instance if it doesn't exist
-        if (!$this->session->Hash) {
-            $this->session->Hash = sha1($this->session->ID . '-' . microtime());
-            $this->session->write();
+            $session = MultiFormSession::create();
+            $session->write();
+            $this->session = $session;
         }
     }
 
@@ -431,30 +427,6 @@ abstract class MultiForm extends Form
         $actions->merge($step->getExtraActions());
 
         return $actions;
-    }
-
-    /**
-     * Return a rendered version of this form, with a specific template.
-     * Looks through the step ancestory templates (MultiFormStep, current step
-     * subclass template) to see if one is available to render the form with. If
-     * any of those don't exist, look for a default Form template to render
-     * with instead.
-     *
-     * @return SSViewer object to render the template with
-     */
-    public function forTemplate()
-    {
-        $return = $this->renderWith([
-            $this->getCurrentStep()->class,
-            'MultiFormStep',
-            $this->class,
-            'MultiForm',
-            'Form'
-        ]);
-
-        $this->clearMessage();
-
-        return $return;
     }
 
     /**
