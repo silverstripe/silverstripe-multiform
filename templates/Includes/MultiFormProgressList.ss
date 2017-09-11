@@ -4,7 +4,7 @@
             <% if $LinkingMode = current %>
             <% else %>
                 <% if $ID %>
-                    <a href="{$Top.URLSegment}/?{$Top.GetVar}={$Session.Hash}&amp;StepID={$ID}">
+                    <a href="$Link">
                 <% end_if %>
             <% end_if %>
 

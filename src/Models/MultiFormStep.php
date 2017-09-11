@@ -145,19 +145,19 @@ class MultiFormStep extends DataObject
     }
 
     /**
-     * Gets a direct link to this step (only works
-     * if you're allowed to skip steps, or this step
-     * has already been saved to the database
-     * for the current {@link MultiFormSession}).
+     * Gets a direct link to this step (only works if you're allowed to skip
+     * steps, or this step has already been saved to the database for the
+     * current {@link MultiFormSession}).
      *
      * @return string Relative URL to this step
      */
     public function Link()
     {
         $form = $this->form;
+
         return Controller::join_links(
             $form->getDisplayLink(),
-            "?{$form->getGetVar()}={$this->getSession()->Hash}"
+            sprintf("?%s=%s&StepID=%s", $form->getGetVar(), $this->getSession()->Hash, $this->ID)
         );
     }
 
