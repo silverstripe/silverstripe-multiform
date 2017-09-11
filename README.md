@@ -94,6 +94,8 @@ First of all, we need to create a new subclass of *MultiForm*.
 For the above example, our multi-form will be called *SurveyForm*
 
 ```php
+use SilverStripe\MultiForm\Models\MultiForm;
+
 class SurveyForm extends MultiForm {
 
 }
@@ -112,7 +114,10 @@ So, for example, if we were going to have a first step which collects the
 personal details of the form user, then we might have this class:
 
 ```php
-class SurveyFormPersonalDetailsStep extends MultiFormStep {
+use SilverStripe\MultiForm\Models\MultiFormStep;
+
+class PersonalDetailsStep extends MultiFormStep
+{
 
 }
 ```
@@ -122,10 +127,11 @@ subclass of MultiForm, SurveyForm, and tell it that SurveyFormPersonalDetailsSte
 is the first step.
 
 ```php
-class SurveyForm extends MultiForm {
+use SilverStripe\MultiForm\Models\MultiForm;
 
-    private static $start_step = 'SurveyFormPersonalDetailsStep';
-
+class SurveyForm extends MultiForm
+{
+    private static $start_step = PersonalDetailsStep::class;
 }
 ```
 
@@ -141,17 +147,21 @@ To let the step know what step is next in the process, we do the same as setting
 the `$start_step` variable *SurveyForm*, but we call it `$next_steps`.
 
 ```php
-class SurveyFormPersonalDetailsStep extends MultiFormStep {
+use SilverStripe\MultiForm\Models\MultiFormStep;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextField;
 
-    private static $next_steps = 'SurveyFormOrganisationDetailsStep';
+class PersonalDetailsStep extends MultiFormStep
+{
+    private static $next_steps = OrganisationDetailsStep::class;
 
-    public function getFields() {
-        return new FieldList(
-            new TextField('FirstName', 'First name'),
-            new TextField('Surname', 'Surname')
+    public function getFields()
+    {
+        return FieldList::create(
+            TextField::create('FirstName', 'First name'),
+            TextField::create('Surname', 'Surname')
         );
     }
-
 }
 ```
 
@@ -167,17 +177,18 @@ So, if we assume that the last step in our process is
 SurveyFormOrganisationDetailsStep, then we can do something like this:
 
 ```php
-class SurveyFormOrganisationDetailsStep extends MultiFormStep {
+use SilverStripe\MultiForm\Models\MultiFormStep;
 
+class OrganisationDetailsStep extends MultiFormStep
+{
     private static $is_final_step = true;
-
 }
 ```
 
 ### 5. Run database integrity check
 
 We need to run *dev/build?flush=1* now, so that the classes are available to the
-SilverStripe manifest builder, and to ensure that the database is up to scratch 
+SilverStripe manifest builder, and to ensure that the database is up to date 
 with all the latest tables. So you can go ahead and do that.
 
 *Note: Whenever you add a new step, you **MUST** run dev/build?flush=1 or you 
@@ -190,35 +201,27 @@ So, if we want to render our multi-form as `$SurveyForm` in the *Page.ss*
 template, we need to create a SurveyForm method (function) on the controller:
 
 ```php
-class Page extends SiteTree {
+use SilverStripe\CMS\Controllers\ContentController;
 
-// ...
-
-}
-
-class Page_Controller extends ContentController {
-
-// ...
-
-    // 
-    private static $allowed_actions = array(
+class PageController extends ContentController
+{
+    private static $allowed_actions = [
         'SurveyForm',
         'finished'
-    );
+    ];
 
-    public function SurveyForm() {
-        return new SurveyForm($this, 'Form');
+    public function SurveyForm()
+    {
+        return SurveyForm::create($this, 'SurveyForm');
     }
-    
-    public function finished() {
-        return array(
+
+    public function finished()
+    {
+        return [
             'Title' => 'Thank you for your submission',
             'Content' => '<p>You have successfully submitted the form!</p>'
-        );
+        ];
     }
-
-// ...
-
 }
 ```
 
@@ -334,25 +337,37 @@ based on the submission value of another step. There are two methods supporting 
 Here is an example of how to populate the email address from step 1 in step2 :
 
 ```php
+use SilverStripe\MultiForm\Models\MultiFormStep;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\EmailField;
+
 class Step1 extends MultiFormStep
 {
-    private static $next_steps = 'Step2';
+    private static $next_steps = Step2::class;
 
-    public function getFields() {
-        return new FieldList(
-            new EmailField('Email', 'Your email')
+    public function getFields()
+    {
+        return FieldList::create(
+            EmailField::create('Email', 'Your email')
         );
     }
 }
+```
+
+```php
+use SilverStripe\MultiForm\Models\MultiFormStep;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\EmailField;
 
 class Step2 extends MultiFormStep
 {
-    private static $next_steps = 'Step3';
+    private static $next_steps = Step3::class;
 
-    public function getFields() {
-        $fields = new FieldList(
-            new EmailField('Email', 'E-mail'),
-            new EmailField('Email2', 'Verify E-Mail')
+    public function getFields()
+    {
+        $fields = FieldList::create(
+            EmailField::create('Email', 'E-mail'),
+            EmailField::create('Email2', 'Verify E-Mail')
         );
 
         // set the email field to the input from Step 1
@@ -378,11 +393,16 @@ So, we must write some code on our subclass of *MultiForm*, overloading
 Here is an example of what we could do here:
 
 ```php 
-class SurveyForm extends MultiForm {
+use SilverStripe\MultiForm\Models\MultiForm;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\EmailField;
+
+class SurveyForm extends MultiForm
+{ 
+   private static $start_step = PersonalDetailsStep::class;
  
-   private static $start_step = 'SurveyFormPersonalDetailsStep';
- 
-   public function finish($data, $form) {
+   public function finish($data, $form)
+   {
       parent::finish($data, $form);
 
       $steps = DataObject::get(
@@ -392,8 +412,8 @@ class SurveyForm extends MultiForm {
       
       if($steps) {
          foreach($steps as $step) {
-            if($step->class == 'SurveyFormPersonalDetailsStep') {
-               $member = new Member();
+            if($step->class == PersonalDetailsStep::class) {
+               $member = Member::create();
                $data = $step->loadData();
 
                if($data) {
@@ -402,8 +422,8 @@ class SurveyForm extends MultiForm {
                }
             }
 
-            if($step->class == 'SurveyOrganisationDetailsStep') {
-               $organisation = new Organisation();
+            if($step->class == OrganisationDetailsStep::class) {
+               $organisation = Organisation::create();
                $data = $step->loadData();
 
                if($data) {
@@ -436,8 +456,10 @@ This example has been chosen as a separate DataObject but you may wish to change
 the code and add the data to the Member class instead.
 
 ```php
-class Organisation extends DataObject {
-    
+use  SilverStripe\ORM\DataObject;
+
+class Organisation extends DataObject
+{
     private static $db = array(
         // Add your Organisation fields here
     );
@@ -502,20 +524,20 @@ step should be. An example:
 
 ```php
 class MyStep extends MultiFormStep
+{
+   ...
 
-// ...
-
-   public function getNextStep() {
+   public function getNextStep()
+   {
       $data = $this->loadData();
-      if(@$data['Gender'] == 'Male') {
-         return 'TestThirdCase1Step';
+      if($data['Gender'] == 'Male') {
+         return TestThirdCase1Step::class;
       } else {
-         return 'TestThirdCase2Step';
+         return TestThirdCase2Step::class;
       }
    }
 
-// ...
-
+   ...
 }
 ```
 ### Validation
@@ -527,19 +549,19 @@ validation see [:form](http://doc.silverstripe.org/form-validation).
 e.g.
 
 ```php
-class MyStep extends MultiFormStep {
-
+class MyStep extends MultiFormStep
+{
    ...
 
-   public function getValidator() {
-      return new RequiredFields(array(
+   public function getValidator()
+   {
+      return RequiredFields::create(array(
          'Name',
          'Email'
       ));
    }
 
    ...
-
 }
 ```
 
@@ -557,16 +579,19 @@ won't be saved.
 For example:
 
 ```php
-class SurveyForm extends MultiForm {
+use SilverStripe\Dev\Debug;
+use SilverStripe\MultiForm\Models\MultiForm;
+use SilverStripe\MultiForm\Models\MultiFormStep;
 
-   private static $start_step = 'SurveyFormPersonalDetailsStep';
+class SurveyForm extends MultiForm
+{
+   private static $start_step = PersonalDetailsStep::class;
 
-   public function finish($data, $form) {
+   public function finish($data, $form)
+   {
       parent::finish($data, $form);
 
-      $steps =	MultiFormStep::get()->filter(array(
-        "SessionID" => $this->session->ID
-      ));
+    $steps = MultiFormStep::get()->filter(['SessionID' => $this->session->ID]);
 
       if($steps) {
          foreach($steps as $step) {
