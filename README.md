@@ -94,7 +94,7 @@ First of all, we need to create a new subclass of *MultiForm*.
 For the above example, our multi-form will be called *SurveyForm*
 
 ```php
-use SilverStripe\MultiForm\Models\MultiForm;
+use SilverStripe\MultiForm\Forms\MultiForm;
 
 class SurveyForm extends MultiForm {
 
@@ -127,7 +127,7 @@ subclass of MultiForm, SurveyForm, and tell it that SurveyFormPersonalDetailsSte
 is the first step.
 
 ```php
-use SilverStripe\MultiForm\Models\MultiForm;
+use SilverStripe\MultiForm\Forms\MultiForm;
 
 class SurveyForm extends MultiForm
 {
@@ -393,7 +393,7 @@ So, we must write some code on our subclass of *MultiForm*, overloading
 Here is an example of what we could do here:
 
 ```php 
-use SilverStripe\MultiForm\Models\MultiForm;
+use SilverStripe\MultiForm\Forms\MultiForm;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\EmailField;
 
@@ -580,7 +580,7 @@ For example:
 
 ```php
 use SilverStripe\Dev\Debug;
-use SilverStripe\MultiForm\Models\MultiForm;
+use SilverStripe\MultiForm\Forms\MultiForm;
 use SilverStripe\MultiForm\Models\MultiFormStep;
 
 class SurveyForm extends MultiForm
