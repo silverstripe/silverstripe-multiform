@@ -141,6 +141,9 @@ abstract class MultiForm extends Form
         // Set up the actions for the current step
         $actions = $this->actionsFor($currentStep);
 
+        // Give the fields, actions, and validation for the current step back to the parent Form class
+        parent::__construct($controller, $name, $fields, $actions);
+
         // Set up validation (if necessary)
         $validator = null;
         $applyValidation = true;
@@ -162,9 +165,6 @@ abstract class MultiForm extends Form
                 $this->setValidator($currentStep->getValidator());
             }
         }
-
-        // Give the fields, actions, and validation for the current step back to the parent Form class
-        parent::__construct($controller, $name, $fields, $actions);
 
         $getVar = $this->getGetVar();
 
