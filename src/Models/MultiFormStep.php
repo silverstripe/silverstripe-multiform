@@ -308,7 +308,8 @@ class MultiFormStep extends DataObject
      */
     public function getPreviousStep()
     {
-        $steps = DataObject::get(MultiFormStep::class, "\"SessionID\" = {$this->SessionID}", '"LastEdited" DESC');
+        $steps = MultiFormStep::get()->filter('SessionID', $this->SessionID)->sort('LastEdited', 'DESC');
+
         if ($steps) {
             foreach ($steps as $step) {
                 $step->setForm($this->form);
