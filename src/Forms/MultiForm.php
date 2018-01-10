@@ -25,7 +25,7 @@ use SilverStripe\ORM\DataObject;
  * you have to allow the following methods:
  *
  * <code>
- * private static $allowed_actions = array('next','prev');
+ * private static $allowed_actions = ['next','prev'];
  * </code>
  *
  */

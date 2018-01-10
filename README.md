@@ -1,10 +1,8 @@
 # MultiForm Module
 
 [![Build Status](https://travis-ci.org/silverstripe/silverstripe-multiform.svg?branch=master)](https://travis-ci.org/silverstripe/silverstripe-multiform)
-[![Latest Stable Version](https://poser.pugx.org/silverstripe/multiform/version.svg)](https://github.com/silverstripe/silverstripe-multiform/releases)
-[![Latest Unstable Version](https://poser.pugx.org/silverstripe/multiform/v/unstable.svg)](https://packagist.org/packages/silverstripe/multiform)
-[![Total Downloads](https://poser.pugx.org/silverstripe/multiform/downloads.svg)](https://packagist.org/packages/silverstripe/multiform)
-[![License](https://poser.pugx.org/silverstripe/multiform/license.svg)](https://github.com/silverstripe/silverstripe-multiform/blob/master/license.md)
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/silverstripe/silverstripe-multiform.svg)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-multiform/?branch=master)
+[![Code Coverage](https://img.shields.io/codecov/c/github/silverstripe/silverstripe-multiform.svg)](https://codecov.io/gh/silverstripe/silverstripe-multiform)
 
 ## Introduction
 
@@ -22,10 +20,11 @@ individual implementation can be customized to the project requirements.
 
 ## Requirements
 
-SilverStripe 4.0+. For SilverStripe 3 support please use `1.3` or below.
+* SilverStripe ^4.0
+
+**Note:** For a SilverStripe 3.x compatible version, please use [the 1.x release line](https://github.com/silverstripe/silverstripe-multiform/tree/1.3).
 
 ## What it does do
-
 
 *  Abstracts fields, actions and validation to each individual step.
 *  Maintains flow control automatically, so it knows which steps are ahead and 
@@ -84,7 +83,7 @@ SilverStripe site using this command (while in the directory where your site is
 currently located)
 
 ```
-composer require "silverstripe/multiform:*"
+composer require silverstripe/multiform
 ```
 
 ### 2. Create subclass of MultiForm
@@ -96,7 +95,8 @@ For the above example, our multi-form will be called *SurveyForm*
 ```php
 use SilverStripe\MultiForm\Forms\MultiForm;
 
-class SurveyForm extends MultiForm {
+class SurveyForm extends MultiForm 
+{
 
 }
 ```
@@ -173,8 +173,7 @@ Keep in mind that our multi-form also requires an end point. This step is the
 final one, and needs to have another variable set to let the multi-form system know 
 this is the final step.
 
-So, if we assume that the last step in our process is 
-SurveyFormOrganisationDetailsStep, then we can do something like this:
+So, if we assume that the last step in our process is OrganisationDetailsStep, then we can do something like this:
 
 ```php
 use SilverStripe\MultiForm\Models\MultiFormStep;
@@ -182,6 +181,8 @@ use SilverStripe\MultiForm\Models\MultiFormStep;
 class OrganisationDetailsStep extends MultiFormStep
 {
     private static $is_final_step = true;
+    
+    ...
 }
 ```
 
@@ -328,10 +329,10 @@ template.
 
 ### 7. Loading values from other steps
 
-There are several use cases were you want to pre-populate a value based
-based on the submission value of another step. There are two methods supporting this:
+There are several use cases where you want to pre-populate a value based on the submission value of another step. 
+There are two methods supporting this:
 
-* `getValueFromOtherStep()` load any submitted value from another step from the session
+* `getValueFromOtherStep()` loads any submitted value from another step from the session
 * `copyValueFromOtherStep()` saves you the repeated work of adding the same lines of code again and again.
 
 Here is an example of how to populate the email address from step 1 in step2 :
@@ -410,26 +411,26 @@ class SurveyForm extends MultiForm
         "SessionID = {$this->session->ID}"
       );
       
-      if($steps) {
-         foreach($steps as $step) {
+      if ($steps) {
+         foreach ($steps as $step) {
             if($step->class == PersonalDetailsStep::class) {
                $member = Member::create();
                $data = $step->loadData();
 
-               if($data) {
+               if ($data) {
                   $member->update($data);
                   $member->write();
                }
             }
 
-            if($step->class == OrganisationDetailsStep::class) {
+            if ($step->class == OrganisationDetailsStep::class) {
                $organisation = Organisation::create();
                $data = $step->loadData();
 
-               if($data) {
+               if ($data) {
                   $organisation->update($data);
 
-                  if($member && $member->ID) {
+                  if ($member && $member->ID) {
                     $organisation->MemberID = $member->ID;
                   }
 
@@ -460,9 +461,9 @@ use  SilverStripe\ORM\DataObject;
 
 class Organisation extends DataObject
 {
-    private static $db = array(
+    private static $db = [
         // Add your Organisation fields here
-    );
+    ];
 }
 ```
 #### Warning
@@ -530,7 +531,7 @@ class MyStep extends MultiFormStep
    public function getNextStep()
    {
       $data = $this->loadData();
-      if($data['Gender'] == 'Male') {
+      if(isset($data['Gender']) && $data['Gender'] == 'Male') {
          return TestThirdCase1Step::class;
       } else {
          return TestThirdCase2Step::class;
@@ -594,7 +595,7 @@ class SurveyForm extends MultiForm
     $steps = MultiFormStep::get()->filter(['SessionID' => $this->session->ID]);
 
       if($steps) {
-         foreach($steps as $step) {
+         foreach ($steps as $step) {
             // Shows the step data (unserialized by loadData)
             Debug::show($step->loadData()); 
          }
@@ -632,7 +633,7 @@ after their creation.
 
 You can run the task from the URL, by using http://mysite.com/dev/tasks/MultiFormPurgeTask?flush=1
 
-MultiFormPurgeTask is a subclass of *BuildTask*, so can be , so can be run using the [SilverStripe CLI tools](http://doc.silverstripe.org/framework/en/topics/commandline).
+MultiFormPurgeTask is a subclass of *BuildTask*, so can be run using the [SilverStripe CLI tools](http://doc.silverstripe.org/framework/en/topics/commandline).
 
 One way of automatically running this on a UNIX based machine is by cron.
 
