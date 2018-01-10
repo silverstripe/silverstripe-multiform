@@ -1,11 +1,18 @@
 en:
-  SilverStripe\MultiForm\MultiForm:
+  SilverStripe\MultiForm\Models\MultiFormSession:
+    PLURALNAME: 'Multi Form Sessions'
+    PLURALS:
+      one: 'A Multi Form Session'
+      other: '{count} Multi Form Sessions'
+    SINGULARNAME: 'Multi Form Session'
+  SilverStripe\MultiForm\Models\MultiFormStep:
     BACK: Back
     NEXT: Next
-    SUBMIT: Submit
-  SilverStripe\MultiForm\MultiFormSession:
-    PLURALNAME: 'Multi Form Sessions'
-    SINGULARNAME: 'Multi Form Session'
-  SilverStripe\MultiForm\MultiFormStep:
     PLURALNAME: 'Multi Form Steps'
+    PLURALS:
+      one: 'A Multi Form Step'
+      other: '{count} Multi Form Steps'
     SINGULARNAME: 'Multi Form Step'
+    SUBMIT: Submit
+  SilverStripe\MultiForm\MultiForm:
+    ProgressPercent: 'You''ve completed {percent}% ({completedSteps}/{totalSteps})'
