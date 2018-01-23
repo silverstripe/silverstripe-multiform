@@ -203,6 +203,7 @@ template, we need to create a SurveyForm method (function) on the controller:
 
 ```php
 use SilverStripe\CMS\Controllers\ContentController;
+use SilverStripe\ORM\FieldType\DBHTMLText;
 
 class PageController extends ContentController
 {
@@ -220,7 +221,7 @@ class PageController extends ContentController
     {
         return [
             'Title' => 'Thank you for your submission',
-            'Content' => '<p>You have successfully submitted the form!</p>'
+            'Content' => DBHTMLText::create('<p>You have successfully submitted the form!</p>')
         ];
     }
 }
