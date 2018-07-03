@@ -1,6 +1,6 @@
 # MultiForm Module
 
-[![Build Status](https://travis-ci.org/silverstripe/silverstripe-multiform.svg?branch=master)](https://travis-ci.org/silverstripe/silverstripe-multiform)
+[![Build Status](https://travis-ci.com/silverstripe/silverstripe-multiform.svg?branch=master)](https://travis-ci.org/silverstripe/silverstripe-multiform)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/silverstripe/silverstripe-multiform.svg)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-multiform/?branch=master)
 [![Code Coverage](https://img.shields.io/codecov/c/github/silverstripe/silverstripe-multiform.svg)](https://codecov.io/gh/silverstripe/silverstripe-multiform)
 
