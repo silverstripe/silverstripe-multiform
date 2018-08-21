@@ -141,7 +141,13 @@ class MultiFormStep extends DataObject {
 	 */
 	public function Link() {
 		$form = $this->form;
-		return Controller::join_links($form->getDisplayLink(), "?{$form->config()->get_var}={$this->Session()->Hash}");
+		return Controller::join_links(
+			$form->getDisplayLink(),
+			'?' . http_build_query(array(
+				$form->getGetVar() => $this->Session()->Hash,
+				'StepID' => $this->ID,
+			))
+		);
 	}
 
 	/**

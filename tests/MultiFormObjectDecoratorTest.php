@@ -8,7 +8,7 @@ class MultiFormObjectDecoratorTest extends SapphireTest {
 	);
 
 	protected $extraDataObjects = array(
-		'MultiFormObjectDecorator_DataObject'
+		'MultiFormObjectDecorator_DataObject',
 	);
 
 	public function testTemporaryDataFilteredQuery() {
@@ -16,6 +16,7 @@ class MultiFormObjectDecoratorTest extends SapphireTest {
 			->map('Name')
 			->toArray();
 
+		$this->assertCount(2, $records);
 		$this->assertContains('Test 1', $records);
 		$this->assertContains('Test 2', $records);
 		$this->assertNotContains('Test 3', $records);
@@ -28,6 +29,7 @@ class MultiFormObjectDecoratorTest extends SapphireTest {
 			->map('Name')
 			->toArray();
 
+		$this->assertCount(1, $records);
 		$this->assertNotContains('Test 1', $records);
 		$this->assertNotContains('Test 2', $records);
 		$this->assertContains('Test 3', $records);
@@ -35,7 +37,7 @@ class MultiFormObjectDecoratorTest extends SapphireTest {
 
 }
 
-class MultiFormObjectDecorator_DataObject extends DataObject {
+class MultiFormObjectDecorator_DataObject extends DataObject implements TestOnly {
 
 	private static $db = array(
 		'Name' => 'Varchar'
