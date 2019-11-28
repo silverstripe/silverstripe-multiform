@@ -229,14 +229,14 @@ abstract class MultiForm extends Form
         $currentStep = null;
         $StepID = $this->controller->getRequest()->getVar('StepID');
         if (isset($StepID)) {
-            $currentStep = DataObject::get_one(
-                MultiFormStep::class,
-                [
-                    'SessionID' => $this->session->ID,
-                    'ID' => $StepID
-                ]
-            );
-        } elseif ($this->session->CurrentStepID) {
+            $currentStep = MultiFormStep::get()->filter([
+                'SessionID' => $this->session->ID,
+                'ID' => $StepID
+            ])->first();
+        }
+
+        // if current step doesn't exist and no session current step then get the current step
+        if (!$currentStep && $this->session->CurrentStepID) {
             $currentStep = $this->session->CurrentStep();
         }
 
