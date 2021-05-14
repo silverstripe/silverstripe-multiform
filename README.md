@@ -414,7 +414,7 @@ class SurveyForm extends MultiForm
       
       if ($steps) {
          foreach ($steps as $step) {
-            if($step->class == PersonalDetailsStep::class) {
+            if($step->ClassName == PersonalDetailsStep::class) {
                $member = Member::create();
                $data = $step->loadData();
 
@@ -424,7 +424,7 @@ class SurveyForm extends MultiForm
                }
             }
 
-            if ($step->class == OrganisationDetailsStep::class) {
+            if ($step->ClassName == OrganisationDetailsStep::class) {
                $organisation = Organisation::create();
                $data = $step->loadData();
 
