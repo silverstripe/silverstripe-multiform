@@ -44,7 +44,7 @@ class MultiFormTest extends FunctionalTest
      */
     protected $form;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -122,17 +122,17 @@ class MultiFormTest extends FunctionalTest
         Config::modify()->set(MultiForm::class, 'get_var', 'SuperSessionID');
 
         $form = $this->controller->Form();
-        $this->assertContains(
+        $this->assertStringContainsString(
             'SuperSessionID',
             $form->config()->get('ignored_fields'),
             'GET var wasn\'t added to ignored fields'
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             'SuperSessionID',
             $form->FormAction(),
             "Form action doesn't contain correct session ID parameter"
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             'SuperSessionID',
             $form->getCurrentStep()->Link(),
             "Form step doesn't contain correct session ID parameter"
