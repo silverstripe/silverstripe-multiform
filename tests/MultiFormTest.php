@@ -122,7 +122,7 @@ class MultiFormTest extends FunctionalTest
         Config::modify()->set(MultiForm::class, 'get_var', 'SuperSessionID');
 
         $form = $this->controller->Form();
-        $this->assertStringContainsString(
+        $this->assertContains(
             'SuperSessionID',
             $form->config()->get('ignored_fields'),
             'GET var wasn\'t added to ignored fields'
