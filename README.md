@@ -1,6 +1,5 @@
 # MultiForm Module
 
-[![Build Status](https://travis-ci.com/silverstripe/silverstripe-multiform.svg?branch=master)](https://travis-ci.org/silverstripe/silverstripe-multiform)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/silverstripe/silverstripe-multiform.svg)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-multiform/?branch=master)
 [![Code Coverage](https://img.shields.io/codecov/c/github/silverstripe/silverstripe-multiform.svg)](https://codecov.io/gh/silverstripe/silverstripe-multiform)
 
@@ -383,14 +382,13 @@ class SurveyForm extends MultiForm
    {
       parent::finish($data, $form);
 
-      $steps = DataObject::get(
-        MultiFormStep::class,
-        "SessionID = {$this->session->ID}"
-      );
+      $steps = MultiFormStep::get()->filter([
+        "SessionID" => $this->session->ID
+      ]);
 
       if ($steps) {
          foreach ($steps as $step) {
-            if($step->ClassName == PersonalDetailsStep::class) {
+            if ($step->ClassName == PersonalDetailsStep::class) {
                $member = Member::create();
                $data = $step->loadData();
 
