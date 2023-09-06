@@ -412,12 +412,13 @@ abstract class MultiForm extends Form
 
         // If there is a previous step defined, add the back button
         if ($step->getPreviousStep() && $step->canGoBack()) {
+            $prev = FormAction::create('prev', $step->getPrevText());
+
             // If there is a next step, insert the action before the next action
             if ($step->getNextStep()) {
-                $actions->insertBefore($prev = FormAction::create('prev', $step->getPrevText()), 'action_next');
-            // Assume that this is the last step, insert the action before the finish action
+                $actions->insertBefore('action_next', $prev);
             } else {
-                $actions->insertBefore($prev = FormAction::create('prev', $step->getPrevText()), 'action_finish');
+                $actions->insertBefore('action_finish', $prev);
             }
             //remove browser validation from prev action
             $prev->setAttribute("formnovalidate", "formnovalidate");
@@ -678,7 +679,7 @@ abstract class MultiForm extends Form
                 $stepsFound->push($nextStep);
                 $this->getAllStepsRecursive($nextStep, $stepsFound);
             }
-        // Once we've reached the final step, we just return what we've collected
+            // Once we've reached the final step, we just return what we've collected
         } else {
             return $stepsFound;
         }
