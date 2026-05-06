@@ -69,7 +69,7 @@ class MultiFormPurgeTask extends BuildTask
 
         return MultiFormSession::get()
             ->filter([
-                "Created:LessThan" => new DateTimeImmutable()->sub($interval)
+                "Created:LessThan" => (new DateTimeImmutable())->sub($interval)
             ]);
     }
 }
