@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\MultiForm\Extension;
+namespace SilverStripe\MultiForm\Extensions;
 
 use SilverStripe\Core\Extension;
 use SilverStripe\MultiForm\Models\MultiFormSession;

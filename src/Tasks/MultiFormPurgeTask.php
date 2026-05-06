@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\MultiForm\Task;
+namespace SilverStripe\MultiForm\Tasks;
 
 use DateInterval;
 use DateTimeImmutable;

@@ -3,7 +3,7 @@
 namespace SilverStripe\MultiForm\Tests;
 
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\MultiForm\Extension\MultiFormObjectExtension;
+use SilverStripe\MultiForm\Extensions\MultiFormObjectExtension;
 use SilverStripe\MultiForm\Tests\Stubs\MultiFormObjectDecoratorDataObject;
 
 class MultiFormObjectDecoratorTest extends SapphireTest
