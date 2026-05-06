@@ -349,7 +349,9 @@ abstract class MultiForm extends Form
     {
         $filter .= ($filter) ? ' AND ' : '';
         $filter .= sprintf("\"SessionID\" = '%s'", $this->session->ID);
-        return MultiFormStep::get()->where($filter);
+        /** @var DataList<MultiFormStep> $steps */
+        $steps = MultiFormStep::get()->where($filter);
+        return $steps;
     }
 
     /**
