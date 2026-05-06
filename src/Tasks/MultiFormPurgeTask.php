@@ -67,9 +67,11 @@ class MultiFormPurgeTask extends BuildTask
     {
         $interval = new DateInterval('P' . $this->config()->get('session_expiry_days') . 'D');
 
-        return MultiFormSession::get()
+        /** @var DataList<MultiFormSession> $sessions */
+        $sessions = MultiFormSession::get()
             ->filter([
                 "Created:LessThan" => (new DateTimeImmutable())->sub($interval)
             ]);
+        return $sessions;
     }
 }
