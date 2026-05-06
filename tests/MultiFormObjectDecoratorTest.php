@@ -3,22 +3,25 @@
 namespace SilverStripe\MultiForm\Tests;
 
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\MultiForm\Extensions\MultiFormObjectDecorator;
+use SilverStripe\MultiForm\Extension\MultiFormObjectExtension;
 use SilverStripe\MultiForm\Tests\Stubs\MultiFormObjectDecoratorDataObject;
 
 class MultiFormObjectDecoratorTest extends SapphireTest
 {
     protected static $fixture_file = 'MultiFormObjectDecoratorTest.yml';
 
+    /**
+     * @var array<class-string,array<int,class-string>>
+     */
     protected static $required_extensions = [
-        MultiFormObjectDecoratorDataObject::class => [MultiFormObjectDecorator::class]
+        MultiFormObjectDecoratorDataObject::class => [MultiFormObjectExtension::class]
     ];
 
     protected static $extra_dataobjects = [
         MultiFormObjectDecoratorDataObject::class
     ];
 
-    public function testTemporaryDataFilteredQuery()
+    public function testTemporaryDataFilteredQuery(): void
     {
         $records = MultiFormObjectDecoratorDataObject::get()
             ->map('Name')
@@ -29,7 +32,7 @@ class MultiFormObjectDecoratorTest extends SapphireTest
         $this->assertNotContains('Test 3', $records);
     }
 
-    public function testTemporaryDataQuery()
+    public function testTemporaryDataQuery(): void
     {
         $records = MultiFormObjectDecoratorDataObject::get()
             ->filter(['MultiFormIsTemporary' => 1])

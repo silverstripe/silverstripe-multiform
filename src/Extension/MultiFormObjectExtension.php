@@ -1,42 +1,33 @@
 <?php
 
-namespace SilverStripe\MultiForm\Extensions;
+namespace SilverStripe\MultiForm\Extension;
 
-use SilverStripe\ORM\DataQuery;
 use SilverStripe\Core\Extension;
-use SilverStripe\ORM\Queries\SQLSelect;
 use SilverStripe\MultiForm\Models\MultiFormSession;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DataQuery;
+use SilverStripe\ORM\Queries\SQLSelect;
 
 /**
- * Decorate {@link DataObject}s which are required to be saved
- * to the database directly by a {@link MultiFormStep}.
- * Only needed for objects which aren't stored in the session,
- * which is the default.
+ * Decorate {@link DataObject}s which are required to be saved to the database directly by a {@link MultiFormStep}.
+ * Only needed for objects which aren't stored in the session, which is the default.
  *
- * This decorator also augments get() requests to the datalayer
- * by automatically filtering out temporary objects.
- * You can override this filter by putting the following statement
- * in your WHERE clause:
- * `<MyDataObjectClass>`.`MultiFormIsTemporary` = 1
- *
+ * @extends Extension<DataObject>
  */
-class MultiFormObjectDecorator extends Extension
+class MultiFormObjectExtension extends Extension
 {
-    private static $db = [
+    private static array $db = [
         'MultiFormIsTemporary' => 'Boolean',
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'MultiFormSession' => MultiFormSession::class,
     ];
 
     /**
-     * Augment any queries to MultiFormObjectDecorator and only
-     * return anything that isn't considered temporary.
-     * @param SQLSelect $query
-     * @param DataQuery|null $dataQuery
+     * Augment any queries to MultiFormObjectExtension and only return anything that isn't considered temporary.
      */
-    public function augmentSQL(SQLSelect $query, DataQuery $dataQuery = null)
+    public function augmentSQL(SQLSelect $query, ?DataQuery $dataQuery = null): void
     {
         $where = $query->getWhere();
         if (!$where && !$this->wantsTemporary($query)) {
@@ -45,7 +36,8 @@ class MultiFormObjectDecorator extends Extension
             return;
         }
         $filterKey = key($where[0]);
-        if (strpos($filterKey, ".`ID` = ") === false
+        if (
+            strpos($filterKey, ".`ID` = ") === false
             && strpos($filterKey, ".ID = ") === false
             && strpos($filterKey, "ID = ") !== 0
             && !$this->wantsTemporary($query)
@@ -56,14 +48,9 @@ class MultiFormObjectDecorator extends Extension
     }
 
     /**
-     * Determines if the current query is supposed
-     * to be exempt from the automatic filtering out
-     * of temporary records.
-     *
-     * @param SQLSelect $query
-     * @return boolean
+     * Determines if the current query is supposed to be exempt from the automatic filtering out of temporary records.
      */
-    protected function wantsTemporary($query)
+    protected function wantsTemporary(SQLSelect $query): bool
     {
         foreach ($query->getWhere() as $whereClause) {
             $from = array_values($query->getFrom());

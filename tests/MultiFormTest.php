@@ -48,7 +48,7 @@ class MultiFormTest extends FunctionalTest
     {
         parent::setUp();
 
-        $this->controller = new MultiFormTestController();
+        $this->controller = MultiFormTestController::create();
         $this->controller->setRequest(new HTTPRequest('GET', '/'));
         $this->controller->getRequest()->setSession(new Session([]));
         $this->controller->pushCurrent();
@@ -57,22 +57,19 @@ class MultiFormTest extends FunctionalTest
         $this->form =  $form;
     }
 
-    public function testInitialisingForm()
+    public function testInitialisingForm(): void
     {
-        $this->assertTrue(is_numeric($this->form->getCurrentStep()->ID) && ($this->form->getCurrentStep()->ID > 0));
-        $this->assertTrue(
-            is_numeric($this->form->getMultiFormSession()->ID)
-            && ($this->form->getMultiFormSession()->ID > 0)
-        );
+        $this->assertGreaterThan(0, $this->form->getCurrentStep()->ID);
+        $this->assertGreaterThan(0, $this->form->getMultiFormSession()->ID);
         $this->assertEquals(MultiFormTestStepOne::class, $this->form->getStartStep());
     }
 
-    public function testSessionGeneration()
+    public function testSessionGeneration(): void
     {
         $this->assertTrue($this->form->getMultiFormSession()->ID > 0);
     }
 
-    public function testMemberLogging()
+    public function testMemberLogging(): void
     {
         // Grab any user to fake being logged in as, and ensure that after a session is written it has
         // that user as the submitter.
@@ -85,23 +82,23 @@ class MultiFormTest extends FunctionalTest
         $this->assertEquals($userId, $session->SubmitterID);
     }
 
-    public function testSecondStep()
+    public function testSecondStep(): void
     {
         $this->assertEquals(MultiFormTestStepTwo::class, $this->form->getCurrentStep()->getNextStep());
     }
 
-    public function testParentForm()
+    public function testParentForm(): void
     {
         $currentStep = $this->form->getCurrentStep();
         $this->assertEquals(get_class($currentStep->getForm()), get_class($this->form));
     }
 
-    public function testTotalStepCount()
+    public function testTotalStepCount(): void
     {
         $this->assertEquals(3, $this->form->getAllStepsLinear()->Count());
     }
 
-    public function testCompletedSession()
+    public function testCompletedSession(): void
     {
         $this->form->setCurrentSessionHash($this->form->getMultiFormSession()->Hash);
         $this->assertInstanceOf(MultiFormSession::class, $this->form->getCurrentSession());
@@ -109,7 +106,7 @@ class MultiFormTest extends FunctionalTest
         $this->assertNull($this->form->getCurrentSession());
     }
 
-    public function testIncorrectSessionIdentifier()
+    public function testIncorrectSessionIdentifier(): void
     {
         $this->form->setCurrentSessionHash('sdfsdf3432325325sfsdfdf'); // made up!
 
@@ -117,7 +114,7 @@ class MultiFormTest extends FunctionalTest
         $this->assertInstanceOf(MultiFormSession::class, $this->form->getMultiFormSession());
     }
 
-    public function testCustomGetVar()
+    public function testCustomGetVar(): void
     {
         Config::modify()->set(MultiForm::class, 'get_var', 'SuperSessionID');
 

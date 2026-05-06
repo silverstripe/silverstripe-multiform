@@ -1,1 +1,8 @@
-.DS_Store
+/.env
+/.idea
+/assets
+/composer.lock
+/resources
+/vendor
+/public
+.phpunit.result.cache

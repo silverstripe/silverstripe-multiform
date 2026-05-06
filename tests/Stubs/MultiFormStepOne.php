@@ -10,14 +10,16 @@ use SilverStripe\MultiForm\Models\MultiFormStep;
 
 class MultiFormTestStepOne extends MultiFormStep implements TestOnly
 {
-    private static $next_steps = MultiFormTestStepTwo::class;
+    private static string $table_name = 'MultiFormTestStepOne';
 
-    public function getFields()
+    private static string $next_steps = MultiFormTestStepTwo::class;
+
+    public function getFields(): FieldList
     {
         return FieldList::create(
-            new TextField('FirstName', 'First name'),
-            new TextField('Surname', 'Surname'),
-            new EmailField('Email', 'Email address')
+            TextField::create('FirstName', 'First name'),
+            TextField::create('Surname', 'Surname'),
+            EmailField::create('Email', 'Email address')
         );
     }
 }

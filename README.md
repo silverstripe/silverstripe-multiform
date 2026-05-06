@@ -1,7 +1,11 @@
 # MultiForm Module
 
+![Build Status](https://github.com/silverstripe/silverstripe-multiform/actions/workflows/ci.yml/badge.svg)
+[![Version](http://img.shields.io/packagist/v/silverstripe/multiform.svg?style=flat-square)](https://packagist.org/packages/silverstripe/multiform)
+[![License](http://img.shields.io/packagist/l/silverstripe/multiform.svg?style=flat-square)](LICENSE)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/silverstripe/silverstripe-multiform.svg)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-multiform/?branch=master)
 [![Code Coverage](https://img.shields.io/codecov/c/github/silverstripe/silverstripe-multiform.svg)](https://codecov.io/gh/silverstripe/silverstripe-multiform)
+
 
 ## Introduction
 
@@ -19,8 +23,9 @@ individual implementation can be customized to the project requirements.
 
 ## Requirements
 
--   SilverStripe ^5.
+-   SilverStripe ^6.
 
+**Note:** For a SilverStripe 5.x compatible version, please use `^3`
 **Note:** For a SilverStripe 4.x or 3.x compatible version, please use `^2` or `^1` tagged version
 
 ## What it does do
@@ -608,25 +613,13 @@ task can be used to purge expired session data on a regular basis. The date of
 expiry can be customised, and is given a default of 7 days to delete sessions
 after their creation.
 
-You can run the task from the URL, by using http://mysite.com/dev/tasks/MultiFormPurgeTask?flush=1
+```sh
+./vendor/bin/sake tasks:multiform-purge
+```
 
 MultiFormPurgeTask is a subclass of _BuildTask_, so can be run using the [SilverStripe CLI tools](http://doc.silverstripe.org/framework/en/topics/commandline).
 
 One way of automatically running this on a UNIX based machine is by cron.
-
-## TODO
-
--   Code example on how to use `$form->saveInto()` with MultiForm, as it doesn't have all steps in the $form context at `finish()`
-
--   Allowing a user to click a link, and have an email sent to them with the current state, so they can come back and use the form exactly where they left off
-
--   Possibly allow for different means to persist data, such as the browser session cache instead of the database.
-
--   Different presentation of the URL to identify each step.
-
--   Allow customisation of `prev()` and `next()` on each step. Currently you can only customise for the entire MultiForm subclass. There is a way to customise on a per step basis, which could be described in a small recipe.
-
--   More detailed explanation, and recipe example on how to make branched multistep forms. For example, clicking a different action takes you to an alternative next step than the one defined in `$next_steps`
 
 ## Related
 

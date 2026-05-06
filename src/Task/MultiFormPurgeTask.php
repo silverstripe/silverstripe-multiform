@@ -1,11 +1,12 @@
 <?php
 
-namespace SilverStripe\MultiForm\Tasks;
+namespace SilverStripe\MultiForm\Task;
 
+use DateInterval;
+use DateTimeImmutable;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\MultiForm\Models\MultiFormSession;
 use SilverStripe\ORM\DataList;
-use SilverStripe\ORM\DataObject;
 use Symfony\Component\Console\Input\InputInterface;
 use SilverStripe\PolyExecution\PolyOutput;
 
@@ -23,14 +24,13 @@ use SilverStripe\PolyExecution\PolyOutput;
 class MultiFormPurgeTask extends BuildTask
 {
     /**
-     * Days after which sessions expire and
-     * are automatically deleted.
-     *
-     * @var int
+     * Days after which sessions expire and are automatically deleted.
      */
-    private static $session_expiry_days = 7;
+    private static int $session_expiry_days = 7;
 
-    private static $segment = 'MultiFormPurgeTask';
+    protected static string $commandName = 'multiform-purge';
+
+    protected static string $description = 'Purge expired MultiForm sessions';
 
     /**
      * Run this cron task.
@@ -43,14 +43,17 @@ class MultiFormPurgeTask extends BuildTask
     {
         $sessions = $this->getExpiredSessions();
         $delCount = 0;
-        if ($sessions) {
-            foreach ($sessions as $session) {
-                $session->delete();
-                $delCount++;
-            }
+        foreach ($sessions as $session) {
+            $session->delete();
+            $delCount++;
         }
-        $output->writeln($delCount . ' session records deleted that were older than '
-            . $this->config()->get('session_expiry_days') . ' days.');
+
+        $output->writeln(sprintf(
+            '%s session records deleted that were older than %s days.',
+            $delCount,
+            $this->config()->get('session_expiry_days')
+        ));
+
         return 0;
     }
 
@@ -58,13 +61,15 @@ class MultiFormPurgeTask extends BuildTask
      * Return all MultiFormSession database records that are older than
      * the days specified in $session_expiry_days
      *
-     * @return DataList
+     * @return DataList<MultiFormSession>
      */
-    protected function getExpiredSessions()
+    protected function getExpiredSessions(): DataList
     {
-        return DataObject::get(
-            MultiFormSession::class,
-            "DATEDIFF(NOW(), \"MultiFormSession\".\"Created\") > " . $this->config()->get('session_expiry_days')
-        );
+        $interval = new DateInterval('P' . $this->config()->get('session_expiry_days') . 'D');
+
+        return MultiFormSession::get()
+            ->filter([
+                "Created:LessThan" => new DateTimeImmutable()->sub($interval)
+            ]);
     }
 }

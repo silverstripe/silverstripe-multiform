@@ -7,9 +7,9 @@ use SilverStripe\ORM\DataObject;
 
 class MultiFormObjectDecoratorDataObject extends DataObject implements TestOnly
 {
-    private static $db = [
+    private static array $db = [
         'Name' => 'Varchar'
     ];
 
-    private static $table_name = 'MultiFormObjectDecoratorDataObject';
+    private static string $table_name = 'MultiFormObjectDecoratorDataObject';
 }

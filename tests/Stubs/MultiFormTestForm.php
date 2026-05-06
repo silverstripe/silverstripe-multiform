@@ -7,10 +7,10 @@ use SilverStripe\MultiForm\Forms\MultiForm;
 
 class MultiFormTestForm extends MultiForm implements TestOnly
 {
-    private static $start_step = MultiFormTestStepOne::class;
+    private static string $start_step = MultiFormTestStepOne::class;
 
-    public function getStartStep()
+    public function getStartStep(): string
     {
-        return $this->config()->get('start_step');
+        return MultiFormTestStepOne::class;
     }
 }

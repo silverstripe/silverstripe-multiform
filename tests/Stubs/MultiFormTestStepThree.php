@@ -9,12 +9,14 @@ use SilverStripe\MultiForm\Models\MultiFormStep;
 
 class MultiFormTestStepThree extends MultiFormStep implements TestOnly
 {
-    private static $is_final_step = true;
+    private static string $table_name = 'MultiFormTestStepThree';
 
-    public function getFields()
+    private static bool $is_final_step = true;
+
+    public function getFields(): FieldList
     {
         return FieldList::create(
-            new TextField('Test', 'Anything else you\'d like to tell us?')
+            TextField::create('Test', 'Anything else you\'d like to tell us?')
         );
     }
 }

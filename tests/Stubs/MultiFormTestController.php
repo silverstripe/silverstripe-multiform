@@ -8,9 +8,9 @@ use SilverStripe\Dev\TestOnly;
 
 class MultiFormTestController extends Controller implements TestOnly
 {
-    private static $url_segment = 'MultiFormTestController';
+    private static string $url_segment = 'MultiFormTestController';
 
-    public function Form()
+    public function Form(): MultiFormTestForm
     {
         return Injector::inst()->get(MultiFormTestForm::class, false, [$this, 'Form'])
             ->setHTMLID(MultiFormTestForm::class);
