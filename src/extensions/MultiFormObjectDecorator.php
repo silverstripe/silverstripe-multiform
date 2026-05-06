@@ -2,10 +2,10 @@
 
 namespace SilverStripe\MultiForm\Extensions;
 
-use SilverStripe\MultiForm\Models\MultiFormSession;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataQuery;
+use SilverStripe\Core\Extension;
 use SilverStripe\ORM\Queries\SQLSelect;
+use SilverStripe\MultiForm\Models\MultiFormSession;
 
 /**
  * Decorate {@link DataObject}s which are required to be saved
@@ -20,7 +20,7 @@ use SilverStripe\ORM\Queries\SQLSelect;
  * `<MyDataObjectClass>`.`MultiFormIsTemporary` = 1
  *
  */
-class MultiFormObjectDecorator extends DataExtension
+class MultiFormObjectDecorator extends Extension
 {
     private static $db = [
         'MultiFormIsTemporary' => 'Boolean',

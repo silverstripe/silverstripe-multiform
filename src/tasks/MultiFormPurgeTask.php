@@ -6,6 +6,8 @@ use SilverStripe\Dev\BuildTask;
 use SilverStripe\MultiForm\Models\MultiFormSession;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
+use Symfony\Component\Console\Input\InputInterface;
+use SilverStripe\PolyExecution\PolyOutput;
 
 /**
  * Task to clean out all {@link MultiFormSession} objects from the database.
@@ -37,7 +39,7 @@ class MultiFormPurgeTask extends BuildTask
      * are older than the days specified in $session_expiry_days
      * and delete them.
      */
-    public function run($request)
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
         $sessions = $this->getExpiredSessions();
         $delCount = 0;
@@ -47,8 +49,9 @@ class MultiFormPurgeTask extends BuildTask
                 $delCount++;
             }
         }
-        echo $delCount . ' session records deleted that were older than '
-            . $this->config()->get('session_expiry_days') . ' days.'. PHP_EOL;
+        $output->writeln($delCount . ' session records deleted that were older than '
+            . $this->config()->get('session_expiry_days') . ' days.');
+        return 0;
     }
 
     /**
