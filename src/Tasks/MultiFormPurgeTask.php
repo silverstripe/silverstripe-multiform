@@ -28,6 +28,10 @@ class MultiFormPurgeTask extends BuildTask
      */
     private static int $session_expiry_days = 7;
 
+    private static bool $purge_completed_sessions = true;
+
+    private static bool $purge_incomplete_sessions = true;
+
     protected static string $commandName = 'multiform-purge';
 
     protected static string $description = 'Purge expired MultiForm sessions';
@@ -61,7 +65,7 @@ class MultiFormPurgeTask extends BuildTask
      * Return all MultiFormSession database records that are older than
      * the days specified in $session_expiry_days
      *
-     * @return DataList<MultiFormSession>
+     * @return DataList<covariant MultiFormSession>
      */
     protected function getExpiredSessions(): DataList
     {
@@ -70,8 +74,22 @@ class MultiFormPurgeTask extends BuildTask
         /** @var DataList<MultiFormSession> $sessions */
         $sessions = MultiFormSession::get()
             ->filter([
-                "Created:LessThan" => (new DateTimeImmutable())->sub($interval)
+                "LastEdited:LessThan" => (new DateTimeImmutable())->sub($interval)->format('Y-m-d H:i:s')
             ]);
+
+        $includeCompleted = self::config()->get('purge_completed_sessions');
+        $includeIncomplete = self::config()->get('purge_incomplete_sessions');
+
+        if ($includeCompleted && $includeIncomplete === false) {
+            $sessions = $sessions->filter('IsComplete', 1);
+        }
+
+        if ($includeIncomplete && $includeCompleted === false) {
+            $sessions = $sessions->filter('IsComplete', 0);
+        }
+
+        $sessions = $sessions->sort('Created', 'ASC');
+
         return $sessions;
     }
 }

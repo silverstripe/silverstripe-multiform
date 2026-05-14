@@ -343,7 +343,7 @@ abstract class MultiForm extends Form
      * to the database, use {@link getAllStepsLinear()}.
      *
      * @param string|null $filter SQL WHERE statement
-     * @return DataList<MultiFormStep> A set of MultiFormStep subclasses
+     * @return DataList<covariant MultiFormStep>
      */
     public function getSavedSteps(?string $filter = null): DataList
     {
@@ -527,7 +527,8 @@ abstract class MultiForm extends Form
         }
 
         // Get the previous step of the class instance returned from $currentStep->getPreviousStep()
-        $prevStep = DataObject::get_one($prevStepClass, "\"SessionID\" = {$this->session->ID}");
+        $prevStep = MultiFormStep::get()->filter('SessionID', $this->session->ID)->last();
+
         if (!$prevStep instanceof MultiFormStep) {
             $this->controller->redirectBack();
             return false;
